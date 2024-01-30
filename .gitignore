@@ -1,0 +1,37 @@
+# Node.js
+node_modules/
+
+# Generated files
+dist/
+build/
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node-modules-folder-into-git
+node_modules
+
+# dotenv environment variables file
+.env
+
+# macOS
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# npm package manager
+npm-debug.log
