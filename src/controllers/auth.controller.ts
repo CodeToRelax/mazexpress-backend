@@ -1,7 +1,12 @@
 import { IUserStatus } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 
-const resetUserPassword = async (firebaseUid: string, newPassword: string) => {
+// signup // mongo and firebase
+// getPasswordResetLink // firebase
+// change password // firebase
+// update user acl // mongo
+
+const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {
   const res = await FirebaseController.resetFirebaseUserPassword({
     firebaseUid,
     newPassword,
@@ -18,6 +23,6 @@ const toggleUser = async (firebaseUid: string, status: IUserStatus) => {
 };
 
 export const AuthController = {
-  resetUserPassword,
+  adminResetUserPassword,
   toggleUser,
 };

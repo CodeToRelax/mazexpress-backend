@@ -8,7 +8,7 @@ const router = Router({
 // reset password
 router.patch('/:id/resetPassword', async (req, res) => {
   try {
-    const results = await AuthController.resetUserPassword(req.params.id, 'newPassword');
+    const results = await AuthController.adminResetUserPassword(req.params.id, 'newPassword');
     return res.status(200).json(results);
   } catch (err) {
     console.log(err);
