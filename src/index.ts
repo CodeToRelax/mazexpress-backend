@@ -39,5 +39,5 @@ App.use('/user', UserRouter);
 App.use('/auth', AuthRouter);
 
 // server
-const port = process.env.PORT ? process.env.PORT : 3000;
+const port = process.env.PORT ? process.env.PORT : 3002;
 App.listen(port, () => console.log('Server is running on', port));

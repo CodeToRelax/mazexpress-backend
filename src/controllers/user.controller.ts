@@ -1,6 +1,5 @@
 import UserCollection from '@/models/user/user.model';
-import { IUserUpdate, IUser } from '@/utils/types';
-import { FirebaseController } from './firebase.controller';
+import { IUserUpdate } from '@/utils/types';
 
 const getUser = async (_id: string) => {
   const user = UserCollection.findById({ _id });
@@ -10,30 +9,6 @@ const getUser = async (_id: string) => {
 // filter and pagination are needed
 const getUsers = async () => {
   const user = UserCollection.find({});
-  return user;
-};
-
-// admins should not have unique shipping number
-const createUser = async (body: IUser) => {
-  // generate acl and unique number
-  const defaultAcl = {
-    get: {},
-    post: {},
-    update: {},
-    delete: {},
-  };
-  const uniqueShippingNumber = 'BEN2020';
-  const fbUser = await FirebaseController.createFirebaseUser({
-    email: 'test@test.com',
-    password: 'testtest123',
-  });
-  console.log(fbUser);
-  const user = new UserCollection({
-    ...body,
-    uniqueShippingNumber,
-    acl: JSON.stringify(defaultAcl),
-  });
-  await user.save();
   return user;
 };
 
@@ -51,7 +26,6 @@ const deleteUser = async (_id: string) => {
 export const UserController = {
   getUser,
   getUsers,
-  createUser,
   updateUser,
   deleteUser,
 };

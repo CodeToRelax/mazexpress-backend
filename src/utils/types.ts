@@ -39,22 +39,22 @@ const systemServices = ['auth', 'user', 'warehouse'] as const;
 type appServices = (typeof systemServices)[number];
 
 const getEndpoints = [] as const;
-const postEndpoints = [] as const;
+const postEndpoints = ['/auth/signUp'] as const;
 const updateEndpoints = [] as const;
 const deleteEndpoints = [] as const;
 
 export interface IUserACL {
   get: {
-    [key in appServices]?: (typeof getEndpoints)[];
+    [key in appServices]?: (typeof getEndpoints)[number][];
   };
   post: {
-    [key in appServices]?: (typeof postEndpoints)[];
+    [key in appServices]?: (typeof postEndpoints)[number][];
   };
   update: {
-    [key in appServices]?: (typeof updateEndpoints)[];
+    [key in appServices]?: (typeof updateEndpoints)[number][];
   };
   delete: {
-    [key in appServices]?: (typeof deleteEndpoints)[];
+    [key in appServices]?: (typeof deleteEndpoints)[number][];
   };
 }
 

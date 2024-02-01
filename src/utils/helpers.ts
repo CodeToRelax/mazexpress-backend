@@ -1,3 +1,5 @@
+import { IUserACL } from './types';
+
 export const validateLibyanNumber = (phoneNumber: string) => {
   const allowedCarriers = ['91', '92', '94', '95'];
   const firstTwoNumbers = phoneNumber.slice(0, 2);
@@ -44,3 +46,34 @@ export const validateUserBirthdate = (value: Date) => {
 //     return res.status(401).json("unathorized access to resource");
 //   }
 // };
+
+export const generateUniqueShippingNumber = (city: string): string => {
+  // Take the first 3 letters of the city and convert to uppercase
+  const prefix: string = city.slice(0, 3).toUpperCase();
+  // Generate 3 random numbers
+  const randomNumbers: string = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10).toString()).join('');
+  // Generate 1 random letter
+  const randomLetter: string = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+
+  // Combine the random numbers and letter in a random order
+  const combinedChars: string[] = randomNumbers.split('');
+  const randomPosition: number = Math.floor(Math.random() * (randomNumbers.length + 1));
+  combinedChars.splice(randomPosition, 0, randomLetter);
+
+  // Ensure that the code contains at least one character after the "-"
+  const suffix: string = combinedChars.join('');
+
+  // Combine the prefix and suffix with a hyphen in between
+  const result: string = `${prefix}-${suffix}`;
+
+  return result;
+};
+
+export const generateDefaultAcl = (): IUserACL => {
+  return {
+    get: {},
+    post: { auth: ['/auth/signUp'] },
+    update: {},
+    delete: {},
+  };
+};
