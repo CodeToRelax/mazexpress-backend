@@ -57,3 +57,5 @@ export interface IUserACL {
     [key in appServices]?: (typeof deleteEndpoints)[];
   };
 }
+
+export type IUserStatus = 'enable' | 'disable';

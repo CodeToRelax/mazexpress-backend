@@ -1,21 +1,22 @@
 import { IUserUpdate, IUser } from '@/utils/types';
+import { faker } from '@faker-js/faker';
 
-export const mockUser: IUser = {
-  username: 'random',
-  firstName: 'John',
-  lastName: 'Doe',
-  password: 'securePassword123',
-  birthDate: new Date('1990-05-15T00:00:00.000Z'),
+export const mockUserAdmin: IUser = {
+  username: faker.internet.userName(),
+  firstName: faker.person.firstName(),
+  lastName: faker.person.lastName(),
+  password: faker.internet.password(),
+  birthDate: faker.date.birthdate(),
   adress: {
-    city: 'benghazi',
-    street: 'elhadayek street',
-    specificDescription: 'nothing',
+    city: faker.location.city(),
+    street: faker.location.street(),
+    specificDescription: faker.location.direction(),
   },
-  email: 'john.doe@example.com',
+  email: faker.internet.email(),
   phoneNumber: '0928930736',
   privacyPolicy: {
-    dataPrivacy: true,
-    usageAgreement: true,
+    dataPrivacy: faker.datatype.boolean(),
+    usageAgreement: faker.datatype.boolean(),
   },
   userType: 'ADMIN',
   uniqueShippingNumber: 'BEN2019',
@@ -27,14 +28,41 @@ export const mockUser: IUser = {
   },
 };
 
-export const mockUserUpdate: IUserUpdate = {
-  firstName: 'John monir',
-  lastName: 'Doesss',
-  birthDate: new Date('1990-05-15T00:00:00.000Z'),
+export const mockUserCustomer: IUser = {
+  username: faker.internet.userName(),
+  firstName: faker.person.firstName(),
+  lastName: faker.person.lastName(),
+  password: faker.internet.password(),
+  birthDate: faker.date.birthdate(),
   adress: {
-    city: 'benghazi',
-    street: 'elhadayek street',
-    specificDescription: 'nothing',
+    city: faker.location.city(),
+    street: faker.location.street(),
+    specificDescription: faker.location.direction(),
   },
-  phoneNumber: '0928930736',
+  email: faker.internet.email(),
+  phoneNumber: '0928930737',
+  privacyPolicy: {
+    dataPrivacy: faker.datatype.boolean(),
+    usageAgreement: faker.datatype.boolean(),
+  },
+  userType: 'CUSTOMER',
+  uniqueShippingNumber: 'BEN2020',
+  acl: {
+    get: {},
+    post: {},
+    update: {},
+    delete: {},
+  },
+};
+
+export const mockUserUpdate: IUserUpdate = {
+  firstName: faker.person.firstName(),
+  lastName: faker.person.lastName(),
+  birthDate: faker.date.birthdate(),
+  adress: {
+    city: faker.location.city(),
+    street: faker.location.street(),
+    specificDescription: faker.location.direction(),
+  },
+  phoneNumber: '0928930737',
 };

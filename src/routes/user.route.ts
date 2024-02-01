@@ -1,6 +1,6 @@
 import { UserController } from '@/controllers/user.controller';
 import { Router } from 'express';
-import { mockUser, mockUserUpdate } from '@/mocks/data/user';
+import { mockUserAdmin, mockUserUpdate } from '@/mocks/data/user';
 
 const router = Router({
   caseSensitive: true,
@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     // const user = await UserController.createUser(req.body);
-    const results = await UserController.createUser(mockUser);
+    const results = await UserController.createUser(mockUserAdmin);
     return res.status(201).json(results);
   } catch (err) {
     console.log(err);
