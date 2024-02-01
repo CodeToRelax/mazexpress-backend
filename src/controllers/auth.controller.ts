@@ -1,7 +1,7 @@
 import { IUser, IUserStatus } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user/user.model';
-import { generateDefaultAcl, generateUniqueShippingNumber } from '@/utils/helpers';
+import { generateDefaultAcl, generateRandomUsername, generateUniqueShippingNumber } from '@/utils/helpers';
 
 // signup // mongo and firebase
 // getPasswordResetLink // firebase
@@ -16,6 +16,7 @@ const createUser = async (body: IUser) => {
   });
   const user = new UserCollection({
     ...body,
+    username: generateRandomUsername(),
     uniqueShippingNumber: body.userType === 'CUSTOMER' ? generateUniqueShippingNumber(body.adress.city) : '0000',
     acl: JSON.stringify(generateDefaultAcl()),
   });

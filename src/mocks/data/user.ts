@@ -15,7 +15,6 @@ export const mockUserAdmin: IUser = {
   email: 'zyzzxshembesh@gmail.com',
   phoneNumber: '0928930736',
   privacyPolicy: {
-    dataPrivacy: faker.datatype.boolean(),
     usageAgreement: faker.datatype.boolean(),
   },
   userType: 'ADMIN',
@@ -43,7 +42,6 @@ export const mockUserCustomer: IUser = {
   email: 'zyzzxshembesh@gmail.com',
   phoneNumber: '0928930737',
   privacyPolicy: {
-    dataPrivacy: faker.datatype.boolean(),
     usageAgreement: faker.datatype.boolean(),
   },
   userType: 'CUSTOMER',

@@ -69,6 +69,12 @@ export const generateUniqueShippingNumber = (city: string): string => {
   return result;
 };
 
+export const generateRandomUsername = (length: number = 10): string => {
+  return Math.random()
+    .toString(20)
+    .slice(2, length + 2);
+};
+
 export const generateDefaultAcl = (): IUserACL => {
   return {
     get: {},

@@ -59,7 +59,6 @@ export const UserSchema = new mongoose.Schema<IUser>({
   },
   privacyPolicy: {
     usageAgreement: { type: Boolean, required: true },
-    dataPrivacy: { type: Boolean, required: true },
   },
   userType: {
     type: String,

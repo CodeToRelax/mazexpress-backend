@@ -27,7 +27,6 @@ export interface IUserAddress {
 
 export interface IUserPrivacyPolicy {
   usageAgreement: boolean;
-  dataPrivacy: boolean;
 }
 
 export enum UserTypes {
