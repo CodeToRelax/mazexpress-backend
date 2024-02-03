@@ -27,9 +27,9 @@ export const UserSchema = new mongoose.Schema<IUser>({
     minlength: 8,
   },
   birthDate: {
-    type: Date,
+    type: String,
     required: true,
-    validate: [validateUserBirthdate, 'bad date'],
+    // validate: [validateUserBirthdate, 'bad date'],
   },
   adress: {
     street: {

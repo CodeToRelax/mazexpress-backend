@@ -1,5 +1,5 @@
 import { AuthController } from '@/controllers/auth.controller';
-import { mockUserAdmin } from '@/mocks/data/user';
+import { signupValidation } from '@/validation/auth.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -8,9 +8,12 @@ const router = Router({
 
 // create user
 router.post('/signUp', async (req, res) => {
-  // const user = await UserController.createUser(req.body);
-  const results = await AuthController.createUser(mockUserAdmin);
-  return res.status(201).json(results); // res handler
+  //validating post body with joi
+  // more error validation here needed
+  const { error } = signupValidation.validate(req.body);
+  if (error) return res.status(400).json(error.details[0].message);
+  const user = await AuthController.createUser(req.body);
+  return res.status(201).json(user); // res handler
 });
 
 // reset password

@@ -2,11 +2,10 @@ import { IUserUpdate, IUser } from '@/utils/types';
 import { faker } from '@faker-js/faker';
 
 export const mockUserAdmin: IUser = {
-  username: faker.internet.userName(),
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   password: faker.internet.password(),
-  birthDate: faker.date.birthdate(),
+  birthDate: '2024.03.04',
   adress: {
     city: faker.location.city(),
     street: faker.location.street(),
@@ -28,11 +27,10 @@ export const mockUserAdmin: IUser = {
 };
 
 export const mockUserCustomer: IUser = {
-  username: faker.internet.userName(),
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   password: faker.internet.password(),
-  birthDate: faker.date.birthdate(),
+  birthDate: '2024.03.04',
   adress: {
     city: faker.location.city(),
     street: faker.location.street(),
@@ -57,7 +55,7 @@ export const mockUserCustomer: IUser = {
 export const mockUserUpdate: IUserUpdate = {
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
-  birthDate: faker.date.birthdate(),
+  birthDate: '2024.03.04',
   adress: {
     city: faker.location.city(),
     street: faker.location.street(),

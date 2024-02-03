@@ -8,6 +8,7 @@ export const validateLibyanNumber = (phoneNumber: string) => {
 };
 
 export const validateUserBirthdate = (value: Date) => {
+  // expect string type
   if (value > new Date()) return false;
   const minDate = new Date();
   minDate.setFullYear(minDate.getFullYear() - 80);

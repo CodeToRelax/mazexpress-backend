@@ -1,16 +1,16 @@
 export interface IUser {
-  username: string;
+  username?: string;
   firstName: string;
   lastName: string;
   password: string;
-  birthDate: Date;
+  birthDate: string;
   adress: IUserAddress;
   email: string;
   phoneNumber: string;
   privacyPolicy: IUserPrivacyPolicy;
-  userType: keyof typeof UserTypes;
-  uniqueShippingNumber: string;
-  acl: IUserACL;
+  userType?: keyof typeof UserTypes;
+  uniqueShippingNumber?: string;
+  acl?: IUserACL;
 }
 
 export interface IUserUpdate
