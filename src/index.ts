@@ -5,29 +5,22 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import morgan from 'morgan';
 import morganBody from 'morgan-body';
+import 'express-async-errors';
 import ConnectToMongoDB from '@/servers/mongoose.server';
 import UserRouter from '@/routes/user.route';
 import AuthRouter from '@/routes/auth.route';
 
 import * as swaggerUi from 'swagger-ui-express';
 import apiDocs from '../swagger-output.json';
+import { ErrorMiddleware } from './middlewares/error.middleware';
 
 const Env = dotenv.config();
 dotenvExpand.expand(Env);
 const App: Application = express();
 
-// middlewares //
-// --- http --- //
-App.use(cors());
-// --- req/res config --- //
-App.use(bodyParser.json());
-App.use(bodyParser.urlencoded());
-App.use(express.json({ limit: '50mb' }));
-// --- logging --- //
-App.use(morgan(':method :url :status :response-time ms - :res[content-length]'));
-morganBody(App);
 // --- DB connection --- //
 ConnectToMongoDB(process.env.DB_URI as string);
+
 // --- routes --- //
 App.get('/', (req, res) => {
   res.send(
@@ -37,6 +30,18 @@ App.get('/', (req, res) => {
 App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
 App.use('/user', UserRouter);
 App.use('/auth', AuthRouter);
+
+// middlewares //
+// --- http --- //
+App.use(cors());
+App.use(ErrorMiddleware);
+// --- req/res config --- //
+App.use(bodyParser.json());
+App.use(bodyParser.urlencoded());
+App.use(express.json({ limit: '50mb' }));
+// --- logging --- //
+App.use(morgan(':method :url :status :response-time ms - :res[content-length]'));
+morganBody(App);
 
 // server
 const port = process.env.PORT ? process.env.PORT : 3002;

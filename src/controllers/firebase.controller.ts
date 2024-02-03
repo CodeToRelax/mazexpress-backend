@@ -1,6 +1,8 @@
+import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { fbAuth } from '@/servers/firebase.server';
+import { isFirebaseAuthError } from '@/utils/helpers';
 import { IUserStatus } from '@/utils/types';
-import { UserRecord } from 'firebase-admin/auth';
+import { FirebaseError } from '@firebase/util';
 
 interface ICreateUser {
   email: string;
@@ -17,16 +19,15 @@ interface IResetPassword {
   newPassword: string;
 }
 
-const createFirebaseUser = async (body: ICreateUser): Promise<UserRecord> => {
+const createFirebaseUser = async (body: ICreateUser) => {
   try {
-    const fbUser = await fbAuth.createUser({
+    await fbAuth.createUser({
       email: body.email,
       password: body.password,
     });
-    return fbUser;
   } catch (error) {
-    console.log(error);
-    throw error;
+    const err = error as FirebaseError;
+    if (isFirebaseAuthError(error)) throw new CustomErrorHandler('common.signUp', err.message, 'firebase', 403);
   }
 };
 
@@ -38,7 +39,7 @@ const resetFirebaseUserPassword = async (body: IResetPassword): Promise<string> 
     return `password reset successfully`;
   } catch (error) {
     console.log(error);
-    throw error;
+    return 'error';
   }
 };
 

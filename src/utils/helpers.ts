@@ -1,4 +1,5 @@
 import { IUserACL } from './types';
+import { FirebaseError } from '@firebase/util';
 
 export const validateLibyanNumber = (phoneNumber: string) => {
   const allowedCarriers = ['91', '92', '94', '95'];
@@ -82,4 +83,8 @@ export const generateDefaultAcl = (): IUserACL => {
     update: {},
     delete: {},
   };
+};
+
+export const isFirebaseAuthError = (error: any): error is FirebaseError => {
+  return error.errorInfo.code.startsWith('auth/');
 };

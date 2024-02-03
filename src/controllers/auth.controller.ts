@@ -20,8 +20,8 @@ const createUser = async (body: IUser) => {
     uniqueShippingNumber: body.userType === 'CUSTOMER' ? generateUniqueShippingNumber(body.adress.city) : '0000',
     acl: JSON.stringify(generateDefaultAcl()),
   });
-  await user.save();
-  return user;
+  const res = await user.save();
+  return res;
 };
 
 const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {

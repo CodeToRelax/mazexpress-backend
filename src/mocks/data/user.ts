@@ -12,7 +12,7 @@ export const mockUserAdmin: IUser = {
     street: faker.location.street(),
     specificDescription: faker.location.direction(),
   },
-  email: 'zyzzxshembesh@gmail.com',
+  email: faker.internet.email(),
   phoneNumber: '0928930736',
   privacyPolicy: {
     usageAgreement: faker.datatype.boolean(),
@@ -38,8 +38,8 @@ export const mockUserCustomer: IUser = {
     street: faker.location.street(),
     specificDescription: faker.location.direction(),
   },
-  // email: faker.internet.email(),
-  email: 'zyzzxshembesh@gmail.com',
+  email: faker.internet.email(),
+  // email: 'zyzzxshembesh@gmail.com',
   phoneNumber: '0928930737',
   privacyPolicy: {
     usageAgreement: faker.datatype.boolean(),

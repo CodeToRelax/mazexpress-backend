@@ -8,17 +8,9 @@ const router = Router({
 
 // create user
 router.post('/signUp', async (req, res) => {
-  try {
-    // const user = await UserController.createUser(req.body);
-    const results = await AuthController.createUser(mockUserAdmin);
-    return res.status(201).json(results);
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({
-      comment: 'error',
-    });
-    // throw error (erorr handler)
-  }
+  // const user = await UserController.createUser(req.body);
+  const results = await AuthController.createUser(mockUserAdmin);
+  return res.status(201).json(results); // res handler
 });
 
 // reset password
