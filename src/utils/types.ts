@@ -3,8 +3,8 @@ export interface IUser {
   firstName: string;
   lastName: string;
   password: string;
-  birthDate: string;
-  adress: IUserAddress;
+  birthdate: string;
+  address: IUserAddress;
   email: string;
   phoneNumber: string;
   privacyPolicy: IUserPrivacyPolicy;

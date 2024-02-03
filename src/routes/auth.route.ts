@@ -1,4 +1,5 @@
 import { AuthController } from '@/controllers/auth.controller';
+import ResponseMiddleware from '@/middlewares/response.middleware';
 import { signupValidation } from '@/validation/auth.validation';
 import { Router } from 'express';
 
@@ -7,14 +8,19 @@ const router = Router({
 });
 
 // create user
-router.post('/signUp', async (req, res) => {
-  //validating post body with joi
-  // more error validation here needed
-  const { error } = signupValidation.validate(req.body);
-  if (error) return res.status(400).json(error.details[0].message);
-  const user = await AuthController.createUser(req.body);
-  return res.status(201).json(user); // res handler
-});
+router.post(
+  '/signUp',
+  async (req, res, next) => {
+    //validating post body with joi
+    // more error validation here needed
+    const { error } = signupValidation.validate(req.body);
+    if (error) return res.status(400).json(error.details[0].message);
+    const user = await AuthController.createUser(req.body);
+    res.locals.data = user;
+    return next();
+  },
+  ResponseMiddleware
+);
 
 // reset password
 router.patch('/:id/resetPassword', async (req, res) => {

@@ -26,12 +26,12 @@ export const UserSchema = new mongoose.Schema<IUser>({
     lowercase: true,
     minlength: 8,
   },
-  birthDate: {
+  birthdate: {
     type: String,
     required: true,
     // validate: [validateUserBirthdate, 'bad date'],
   },
-  adress: {
+  address: {
     street: {
       type: String,
       lowercase: true,

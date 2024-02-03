@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
-const responseCleanUp = async (req: Request, res: Response, next: NextFunction) => {
-  // check response type and clean up accordingly
+const ResponseHandler = async (_req: Request, res: Response) => {
+  console.log(res.locals.data); // data to minipulate
+  return res.status(200).json(res.locals.data);
 };
 
-export default responseCleanUp;
+export default ResponseHandler;

@@ -17,9 +17,12 @@ const createUser = async (body: IUser) => {
   const user = new UserCollection({
     ...body,
     username: generateRandomUsername(),
-    uniqueShippingNumber: body.userType === 'CUSTOMER' ? generateUniqueShippingNumber(body.adress.city) : '0000',
+    userType: 'CUSTOMER',
+    uniqueShippingNumber: generateUniqueShippingNumber(body.address.city),
     acl: JSON.stringify(generateDefaultAcl()),
   });
+
+  // TODO delete user if mongo fails
   const res = await user.save();
   return res;
 };

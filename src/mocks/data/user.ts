@@ -5,8 +5,8 @@ export const mockUserAdmin: IUser = {
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   password: faker.internet.password(),
-  birthDate: '2024.03.04',
-  adress: {
+  birthdate: '2024.03.04',
+  address: {
     city: faker.location.city(),
     street: faker.location.street(),
     specificDescription: faker.location.direction(),
@@ -30,8 +30,8 @@ export const mockUserCustomer: IUser = {
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   password: faker.internet.password(),
-  birthDate: '2024.03.04',
-  adress: {
+  birthdate: '2024.03.04',
+  address: {
     city: faker.location.city(),
     street: faker.location.street(),
     specificDescription: faker.location.direction(),
@@ -55,8 +55,8 @@ export const mockUserCustomer: IUser = {
 export const mockUserUpdate: IUserUpdate = {
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
-  birthDate: '2024.03.04',
-  adress: {
+  birthdate: '2024.03.04',
+  address: {
     city: faker.location.city(),
     street: faker.location.street(),
     specificDescription: faker.location.direction(),
