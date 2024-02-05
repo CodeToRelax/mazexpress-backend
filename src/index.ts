@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import morganBody from 'morgan-body';
-import 'express-async-errors';
 import ConnectToMongoDB from '@/servers/mongoose.server';
 import createExpressServer from './servers/express.server';
 

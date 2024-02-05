@@ -1,25 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 
 interface ICustomError extends Error {
-  errorType?: 'firebase' | 'mongo' | 'unkwown';
   title: string;
   description: string;
-  statusCode: number;
   data: Record<string, unknown>;
+  statusCode: number;
 }
 
 export class CustomErrorHandler extends Error {
-  errorType: 'firebase' | 'mongo' | 'unkwown';
+  rawError: Record<string, unknown> | unknown;
+  data: Record<string, unknown> | unknown;
   statusCode: number;
-  data: Record<string, unknown>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(
+    statusCode: number,
     title: string,
     description: string,
-    errorType: ICustomError['errorType'],
-    statusCode = 500,
-    data = {},
+    rawError: Record<string, unknown> | unknown,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...params: any[]
   ) {
     super(...params);
@@ -29,18 +27,25 @@ export class CustomErrorHandler extends Error {
     // if (Error.captureStackTrace) {
     //   Error.captureStackTrace(this, CustomErrorHandler);
     // }
-    //error title
     this.name = title;
-    //error description
     this.message = description;
-    // status code
+    this.rawError = rawError;
+    this.data = this.sanatizeError();
     this.statusCode = statusCode;
-    // error type
-    this.errorType = errorType || 'unkwown';
-    this.data = data;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private sanatizeError(): Record<string, any> | unknown {
+    if ((this.rawError as { errorInfo: { code: string } }).errorInfo) {
+      return {
+        statusCode: 403,
+        error: 'firebase',
+      };
+    }
+    return this.rawError;
   }
 }
 
 export const ErrorMiddleware = (error: ICustomError, _req: Request, res: Response, _next: NextFunction) => {
-  return res.status(error.statusCode || 500).json(error);
+  return res.status(error.statusCode).json(error);
 };

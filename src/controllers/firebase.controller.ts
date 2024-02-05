@@ -1,9 +1,7 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { fbAuth } from '@/servers/firebase.server';
-import { isFirebaseAuthError } from '@/utils/helpers';
 import { IUserStatus } from '@/utils/types';
-import { FirebaseError } from '@firebase/util';
-
+import { FirebaseError } from 'firebase-admin';
 interface ICreateUser {
   email: string;
   password: string;
@@ -19,15 +17,20 @@ interface IResetPassword {
   newPassword: string;
 }
 
+interface IUserCustomClaims {
+  uid: string;
+  customClaims: object;
+}
+
 const createFirebaseUser = async (body: ICreateUser) => {
   try {
-    await fbAuth.createUser({
+    return await fbAuth.createUser({
       email: body.email,
-      password: body.password,
+      password: body.email,
     });
   } catch (error) {
     const err = error as FirebaseError;
-    if (isFirebaseAuthError(error)) throw new CustomErrorHandler('common.signUp', err.message, 'firebase', 403);
+    throw new CustomErrorHandler(403, 'common.SignUpError', err.message, error);
   }
 };
 
@@ -55,8 +58,18 @@ const toggleFirebaseUser = async (body: IToggleUser): Promise<string> => {
   }
 };
 
+const addFirebaseCustomClaims = async (body: IUserCustomClaims) => {
+  try {
+    return await fbAuth.setCustomUserClaims(body.uid, body.customClaims);
+  } catch (error) {
+    const err = error as FirebaseError;
+    throw new CustomErrorHandler(403, 'common.addUserAttributeError', err.message, error);
+  }
+};
+
 export const FirebaseController = {
   createFirebaseUser,
   resetFirebaseUserPassword,
   toggleFirebaseUser,
+  addFirebaseCustomClaims,
 };

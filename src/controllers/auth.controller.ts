@@ -2,29 +2,35 @@ import { IUser, IUserStatus } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user/user.model';
 import { generateDefaultAcl, generateRandomUsername, generateUniqueShippingNumber } from '@/utils/helpers';
+import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
 // signup // mongo and firebase
 // getPasswordResetLink // firebase
 // change password // firebase
 // update user acl // mongo
 
-// admins should not have unique shipping number
-const createUser = async (body: IUser) => {
-  await FirebaseController.createFirebaseUser({
-    email: body.email,
-    password: body.password,
-  });
-  const user = new UserCollection({
-    ...body,
-    username: generateRandomUsername(),
-    userType: 'CUSTOMER',
-    uniqueShippingNumber: generateUniqueShippingNumber(body.address.city),
-    acl: JSON.stringify(generateDefaultAcl()),
-  });
-
-  // TODO delete user if mongo fails
-  const res = await user.save();
-  return res;
+const signUp = async (body: IUser) => {
+  try {
+    const fbUser = await FirebaseController.createFirebaseUser({
+      email: body.email,
+      password: body.password,
+    });
+    const mongoUserBody = new UserCollection({
+      ...body,
+      username: generateRandomUsername(),
+      userType: 'CUSTOMER',
+      uniqueShippingNumber: generateUniqueShippingNumber(body.address.city),
+      acl: JSON.stringify(generateDefaultAcl()),
+    });
+    const mongoUser = await mongoUserBody.save();
+    await FirebaseController.addFirebaseCustomClaims({
+      uid: fbUser.uid,
+      customClaims: { mongoId: mongoUser._id },
+    });
+    return mongoUser;
+  } catch (error) {
+    throw new CustomErrorHandler(403, 'common.signUpError', 'common.signUpFailed', error);
+  }
 };
 
 const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {
@@ -44,7 +50,7 @@ const toggleUser = async (firebaseUid: string, status: IUserStatus) => {
 };
 
 export const AuthController = {
-  createUser,
+  signUp,
   adminResetUserPassword,
   toggleUser,
 };

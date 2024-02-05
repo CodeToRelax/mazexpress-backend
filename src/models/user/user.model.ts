@@ -51,6 +51,7 @@ export const UserSchema = new mongoose.Schema<IUser>({
     required: true,
     lowercase: true,
     validate: [validator.isEmail, 'invalid email'],
+    unique: true,
   },
   phoneNumber: {
     type: String,

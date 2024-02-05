@@ -1,6 +1,5 @@
 import { UserController } from '@/controllers/user.controller';
 import { Router } from 'express';
-import { mockUserUpdate } from '@/mocks/data/user';
 
 const router = Router({
   caseSensitive: true,
@@ -39,7 +38,7 @@ router.get('/:id', async (req, res) => {
 // update user
 router.patch('/:id', async (req, res) => {
   try {
-    const results = await UserController.updateUser(req.params.id, mockUserUpdate);
+    const results = await UserController.updateUser(req.params.id, req.body);
     return res.status(200).json(results);
   } catch (err) {
     console.log(err);

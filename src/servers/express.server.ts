@@ -3,10 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express, { Application } from 'express';
 import morgan from 'morgan';
-
+import 'express-async-errors';
 import AuthRouter from '@/routes/auth.route';
 import UserRouter from '@/routes/user.route';
-import ResponseMiddleware from '@/middlewares/response.middleware';
 
 const createExpressServer = () => {
   const App: Application = express();
@@ -28,7 +27,6 @@ const createExpressServer = () => {
 
   // response middlewares
   App.use(ErrorMiddleware);
-  App.use(ResponseMiddleware);
 
   // return server app
   return App;
