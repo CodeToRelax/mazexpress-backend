@@ -22,8 +22,8 @@ const createExpressServer = () => {
       'Welcome to mazexpress backend architected and developed by monir shembesh 2024. All services are running with no issues!'
     );
   });
-  App.use('/user', UserRouter);
   App.use('/auth', AuthRouter);
+  App.use('/user', UserRouter);
 
   // response middlewares
   App.use(ErrorMiddleware);

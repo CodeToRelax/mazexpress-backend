@@ -16,7 +16,7 @@ export class CustomErrorHandler extends Error {
     statusCode: number,
     title: string,
     description: string,
-    rawError: Record<string, unknown> | unknown,
+    rawError?: Record<string, unknown> | unknown,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...params: any[]
   ) {

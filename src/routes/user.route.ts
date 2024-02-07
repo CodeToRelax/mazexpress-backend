@@ -1,4 +1,5 @@
 import { UserController } from '@/controllers/user.controller';
+import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { Router } from 'express';
 
 const router = Router({
@@ -23,15 +24,12 @@ router.get('/', async (req, res) => {
 
 // get a single user
 router.get('/:id', async (req, res) => {
+  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
   try {
     const results = await UserController.getUser(req.params.id);
     return res.status(200).json(results);
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({
-      comment: 'error',
-    });
-    // throw error (erorr handler)
+  } catch (error) {
+    throw new CustomErrorHandler(404, 'common.error', 'common.userNotFound', error);
   }
 });
 
