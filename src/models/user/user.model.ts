@@ -1,4 +1,3 @@
-import { validateUserBirthdate } from '@/utils/helpers';
 import { IUser } from '@/utils/types';
 import mongoose from 'mongoose';
 import validator from 'validator';
@@ -29,7 +28,6 @@ export const UserSchema = new mongoose.Schema<IUser>({
   birthdate: {
     type: String,
     required: true,
-    // validate: [validateUserBirthdate, 'bad date'],
   },
   address: {
     street: {

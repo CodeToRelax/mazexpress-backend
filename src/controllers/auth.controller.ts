@@ -4,11 +4,6 @@ import UserCollection from '@/models/user/user.model';
 import { generateDefaultAcl, generateRandomUsername, generateUniqueShippingNumber } from '@/utils/helpers';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
-// signup // mongo and firebase
-// getPasswordResetLink // firebase
-// change password // firebase
-// update user acl // mongo
-
 const signUp = async (body: IUser) => {
   try {
     const fbUser = await FirebaseController.createFirebaseUser({
@@ -33,24 +28,28 @@ const signUp = async (body: IUser) => {
   }
 };
 
-const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {
-  const res = await FirebaseController.resetFirebaseUserPassword({
-    firebaseUid,
-    newPassword,
-  });
-  return res;
-};
+// const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {
+//   const res = await FirebaseController.resetFirebaseUserPassword({
+//     firebaseUid,
+//     newPassword,
+//   });
+//   return res;
+// };
 
-const toggleUser = async (firebaseUid: string, status: IUserStatus) => {
-  const res = await FirebaseController.toggleFirebaseUser({
-    firebaseUid,
-    status,
-  });
-  return res;
-};
+// change password // firebase
+
+// const toggleUser = async (firebaseUid: string, status: IUserStatus) => {
+//   const res = await FirebaseController.toggleFirebaseUser({
+//     firebaseUid,
+//     status,
+//   });
+//   return res;
+// };
+
+// update user acl // mongo
 
 export const AuthController = {
   signUp,
-  adminResetUserPassword,
-  toggleUser,
+  // adminResetUserPassword,
+  // toggleUser,
 };

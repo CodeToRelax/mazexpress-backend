@@ -13,4 +13,6 @@ ConnectToMongoDB(process.env.DB_URI as string);
 const port = process.env.PORT ? process.env.PORT : 3002;
 const server = createExpressServer();
 morganBody(server);
+
+// listen to port
 server.listen(port, () => console.log('Server is running on', port));
