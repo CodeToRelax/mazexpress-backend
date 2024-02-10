@@ -26,11 +26,11 @@ const createFirebaseUser = async (body: ICreateUser) => {
   try {
     return await fbAuth.createUser({
       email: body.email,
-      password: body.email,
+      password: body.password,
     });
   } catch (error) {
     const err = error as FirebaseError;
-    throw new CustomErrorHandler(403, 'common.SignUpError', err.message, error);
+    throw new CustomErrorHandler(403, err.code, err.message, error);
   }
 };
 

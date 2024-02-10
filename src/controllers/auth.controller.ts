@@ -1,7 +1,7 @@
-import { IUser, IUserStatus } from '@/utils/types';
+import { IUser } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user/user.model';
-import { generateDefaultAcl, generateRandomUsername, generateUniqueShippingNumber } from '@/utils/helpers';
+import { generateDefaultCustomerAcl, generateRandomUsername, generateUniqueShippingNumber } from '@/utils/helpers';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
 const signUp = async (body: IUser) => {
@@ -15,7 +15,7 @@ const signUp = async (body: IUser) => {
       username: generateRandomUsername(),
       userType: 'CUSTOMER',
       uniqueShippingNumber: generateUniqueShippingNumber(body.address.city),
-      acl: JSON.stringify(generateDefaultAcl()),
+      acl: JSON.stringify(generateDefaultCustomerAcl()),
     });
     const mongoUser = await mongoUserBody.save();
     await FirebaseController.addFirebaseCustomClaims({
@@ -24,7 +24,14 @@ const signUp = async (body: IUser) => {
     });
     return mongoUser;
   } catch (error) {
-    throw new CustomErrorHandler(403, 'common.signUpError', 'common.signUpFailed', error);
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      console.log(error);
+      // mongo error here
+      console.error('MongoDB error occurred:');
+      throw error;
+    }
   }
 };
 

@@ -1,21 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 
 interface ICustomError extends Error {
-  title: string;
-  description: string;
-  data: Record<string, unknown>;
   statusCode: number;
+  errorCode: string;
+  errorDescription: string;
+  rawError: Record<string, unknown>;
 }
 
 export class CustomErrorHandler extends Error {
-  rawError: Record<string, unknown> | unknown;
-  data: Record<string, unknown> | unknown;
   statusCode: number;
+  rawError: Record<string, unknown> | unknown;
 
   constructor(
     statusCode: number,
-    title: string,
-    description: string,
+    errorCode: string,
+    errorDescription: string,
     rawError?: Record<string, unknown> | unknown,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...params: any[]
@@ -27,25 +26,14 @@ export class CustomErrorHandler extends Error {
     // if (Error.captureStackTrace) {
     //   Error.captureStackTrace(this, CustomErrorHandler);
     // }
-    this.name = title;
-    this.message = description;
-    this.rawError = rawError;
-    this.data = this.sanatizeError();
     this.statusCode = statusCode;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private sanatizeError(): Record<string, any> | unknown {
-    if ((this.rawError as { errorInfo: { code: string } }).errorInfo) {
-      return {
-        statusCode: 403,
-        error: 'firebase',
-      };
-    }
-    return this.rawError;
+    this.name = errorCode;
+    this.message = errorDescription;
+    this.rawError = rawError;
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const ErrorMiddleware = (error: ICustomError, _req: Request, res: Response, _next: NextFunction) => {
   return res.status(error.statusCode).json(error);
 };

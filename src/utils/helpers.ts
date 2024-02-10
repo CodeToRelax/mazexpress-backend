@@ -76,7 +76,25 @@ export const generateRandomUsername = (length: number = 10): string => {
     .slice(2, length + 2);
 };
 
-export const generateDefaultAcl = (): IUserACL => {
+export const generateDefaultStaffAcl = (): IUserACL => {
+  return {
+    get: {},
+    post: { auth: ['/auth/signUp'] },
+    update: {},
+    delete: {},
+  };
+};
+
+export const generateDefaultCustomerAcl = (): IUserACL => {
+  return {
+    get: {},
+    post: { auth: ['/auth/signUp'] },
+    update: {},
+    delete: {},
+  };
+};
+
+export const generateDefaultAdminAcl = (): IUserACL => {
   return {
     get: {},
     post: { auth: ['/auth/signUp'] },

@@ -13,15 +13,17 @@ router.post('/signUp', async (req, res) => {
   try {
     // validate body
     const { error } = signupValidation.validate(req.body);
-    if (error) throw new CustomErrorHandler(403, 'common.error', error.details[0].message, error);
-    if (!validateLibyanNumber(req.body.phoneNumber))
-      throw new CustomErrorHandler(403, 'common.error', 'common.badPhoneNumber', error);
-
+    if (error) return res.status(403).json(error);
+    if (!validateLibyanNumber(req.body.phoneNumber)) return res.status(403).json(error); // update to validation error custom
     // start signup process
     const user = await AuthController.signUp(req.body);
     return res.status(201).json(user);
   } catch (error) {
-    throw new CustomErrorHandler(500, 'unexpected', 'An unexpected error occurred', error);
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
   }
 });
 

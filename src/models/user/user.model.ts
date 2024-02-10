@@ -74,10 +74,5 @@ export const UserSchema = new mongoose.Schema<IUser>({
   },
 });
 
-UserSchema.virtual('fullName').get(function () {
-  const fullName: string = `${this.firstName[0].toUpperCase() + this.firstName.slice(1)} ${this.lastName[0].toUpperCase() + this.lastName.slice(1)}`;
-  return fullName;
-});
-
 const UserCollection = mongoose.model<IUser>('User', UserSchema);
 export default UserCollection;
