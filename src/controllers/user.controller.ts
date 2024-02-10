@@ -1,5 +1,6 @@
+import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user/user.model';
-import { IUserUpdate } from '@/utils/types';
+import { ICustomerUpdateProfle } from '@/utils/types';
 
 const getUser = async (_id: string) => {
   const user = UserCollection.findById({ _id });
@@ -12,10 +13,13 @@ const getUsers = async () => {
   return user;
 };
 
-const updateUser = async (_id: string, body: IUserUpdate) => {
-  const user = await UserCollection.findOneAndUpdate({ _id }, { ...body });
-  console.log(user);
-  return user;
+const updateUser = async (_id: string, body: ICustomerUpdateProfle) => {
+  try {
+    const res = await UserCollection.findOneAndUpdate({ _id }, { ...body });
+    return res;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.userUpdateError', 'errorMessageTemp', error);
+  }
 };
 
 const deleteUser = async (_id: string) => {

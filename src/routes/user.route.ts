@@ -1,5 +1,6 @@
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import { UpdateProfileValidation } from '@/validation/user.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -44,6 +45,23 @@ router.patch('/:id', async (req, res) => {
       comment: 'error',
     });
     // throw error (erorr handler)
+  }
+});
+
+// update user profile (for cutsomers)
+router.patch('/updateProfile/:id', async (req, res) => {
+  try {
+    // validate body
+    const { error } = UpdateProfileValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    const results = await UserController.updateUser(req.params.id, req.body);
+    return res.status(200).json(results); // TODO profile update message
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
   }
 });
 

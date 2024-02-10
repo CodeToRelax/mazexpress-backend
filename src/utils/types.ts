@@ -19,6 +19,12 @@ export interface IUserUpdate
     'username' | 'password' | 'email' | 'privacyPolicy' | 'userType' | 'uniqueShippingNumber' | 'acl'
   > {}
 
+export interface ICustomerUpdateProfle {
+  firstName: string;
+  lastName: string;
+  birthdate: string;
+}
+
 export interface IUserAddress {
   street: string;
   city: string; // type for libyan cities
