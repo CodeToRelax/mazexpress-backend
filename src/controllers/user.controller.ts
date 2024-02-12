@@ -1,6 +1,6 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user/user.model';
-import { ICustomerUpdateProfle } from '@/utils/types';
+import { ICustomerUpdateProfile } from '@/utils/types';
 
 const getUser = async (_id: string) => {
   const user = UserCollection.findById({ _id });
@@ -13,7 +13,7 @@ const getUsers = async () => {
   return user;
 };
 
-const updateUser = async (_id: string, body: ICustomerUpdateProfle) => {
+const updateUser = async (_id: string, body: ICustomerUpdateProfile) => {
   try {
     const res = await UserCollection.findOneAndUpdate({ _id }, { ...body });
     return res;

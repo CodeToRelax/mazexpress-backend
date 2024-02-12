@@ -19,7 +19,7 @@ export interface IUserUpdate
     'username' | 'password' | 'email' | 'privacyPolicy' | 'userType' | 'uniqueShippingNumber' | 'acl'
   > {}
 
-export interface ICustomerUpdateProfle {
+export interface ICustomerUpdateProfile {
   firstName: string;
   lastName: string;
   birthdate: string;
