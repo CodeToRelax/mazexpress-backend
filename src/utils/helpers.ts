@@ -1,4 +1,4 @@
-import { IUserACL } from './types';
+import { IUserACL, UserTypes } from './types';
 
 export const validateLibyanNumber = (phoneNumber: string) => {
   const allowedCarriers = ['91', '92', '94', '95'];
@@ -48,7 +48,9 @@ export const validateUserBirthdate = (value: Date) => {
 //   }
 // };
 
-export const generateUniqueShippingNumber = (city: string): string => {
+export const generateShippingNumber = (customerType: UserTypes, city: string): string => {
+  if (customerType === UserTypes.ADMIN) return '0000';
+
   // Take the first 3 letters of the city and convert to uppercase
   const prefix: string = city.slice(0, 3).toUpperCase();
   // Generate 3 random numbers
@@ -76,25 +78,15 @@ export const generateRandomUsername = (length: number = 10): string => {
     .slice(2, length + 2);
 };
 
-export const generateDefaultStaffAcl = (): IUserACL => {
-  return {
-    get: {},
-    post: { auth: ['/auth/signUp'] },
-    update: {},
-    delete: {},
-  };
-};
-
-export const generateDefaultCustomerAcl = (): IUserACL => {
-  return {
-    get: {},
-    post: { auth: ['/auth/signUp'] },
-    update: {},
-    delete: {},
-  };
-};
-
-export const generateDefaultAdminAcl = (): IUserACL => {
+export const generateAcl = (customerType: UserTypes): IUserACL => {
+  if (customerType === UserTypes.CUSTOMER) {
+    return {
+      get: {},
+      post: { auth: ['/auth/signUp'] },
+      update: {},
+      delete: {},
+    };
+  }
   return {
     get: {},
     post: { auth: ['/auth/signUp'] },

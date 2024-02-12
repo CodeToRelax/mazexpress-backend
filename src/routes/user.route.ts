@@ -1,5 +1,8 @@
+import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import { validateLibyanNumber } from '@/utils/helpers';
+import { createUserValidation } from '@/validation/auth.validation';
 import { UpdateProfileValidation } from '@/validation/user.validation';
 import { Router } from 'express';
 
@@ -9,21 +12,21 @@ const router = Router({
 
 // --- api methods user service--- //
 
-//get all users
-router.get('/', async (req, res) => {
+// (admin)
+router.get('/getAllUsers', async (req, res) => {
   try {
-    const results = await UserController.getUsers();
-    return res.status(201).json(results);
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({
-      comment: 'error',
-    });
-    // throw error (erorr handler)
+    const results = await UserController.getAllUsers();
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
   }
 });
 
-// get a single user
+// get a single user (admin/customer)
 router.get('/:id', async (req, res) => {
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
   try {
@@ -34,7 +37,26 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// update user
+// (admin)
+router.post('/createUser', async (req, res) => {
+  try {
+    // validate body
+    const { error } = createUserValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    if (!validateLibyanNumber(req.body.phoneNumber)) return res.status(403).json(error); // update to validation error custom
+    // start signup process
+    const user = await AuthController.createUser(req.body, req.body.userType);
+    return res.status(201).json(user);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
+// update user (admin)
 router.patch('/:id', async (req, res) => {
   try {
     const results = await UserController.updateUser(req.params.id, req.body);
@@ -65,7 +87,7 @@ router.patch('/updateProfile/:id', async (req, res) => {
   }
 });
 
-// delete user
+// delete user (admin)
 router.delete('/:id', async (req, res) => {
   try {
     const results = await UserController.deleteUser(req.params.id);

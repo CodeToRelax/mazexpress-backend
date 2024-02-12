@@ -40,6 +40,16 @@ export enum UserTypes {
   CUSTOMER = 'customer',
 }
 
+export interface IWarehouse {
+  name: string;
+  address: {
+    city: string;
+    street: string;
+    googleMapsUrl: string;
+  };
+  youtubeUrl: string;
+}
+
 const systemServices = ['auth', 'user', 'warehouse'] as const;
 type appServices = (typeof systemServices)[number];
 
