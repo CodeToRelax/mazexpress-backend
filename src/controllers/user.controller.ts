@@ -1,5 +1,5 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import UserCollection from '@/models/user/user.model';
+import UserCollection from '@/models/user.model';
 import { ICustomerUpdateProfile } from '@/utils/types';
 
 const getUser = async (_id: string) => {
@@ -8,9 +8,9 @@ const getUser = async (_id: string) => {
 };
 
 // filter and pagination are needed
-const getUsers = async () => {
-  const user = UserCollection.find({});
-  return user;
+const getAllUsers = async () => {
+  const users = await UserCollection.find({});
+  return users;
 };
 
 const updateUser = async (_id: string, body: ICustomerUpdateProfile) => {
@@ -29,7 +29,7 @@ const deleteUser = async (_id: string) => {
 
 export const UserController = {
   getUser,
-  getUsers,
+  getAllUsers,
   updateUser,
   deleteUser,
 };

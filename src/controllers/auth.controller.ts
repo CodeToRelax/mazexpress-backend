@@ -1,10 +1,10 @@
-import { IUser } from '@/utils/types';
+import { IUser, UserTypes } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
-import UserCollection from '@/models/user/user.model';
-import { generateDefaultCustomerAcl, generateRandomUsername, generateUniqueShippingNumber } from '@/utils/helpers';
+import UserCollection from '@/models/user.model';
+import { generateAcl, generateRandomUsername, generateShippingNumber } from '@/utils/helpers';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
-const signUp = async (body: IUser) => {
+const createUser = async (body: IUser, customerType: UserTypes) => {
   try {
     const fbUser = await FirebaseController.createFirebaseUser({
       email: body.email,
@@ -13,9 +13,9 @@ const signUp = async (body: IUser) => {
     const mongoUserBody = new UserCollection({
       ...body,
       username: generateRandomUsername(),
-      userType: 'CUSTOMER',
-      uniqueShippingNumber: generateUniqueShippingNumber(body.address.city),
-      acl: JSON.stringify(generateDefaultCustomerAcl()),
+      userType: customerType,
+      uniqueShippingNumber: generateShippingNumber(customerType, body.address.city),
+      acl: JSON.stringify(generateAcl(customerType)),
     });
     const mongoUser = await mongoUserBody.save();
     await FirebaseController.addFirebaseCustomClaims({
@@ -56,7 +56,7 @@ const signUp = async (body: IUser) => {
 // update user acl // mongo
 
 export const AuthController = {
-  signUp,
+  createUser,
   // adminResetUserPassword,
   // toggleUser,
 };
