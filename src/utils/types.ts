@@ -11,6 +11,7 @@ export interface IUser {
   userType?: keyof typeof UserTypes;
   uniqueShippingNumber?: string;
   acl?: IUserACL;
+  firebaseId: string;
 }
 
 export interface IUserUpdate
@@ -48,6 +49,11 @@ export interface IWarehouse {
     googleMapsUrl: string;
   };
   youtubeUrl: string;
+}
+
+export interface ISystemConfig {
+  shippingCost: number;
+  shippingFactor: number;
 }
 
 const systemServices = ['auth', 'user', 'warehouse'] as const;
