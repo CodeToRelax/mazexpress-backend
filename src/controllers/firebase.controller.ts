@@ -67,9 +67,19 @@ const addFirebaseCustomClaims = async (body: IUserCustomClaims) => {
   }
 };
 
+const deleteFirebaseUser = async (fbId: string) => {
+  try {
+    return await fbAuth.deleteUser(fbId);
+  } catch (error) {
+    const err = error as FirebaseError;
+    throw new CustomErrorHandler(403, err.code, err.message, error);
+  }
+};
+
 export const FirebaseController = {
   createFirebaseUser,
   resetFirebaseUserPassword,
   toggleFirebaseUser,
   addFirebaseCustomClaims,
+  deleteFirebaseUser,
 };

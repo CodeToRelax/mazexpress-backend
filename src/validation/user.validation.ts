@@ -5,3 +5,8 @@ export const UpdateProfileValidation = joi.object({
   lastName: joi.string().lowercase().min(3).required(),
   birthdate: joi.string().allow('').lowercase(),
 });
+
+export const deleteUserValidation = joi.object({
+  mongoId: joi.string().required(),
+  firebaseId: joi.string().required(),
+});

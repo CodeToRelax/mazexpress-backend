@@ -16,6 +16,7 @@ const createUser = async (body: IUser, customerType: UserTypes) => {
       userType: customerType,
       uniqueShippingNumber: generateShippingNumber(customerType, body.address.city),
       acl: JSON.stringify(generateAcl(customerType)),
+      firebaseId: fbUser.uid,
     });
     const mongoUser = await mongoUserBody.save();
     await FirebaseController.addFirebaseCustomClaims({

@@ -1,6 +1,7 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user.model';
 import { ICustomerUpdateProfile } from '@/utils/types';
+import { FirebaseController } from './firebase.controller';
 
 const getUser = async (_id: string) => {
   const user = UserCollection.findById({ _id });
@@ -22,9 +23,21 @@ const updateUser = async (_id: string, body: ICustomerUpdateProfile) => {
   }
 };
 
-const deleteUser = async (_id: string) => {
-  const deletedUser = await UserCollection.deleteOne({ _id });
-  return deletedUser;
+const deleteUser = async (_id: string, fbId: string) => {
+  try {
+    await FirebaseController.deleteFirebaseUser(fbId);
+    const deletedUser = await UserCollection.deleteOne({ _id });
+    return deletedUser;
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      console.log(error);
+      // mongo error here
+      console.error('MongoDB error occurred:');
+      throw error;
+    }
+  }
 };
 
 export const UserController = {

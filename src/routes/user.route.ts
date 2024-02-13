@@ -3,7 +3,7 @@ import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { validateLibyanNumber } from '@/utils/helpers';
 import { createUserValidation } from '@/validation/auth.validation';
-import { UpdateProfileValidation } from '@/validation/user.validation';
+import { UpdateProfileValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -88,16 +88,18 @@ router.patch('/updateProfile/:id', async (req, res) => {
 });
 
 // delete user (admin)
-router.delete('/:id', async (req, res) => {
+router.delete('/deleteUser', async (req, res) => {
   try {
-    const results = await UserController.deleteUser(req.params.id);
+    const { error } = deleteUserValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    const results = await UserController.deleteUser(req.body.mongoId, req.body.firebaseId);
     return res.status(200).json(results);
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({
-      comment: 'error',
-    });
-    // throw error (erorr handler)
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
   }
 });
 
