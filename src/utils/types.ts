@@ -32,6 +32,14 @@ export interface ICustomerProfileStatus {
   disabled: boolean;
 }
 
+export interface IAdminUpdateProfile {
+  firstName: string;
+  lastName: string;
+  birthdate: string;
+  address: IUserAddress;
+  phoneNumber: string;
+}
+
 export interface IUserAddress {
   street: string;
   city: string; // type for libyan cities
@@ -60,6 +68,14 @@ export interface IWarehouse {
 export interface ISystemConfig {
   shippingCost: number;
   shippingFactor: number;
+}
+
+export interface IUpdateUserAdmin {
+  firstName: string;
+  lastName: string;
+  birthdate: string;
+  address: IUserAddress;
+  phoneNumber: string;
 }
 
 const systemServices = ['auth', 'user', 'warehouse'] as const;

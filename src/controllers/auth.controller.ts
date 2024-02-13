@@ -3,7 +3,6 @@ import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user.model';
 import { generateAcl, generateRandomUsername, generateShippingNumber } from '@/utils/helpers';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { UserController } from './user.controller';
 
 const createUser = async (body: IUser, customerType: UserTypes) => {
   try {
@@ -38,22 +37,6 @@ const createUser = async (body: IUser, customerType: UserTypes) => {
   }
 };
 
-const toggleUser = async (firebaseId: string, status: 'disable' | 'enable') => {
-  const filter = { firebaseId };
-  try {
-    await FirebaseController.toggleFirebaseUser({
-      firebaseId,
-      status,
-    });
-    await UserController.updateUser(filter, {
-      disabled: status === 'disable' ? true : false,
-    });
-    return `user ${status} success`;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {
 //   const res = await FirebaseController.resetFirebaseUserPassword({
 //     firebaseUid,
@@ -68,6 +51,5 @@ const toggleUser = async (firebaseId: string, status: 'disable' | 'enable') => {
 
 export const AuthController = {
   createUser,
-  toggleUser,
   // adminResetUserPassword,
 };

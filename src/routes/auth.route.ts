@@ -2,7 +2,7 @@ import { AuthController } from '@/controllers/auth.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { validateLibyanNumber } from '@/utils/helpers';
 import { UserTypes } from '@/utils/types';
-import { signupValidation, toggleUserValidation } from '@/validation/auth.validation';
+import { signupValidation } from '@/validation/auth.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -41,22 +41,5 @@ router.post('/signUp', async (req, res) => {
 //     // throw error (erorr handler)
 //   }
 // });
-
-// toggle user
-router.patch('/toggleUser', async (req, res) => {
-  try {
-    // validate body
-    const { error } = toggleUserValidation.validate(req.body);
-    if (error) return res.status(403).json(error);
-    const results = await AuthController.toggleUser(req.body.firebaseId, req.body.status);
-    return res.status(200).json(results);
-  } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-    }
-  }
-});
 
 export default router;

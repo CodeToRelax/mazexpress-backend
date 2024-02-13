@@ -1,6 +1,6 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user.model';
-import { ICustomerProfileStatus, ICustomerUpdateProfile } from '@/utils/types';
+import { IAdminUpdateProfile, ICustomerProfileStatus, ICustomerUpdateProfile } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 
 const getUser = async (_id: string) => {
@@ -14,7 +14,10 @@ const getAllUsers = async () => {
   return users;
 };
 
-const updateUser = async (filter: object, body: ICustomerUpdateProfile | ICustomerProfileStatus) => {
+const updateUser = async (
+  filter: object,
+  body: ICustomerUpdateProfile | ICustomerProfileStatus | IAdminUpdateProfile
+) => {
   try {
     const res = await UserCollection.findOneAndUpdate(filter, { ...body });
     return res;
@@ -40,9 +43,26 @@ const deleteUser = async (_id: string, fbId: string) => {
   }
 };
 
+const toggleUser = async (firebaseId: string, status: 'disable' | 'enable') => {
+  const filter = { firebaseId };
+  try {
+    await FirebaseController.toggleFirebaseUser({
+      firebaseId,
+      status,
+    });
+    await updateUser(filter, {
+      disabled: status === 'disable' ? true : false,
+    });
+    return `user ${status} success`;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const UserController = {
   getUser,
   getAllUsers,
   updateUser,
   deleteUser,
+  toggleUser,
 };

@@ -2,8 +2,8 @@ import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { validateLibyanNumber } from '@/utils/helpers';
-import { createUserValidation } from '@/validation/auth.validation';
-import { UpdateProfileValidation, deleteUserValidation } from '@/validation/user.validation';
+import { createUserValidation, toggleUserValidation } from '@/validation/auth.validation';
+import { AdminUpdateUserValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -56,28 +56,14 @@ router.post('/createUser', async (req, res) => {
   }
 });
 
-// update user (admin)
-router.patch('/:id', async (req, res) => {
-  try {
-    const results = await UserController.updateUser(req.params.id, req.body);
-    return res.status(200).json(results);
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({
-      comment: 'error',
-    });
-    // throw error (erorr handler)
-  }
-});
-
-// update user profile (for cutsomers)
-router.patch('/updateProfile/:id', async (req, res) => {
+// toggle user
+router.patch('/toggleUser', async (req, res) => {
   try {
     // validate body
-    const { error } = UpdateProfileValidation.validate(req.body);
+    const { error } = toggleUserValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    const results = await UserController.updateUser(req.params.id, req.body);
-    return res.status(200).json(results); // TODO profile update message
+    const results = await UserController.toggleUser(req.body.firebaseId, req.body.status);
+    return res.status(200).json(results);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
       throw error;
@@ -86,6 +72,44 @@ router.patch('/updateProfile/:id', async (req, res) => {
     }
   }
 });
+
+// update user (admin)
+router.patch('/updateUser/:id', async (req, res) => {
+  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+
+  try {
+    // validate body
+    const { error } = AdminUpdateUserValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    if (!validateLibyanNumber(req.body.phoneNumber)) return res.status(403).json(error); // update to validation error custom
+    const filter = { _id: req.params.id };
+    const results = await UserController.updateUser(filter, req.body);
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
+// update user profile (for cutsomers)
+// router.patch('/updateProfile/:id', async (req, res) => {
+//   try {
+//     // validate body
+//     const { error } = UpdateProfileValidation.validate(req.body);
+//     if (error) return res.status(403).json(error);
+//     const results = await UserController.updateUser(req.params.id, req.body);
+//     return res.status(200).json(results); // TODO profile update message
+//   } catch (error) {
+//     if (error instanceof CustomErrorHandler) {
+//       throw error;
+//     } else {
+//       throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+//     }
+//   }
+// });
 
 // delete user (admin)
 router.delete('/deleteUser', async (req, res) => {
