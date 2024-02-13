@@ -1,6 +1,6 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user.model';
-import { ICustomerUpdateProfile } from '@/utils/types';
+import { ICustomerProfileStatus, ICustomerUpdateProfile } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 
 const getUser = async (_id: string) => {
@@ -14,9 +14,9 @@ const getAllUsers = async () => {
   return users;
 };
 
-const updateUser = async (_id: string, body: ICustomerUpdateProfile) => {
+const updateUser = async (filter: object, body: ICustomerUpdateProfile | ICustomerProfileStatus) => {
   try {
-    const res = await UserCollection.findOneAndUpdate({ _id }, { ...body });
+    const res = await UserCollection.findOneAndUpdate(filter, { ...body });
     return res;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.userUpdateError', 'errorMessageTemp', error);

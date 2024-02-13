@@ -36,3 +36,8 @@ export const createUserValidation = joi.object({
   }),
   userType: joi.string().valid('admin', 'customer').required(),
 });
+
+export const toggleUserValidation = joi.object({
+  firebaseId: joi.string().required(),
+  status: joi.string().valid('enable', 'disable').required(),
+});

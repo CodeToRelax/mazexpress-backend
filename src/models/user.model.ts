@@ -73,6 +73,7 @@ export const UserSchema = new mongoose.Schema<IUser>({
     required: true,
   },
   firebaseId: { type: String, required: true },
+  disabled: { type: Boolean, required: true },
 });
 
 const UserCollection = mongoose.model<IUser>('User', UserSchema);

@@ -8,7 +8,7 @@ interface ICreateUser {
 }
 
 interface IToggleUser {
-  firebaseUid: string;
+  firebaseId: string;
   status: IUserStatus;
 }
 
@@ -48,13 +48,13 @@ const resetFirebaseUserPassword = async (body: IResetPassword): Promise<string> 
 
 const toggleFirebaseUser = async (body: IToggleUser): Promise<string> => {
   try {
-    await fbAuth.updateUser(body.firebaseUid, {
+    await fbAuth.updateUser(body.firebaseId, {
       disabled: body.status === 'disable' ? true : false,
     });
     return `user ${body.status}`;
   } catch (error) {
-    console.log(error);
-    throw error;
+    const err = error as FirebaseError;
+    throw new CustomErrorHandler(403, err.code, err.message, error);
   }
 };
 

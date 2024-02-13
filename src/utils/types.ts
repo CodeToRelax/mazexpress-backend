@@ -12,6 +12,7 @@ export interface IUser {
   uniqueShippingNumber?: string;
   acl?: IUserACL;
   firebaseId: string;
+  disabled: boolean;
 }
 
 export interface IUserUpdate
@@ -24,6 +25,11 @@ export interface ICustomerUpdateProfile {
   firstName: string;
   lastName: string;
   birthdate: string;
+  disabled?: boolean;
+}
+
+export interface ICustomerProfileStatus {
+  disabled: boolean;
 }
 
 export interface IUserAddress {
