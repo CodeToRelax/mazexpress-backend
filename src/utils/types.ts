@@ -44,6 +44,7 @@ export interface IUserAddress {
   street: string;
   city: string; // type for libyan cities
   specificDescription?: string;
+  country: string;
 }
 
 export interface IUserPrivacyPolicy {
@@ -58,10 +59,17 @@ export enum UserTypes {
 export interface IWarehouse {
   name: string;
   address: {
-    city: string;
+    doorNumber: string;
+    buldingNumber: string;
     street: string;
+    neighborhood: string;
+    district: string;
+    city: string;
+    countr: string;
     googleMapsUrl: string;
   };
+  phoneNumber: string;
+  email: string;
   youtubeUrl: string;
 }
 

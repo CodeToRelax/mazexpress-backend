@@ -42,6 +42,10 @@ export const UserSchema = new mongoose.Schema<IUser>({
     specificDescription: {
       type: String,
       lowercase: true,
+    }, //type for libya and turkey only
+    country: {
+      type: String,
+      lowercase: true,
     },
   },
   email: {

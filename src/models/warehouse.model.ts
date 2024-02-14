@@ -1,5 +1,6 @@
 import { IWarehouse } from '@/utils/types';
 import mongoose from 'mongoose';
+import validator from 'validator';
 
 // add DB error handling
 export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
@@ -9,11 +10,32 @@ export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
     lowercase: true,
   },
   address: {
+    doorNumber: {
+      type: String,
+      lowercase: true,
+    },
+    buldingNumber: {
+      type: String,
+      lowercase: true,
+    },
     street: {
       type: String,
       lowercase: true,
     },
+    neighborhood: {
+      type: String,
+      lowercase: true,
+    },
+    district: {
+      type: String,
+      lowercase: true,
+    },
     city: {
+      type: String,
+      required: true,
+      lowercase: true,
+    }, // type for Libya or turkey cities
+    country: {
       type: String,
       required: true,
       lowercase: true,
@@ -22,6 +44,15 @@ export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
       type: String,
       required: true,
     },
+  },
+  phoneNumber: {
+    type: String,
+    lowercase: true,
+  },
+  email: {
+    type: String,
+    lowercase: true,
+    validate: [validator.isEmail, 'invalid email'],
   },
   youtubeUrl: {
     type: String,
