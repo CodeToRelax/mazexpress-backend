@@ -1,7 +1,6 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { validateLibyanNumber } from '@/utils/helpers';
 import { createUserValidation, toggleUserValidation } from '@/validation/auth.validation';
 import { AdminUpdateUserValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
@@ -43,7 +42,6 @@ router.post('/createUser', async (req, res) => {
     // validate body
     const { error } = createUserValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    if (!validateLibyanNumber(req.body.phoneNumber)) return res.status(403).json(error); // update to validation error custom
     // start signup process
     const user = await AuthController.createUser(req.body, req.body.userType);
     return res.status(201).json(user);
@@ -81,7 +79,6 @@ router.patch('/updateUser/:id', async (req, res) => {
     // validate body
     const { error } = AdminUpdateUserValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    if (!validateLibyanNumber(req.body.phoneNumber)) return res.status(403).json(error); // update to validation error custom
     const filter = { _id: req.params.id };
     const results = await UserController.updateUser(filter, req.body);
     return res.status(200).json(results);

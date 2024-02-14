@@ -1,6 +1,5 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { validateLibyanNumber } from '@/utils/helpers';
 import { UserTypes } from '@/utils/types';
 import { signupValidation } from '@/validation/auth.validation';
 import { Router } from 'express';
@@ -15,7 +14,6 @@ router.post('/signUp', async (req, res) => {
     // validate body
     const { error } = signupValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    if (!validateLibyanNumber(req.body.phoneNumber)) return res.status(403).json(error); // update to validation error custom
     // start signup process
     const user = await AuthController.createUser(req.body, UserTypes.CUSTOMER);
     return res.status(201).json(user);
