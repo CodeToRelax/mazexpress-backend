@@ -7,6 +7,7 @@ import 'express-async-errors';
 import AuthRouter from '@/routes/auth.route';
 import UserRouter from '@/routes/user.route';
 import WarehouseRouter from '@/routes/warehouse.route';
+import ConfigRouter from '@/routes/config.route';
 
 const createExpressServer = () => {
   const App: Application = express();
@@ -26,6 +27,7 @@ const createExpressServer = () => {
   App.use('/auth', AuthRouter);
   App.use('/user', UserRouter);
   App.use('/warehouse', WarehouseRouter);
+  App.use('/config', ConfigRouter);
 
   // response middlewares
   App.use(ErrorMiddleware);

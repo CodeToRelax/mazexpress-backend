@@ -6,10 +6,12 @@ export const ConfigSchema = new mongoose.Schema<ISystemConfig>({
   shippingCost: {
     type: Number,
     required: true,
+    unique: true,
   },
   shippingFactor: {
     type: Number,
     required: true,
+    unique: true,
   },
 });
 
