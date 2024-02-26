@@ -37,14 +37,6 @@ const createUser = async (body: IUser, customerType: UserTypes) => {
   }
 };
 
-// const adminResetUserPassword = async (firebaseUid: string, newPassword: string) => {
-//   const res = await FirebaseController.resetFirebaseUserPassword({
-//     firebaseUid,
-//     newPassword,
-//   });
-//   return res;
-// };
-
 // change password // firebase
 
 // update user acl // mongo
