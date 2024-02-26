@@ -13,11 +13,11 @@ dotenvExpand.expand(Env);
 // --- FB connection --- //
 const serviceKey = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string);
 
-const App = Firebase.initializeApp({
+const fbApp = Firebase.initializeApp({
   credential: Firebase.credential.cert(serviceKey),
   projectId: process.env.FIREBASE_PROJECT_ID,
 });
-export const fbAuth = getAuth(App);
+export const fbAuth = getAuth(fbApp);
 
 // --- DB connection --- //
 const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@main.ybp56ng.mongodb.net/`;
@@ -29,3 +29,5 @@ morganBody(server);
 
 // listen to port
 server.listen(port, () => console.log('Server is running on', port));
+
+export default server;
