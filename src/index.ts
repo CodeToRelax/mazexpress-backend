@@ -8,7 +8,8 @@ const Env = dotenv.config();
 dotenvExpand.expand(Env);
 
 // --- DB connection --- //
-ConnectToMongoDB(process.env.DB_URI as string);
+const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@main.ybp56ng.mongodb.net/`;
+ConnectToMongoDB(DB_URI);
 // --- server connection --- //
 const port = process.env.PORT ? process.env.PORT : 3002;
 const server = createExpressServer();
