@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
-const firebase_server_1 = require("../servers/firebase.server");
+const __1 = require("..");
 const createFirebaseUser = async (body) => {
     try {
-        return await firebase_server_1.fbAuth.createUser({
+        return await __1.fbAuth.createUser({
             email: body.email,
             password: body.password,
         });
@@ -17,7 +17,7 @@ const createFirebaseUser = async (body) => {
 };
 const resetFirebaseUserPassword = async (body) => {
     try {
-        await firebase_server_1.fbAuth.updateUser(body.firebaseUid, {
+        await __1.fbAuth.updateUser(body.firebaseUid, {
             password: body.newPassword,
         });
         return `password reset successfully`;
@@ -29,7 +29,7 @@ const resetFirebaseUserPassword = async (body) => {
 };
 const toggleFirebaseUser = async (body) => {
     try {
-        await firebase_server_1.fbAuth.updateUser(body.firebaseId, {
+        await __1.fbAuth.updateUser(body.firebaseId, {
             disabled: body.status === 'disable' ? true : false,
         });
         return `user ${body.status}`;
@@ -41,7 +41,7 @@ const toggleFirebaseUser = async (body) => {
 };
 const addFirebaseCustomClaims = async (body) => {
     try {
-        return await firebase_server_1.fbAuth.setCustomUserClaims(body.uid, body.customClaims);
+        return await __1.fbAuth.setCustomUserClaims(body.uid, body.customClaims);
     }
     catch (error) {
         const err = error;
@@ -50,7 +50,7 @@ const addFirebaseCustomClaims = async (body) => {
 };
 const deleteFirebaseUser = async (fbId) => {
     try {
-        return await firebase_server_1.fbAuth.deleteUser(fbId);
+        return await __1.fbAuth.deleteUser(fbId);
     }
     catch (error) {
         const err = error;

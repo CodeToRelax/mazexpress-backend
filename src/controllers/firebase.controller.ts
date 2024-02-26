@@ -1,7 +1,7 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { fbAuth } from '@/servers/firebase.server';
 import { IUserStatus } from '@/utils/types';
 import { FirebaseError } from 'firebase-admin';
+import { fbAuth } from '..';
 interface ICreateUser {
   email: string;
   password: string;

@@ -1,4 +1,4 @@
-import { fbAuth } from '@/servers/firebase.server';
+import { fbAuth } from '..';
 import { NextFunction, Request, Response } from 'express';
 
 const AuthenticateFbJWT = async (req: Request, res: Response, next: NextFunction) => {
