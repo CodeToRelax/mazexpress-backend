@@ -14,7 +14,7 @@ export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
       type: String,
       lowercase: true,
     },
-    buldingNumber: {
+    buildingNumber: {
       type: String,
       lowercase: true,
     },
