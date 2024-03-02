@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
+const types_1 = require("../utils/types");
 const firebase_controller_1 = require("./firebase.controller");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
@@ -16,6 +17,10 @@ const createUser = async (body, customerType) => {
         });
         const mongoUserBody = new user_model_1.default({
             ...body,
+            address: {
+                ...body.address,
+                country: customerType === types_1.UserTypes.CUSTOMER ? types_1.Countries.LIBYA : body.address.country,
+            },
             username: (0, helpers_1.generateRandomUsername)(),
             userType: customerType,
             uniqueShippingNumber: (0, helpers_1.generateShippingNumber)(customerType, body.address.city),

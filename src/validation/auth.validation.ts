@@ -8,10 +8,11 @@ export const signupValidation = joi.object({
   birthdate: joi.string().allow('').lowercase(),
   address: joi.object({
     street: joi.string().required(),
-    city: joi.string().required(),
+    city: joi.string().valid('benghazi', 'tripoli', 'musrata', 'istanbul').required(),
     specificDescription: joi.string().optional(),
-    country: joi.string().required(),
+    country: joi.string().valid('libya', 'turkey').required(),
   }),
+  gender: joi.string().valid('male', 'female').required(),
   email: joi.string().email().allow('').lowercase(),
   phoneNumber: joi.number().required(),
   privacyPolicy: joi.object({
@@ -27,10 +28,11 @@ export const createUserValidation = joi.object({
   birthdate: joi.string().allow('').lowercase(),
   address: joi.object({
     street: joi.string().required(),
-    city: joi.string().required(),
+    city: joi.string().valid('benghazi', 'tripoli', 'musrata', 'istanbul').required(),
     specificDescription: joi.string().optional(),
-    country: joi.string().required(),
+    country: joi.string().valid('libya', 'turkey').required(),
   }),
+  gender: joi.string().valid('male', 'female').required(),
   email: joi.string().email().allow('').lowercase(),
   phoneNumber: joi.number().required(),
   privacyPolicy: joi.object({

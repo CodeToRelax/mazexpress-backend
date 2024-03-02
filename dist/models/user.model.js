@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserSchema = void 0;
+const types_1 = require("../utils/types");
 const mongoose_1 = __importDefault(require("mongoose"));
 const validator_1 = __importDefault(require("validator"));
 exports.UserSchema = new mongoose_1.default.Schema({
@@ -37,19 +38,27 @@ exports.UserSchema = new mongoose_1.default.Schema({
             type: String,
             lowercase: true,
         },
-        city: {
-            type: String,
-            required: true,
-            lowercase: true,
-        },
         specificDescription: {
             type: String,
             lowercase: true,
         },
+        city: {
+            type: String,
+            required: true,
+            lowercase: true,
+            enum: types_1.Cities,
+        },
         country: {
             type: String,
             lowercase: true,
+            enum: types_1.Countries,
         },
+    },
+    gender: {
+        type: String,
+        lowercase: true,
+        required: true,
+        enum: ['male', 'female'],
     },
     email: {
         type: String,

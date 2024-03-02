@@ -1,4 +1,4 @@
-import { IUser, UserTypes } from '@/utils/types';
+import { Countries, IUser, UserTypes } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user.model';
 import { generateAcl, generateRandomUsername, generateShippingNumber } from '@/utils/helpers';
@@ -12,6 +12,10 @@ const createUser = async (body: IUser, customerType: UserTypes) => {
     });
     const mongoUserBody = new UserCollection({
       ...body,
+      address: {
+        ...body.address,
+        country: customerType === UserTypes.CUSTOMER ? Countries.LIBYA : body.address.country,
+      },
       username: generateRandomUsername(),
       userType: customerType,
       uniqueShippingNumber: generateShippingNumber(customerType, body.address.city),

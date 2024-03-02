@@ -13,6 +13,7 @@ export interface IUser {
   acl?: IUserACL;
   firebaseId: string;
   disabled: boolean;
+  gender: UserGender;
 }
 
 export interface IUserUpdate
@@ -20,6 +21,8 @@ export interface IUserUpdate
     IUser,
     'username' | 'password' | 'email' | 'privacyPolicy' | 'userType' | 'uniqueShippingNumber' | 'acl'
   > {}
+
+export type UserGender = 'male' | 'female';
 
 export interface ICustomerUpdateProfile {
   firstName: string;
@@ -45,6 +48,18 @@ export interface IUserAddress {
   city: string; // type for libyan cities
   specificDescription?: string;
   country: string;
+}
+
+export enum Cities {
+  BENGHAZI = 'benghazi',
+  ISTANBUL = 'istanbul',
+  TRIPOLI = 'tripoli',
+  MUSRATA = 'musrata',
+}
+
+export enum Countries {
+  LIBYA = 'libya',
+  TURKEY = 'turkey',
 }
 
 export interface IUserPrivacyPolicy {

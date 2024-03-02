@@ -1,4 +1,4 @@
-import { IUser } from '@/utils/types';
+import { Cities, Countries, IUser } from '@/utils/types';
 import mongoose from 'mongoose';
 import validator from 'validator';
 
@@ -34,19 +34,27 @@ export const UserSchema = new mongoose.Schema<IUser>({
       type: String,
       lowercase: true,
     },
+    specificDescription: {
+      type: String,
+      lowercase: true,
+    },
     city: {
       type: String,
       required: true,
       lowercase: true,
-    }, // type for libyan cities
-    specificDescription: {
-      type: String,
-      lowercase: true,
-    }, //type for libya and turkey only
+      enum: Cities,
+    },
     country: {
       type: String,
       lowercase: true,
+      enum: Countries,
     },
+  },
+  gender: {
+    type: String,
+    lowercase: true,
+    required: true,
+    enum: ['male', 'female'],
   },
   email: {
     type: String,
