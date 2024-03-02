@@ -14,7 +14,7 @@ export const signupValidation = joi.object({
   }),
   gender: joi.string().valid('male', 'female').required(),
   email: joi.string().email().allow('').lowercase(),
-  phoneNumber: joi.number().required(),
+  phoneNumber: joi.string().required(),
   privacyPolicy: joi.object({
     usageAgreement: joi.boolean().required(),
   }),
@@ -34,7 +34,7 @@ export const createUserValidation = joi.object({
   }),
   gender: joi.string().valid('male', 'female').required(),
   email: joi.string().email().allow('').lowercase(),
-  phoneNumber: joi.number().required(),
+  phoneNumber: joi.string().required(),
   privacyPolicy: joi.object({
     usageAgreement: joi.boolean().required(),
   }),

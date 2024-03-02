@@ -19,7 +19,7 @@ exports.signupValidation = joi_1.default.object({
     }),
     gender: joi_1.default.string().valid('male', 'female').required(),
     email: joi_1.default.string().email().allow('').lowercase(),
-    phoneNumber: joi_1.default.number().required(),
+    phoneNumber: joi_1.default.string().required(),
     privacyPolicy: joi_1.default.object({
         usageAgreement: joi_1.default.boolean().required(),
     }),
@@ -38,7 +38,7 @@ exports.createUserValidation = joi_1.default.object({
     }),
     gender: joi_1.default.string().valid('male', 'female').required(),
     email: joi_1.default.string().email().allow('').lowercase(),
-    phoneNumber: joi_1.default.number().required(),
+    phoneNumber: joi_1.default.string().required(),
     privacyPolicy: joi_1.default.object({
         usageAgreement: joi_1.default.boolean().required(),
     }),
