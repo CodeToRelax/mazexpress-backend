@@ -15,4 +15,5 @@ export const createWarehouseValidation = joi.object({
   phoneNumber: joi.string().required(),
   email: joi.string().email().allow('').lowercase(),
   youtubeUrl: joi.string().allow('').lowercase(),
+  imageUrl: joi.string().allow('').lowercase(),
 });

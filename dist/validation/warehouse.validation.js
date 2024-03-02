@@ -20,5 +20,6 @@ exports.createWarehouseValidation = joi_1.default.object({
     phoneNumber: joi_1.default.string().required(),
     email: joi_1.default.string().email().allow('').lowercase(),
     youtubeUrl: joi_1.default.string().allow('').lowercase(),
+    imageUrl: joi_1.default.string().allow('').lowercase(),
 });
 //# sourceMappingURL=warehouse.validation.js.map

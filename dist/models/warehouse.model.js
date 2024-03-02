@@ -61,6 +61,10 @@ exports.WarehouseSchema = new mongoose_1.default.Schema({
         type: String,
         required: false,
     },
+    imageUrl: {
+        type: String,
+        required: false,
+    },
 });
 const WarehouseCollection = mongoose_1.default.model('Warehouse', exports.WarehouseSchema);
 exports.default = WarehouseCollection;

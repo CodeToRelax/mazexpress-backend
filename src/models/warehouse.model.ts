@@ -58,6 +58,10 @@ export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
     type: String,
     required: false,
   },
+  imageUrl: {
+    type: String,
+    required: false,
+  },
 });
 
 const WarehouseCollection = mongoose.model<IWarehouse>('Warehouse', WarehouseSchema);

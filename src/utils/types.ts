@@ -86,6 +86,7 @@ export interface IWarehouse {
   phoneNumber: string;
   email: string;
   youtubeUrl: string;
+  imageUrl: string;
 }
 
 export interface ISystemConfig {
