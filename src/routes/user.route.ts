@@ -2,7 +2,7 @@ import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { createUserValidation, toggleUserValidation } from '@/validation/auth.validation';
-import { AdminUpdateUserValidation, deleteUserValidation } from '@/validation/user.validation';
+import { AdminUpdateUserValidation, UpdateProfileValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -92,21 +92,22 @@ router.patch('/updateUser/:id', async (req, res) => {
 });
 
 // update user profile (for cutsomers)
-// router.patch('/updateProfile/:id', async (req, res) => {
-//   try {
-//     // validate body
-//     const { error } = UpdateProfileValidation.validate(req.body);
-//     if (error) return res.status(403).json(error);
-//     const results = await UserController.updateUser(req.params.id, req.body);
-//     return res.status(200).json(results); // TODO profile update message
-//   } catch (error) {
-//     if (error instanceof CustomErrorHandler) {
-//       throw error;
-//     } else {
-//       throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-//     }
-//   }
-// });
+// TODO check jwt id
+router.patch('/updateProfile', async (req, res) => {
+  try {
+    // validate body
+    const { error } = UpdateProfileValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    const results = await UserController.updateUser({ _id: '' }, req.body);
+    return res.status(200).json(results); // TODO profile update message
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
 
 // delete user (admin)
 router.delete('/deleteUser', async (req, res) => {

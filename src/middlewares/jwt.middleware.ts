@@ -13,16 +13,6 @@ const AuthenticateFbJWT = async (req: Request, res: Response, next: NextFunction
       console.log(error);
       return res.sendStatus(403);
     }
-    // admin
-    //   .auth()
-    //   .verifyIdToken(idToken)
-    //   .then(function (decodedToken) {
-    //     return next();
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //     return res.sendStatus(403);
-    //   });
   } else {
     res.sendStatus(401);
   }

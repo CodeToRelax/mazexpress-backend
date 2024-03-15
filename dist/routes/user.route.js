@@ -88,6 +88,23 @@ router.patch('/updateUser/:id', async (req, res) => {
         }
     }
 });
+router.patch('/updateProfile', async (req, res) => {
+    try {
+        const { error } = user_validation_1.UpdateProfileValidation.validate(req.body);
+        if (error)
+            return res.status(403).json(error);
+        const results = await user_controller_1.UserController.updateUser({ _id: '' }, req.body);
+        return res.status(200).json(results);
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
 router.delete('/deleteUser', async (req, res) => {
     try {
         const { error } = user_validation_1.deleteUserValidation.validate(req.body);
