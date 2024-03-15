@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toggleUserValidation = exports.createUserValidation = exports.signupValidation = void 0;
+exports.updateAclValidation = exports.toggleUserValidation = exports.createUserValidation = exports.signupValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.signupValidation = joi_1.default.object({
     firstName: joi_1.default.string().lowercase().min(3).required(),
@@ -47,5 +47,16 @@ exports.createUserValidation = joi_1.default.object({
 exports.toggleUserValidation = joi_1.default.object({
     firebaseId: joi_1.default.string().required(),
     status: joi_1.default.string().valid('enable', 'disable').required(),
+});
+exports.updateAclValidation = joi_1.default.object({
+    userId: joi_1.default.string().guid().required(),
+    rules: joi_1.default
+        .object({
+        DELETE: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
+        POST: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
+        PATCH: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
+        GET: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
+    })
+        .required(),
 });
 //# sourceMappingURL=auth.validation.js.map

@@ -1,4 +1,4 @@
-import { Countries, IUser, UserTypes } from '@/utils/types';
+import { Countries, IUser, IUserACL, UserTypes } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user.model';
 import { generateAcl, generateRandomUsername, generateShippingNumber } from '@/utils/helpers';
@@ -44,8 +44,17 @@ const createUser = async (body: IUser, customerType: UserTypes) => {
 // change password // firebase
 
 // update user acl // mongo
+const updateUserAcl = async (_id: string, body: IUserACL) => {
+  try {
+    const res = await UserCollection.findOneAndUpdate({ _id }, { acl: body });
+    return res;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.userUpdateError', 'errorMessageTemp', error);
+  }
+};
 
 export const AuthController = {
   createUser,
+  updateUserAcl,
   // adminResetUserPassword,
 };

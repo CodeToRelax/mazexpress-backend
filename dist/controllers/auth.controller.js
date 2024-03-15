@@ -46,7 +46,17 @@ const createUser = async (body, customerType) => {
         }
     }
 };
+const updateUserAcl = async (_id, body) => {
+    try {
+        const res = await user_model_1.default.findOneAndUpdate({ _id }, { acl: body });
+        return res;
+    }
+    catch (error) {
+        throw new error_middleware_1.CustomErrorHandler(400, 'common.userUpdateError', 'errorMessageTemp', error);
+    }
+};
 exports.AuthController = {
     createUser,
+    updateUserAcl,
 };
 //# sourceMappingURL=auth.controller.js.map

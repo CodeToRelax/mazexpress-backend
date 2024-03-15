@@ -45,3 +45,15 @@ export const toggleUserValidation = joi.object({
   firebaseId: joi.string().required(),
   status: joi.string().valid('enable', 'disable').required(),
 });
+
+export const updateAclValidation = joi.object({
+  userId: joi.string().guid().required(),
+  rules: joi
+    .object({
+      DELETE: joi.object().pattern(joi.string(), joi.any()),
+      POST: joi.object().pattern(joi.string(), joi.any()),
+      PATCH: joi.object().pattern(joi.string(), joi.any()),
+      GET: joi.object().pattern(joi.string(), joi.any()),
+    })
+    .required(),
+});
