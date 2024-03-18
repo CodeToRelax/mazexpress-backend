@@ -89,6 +89,22 @@ export interface IWarehouse {
   imageUrl: string;
 }
 
+export interface IShipments {
+  isn: string;
+  esn: string;
+  csn: string;
+  size: {
+    weight: string;
+    height: string;
+    width: string;
+  };
+  shipmentDestination: Cities;
+  shippingMethod: shippingMethod;
+}
+
+export type shipmentDestination = 'benghazi' | 'musrata' | 'tripoli';
+export type shippingMethod = 'air' | 'sea';
+
 export interface ISystemConfig {
   shippingCost: number;
   shippingFactor: number;

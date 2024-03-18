@@ -78,6 +78,10 @@ export const generateRandomUsername = (length: number = 10): string => {
     .slice(2, length + 2);
 };
 
+export const generateExternalTrackingNumber = (length: number = 10): string => {
+  return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+};
+
 export const generateAcl = (customerType: UserTypes): IUserACL => {
   if (customerType === UserTypes.CUSTOMER) {
     return {

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAcl = exports.generateRandomUsername = exports.generateShippingNumber = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
+exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateShippingNumber = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
 const types_1 = require("./types");
 const validateLibyanNumber = (phoneNumber) => {
     const allowedCarriers = ['91', '92', '94', '95'];
@@ -38,6 +38,10 @@ const generateRandomUsername = (length = 10) => {
         .slice(2, length + 2);
 };
 exports.generateRandomUsername = generateRandomUsername;
+const generateExternalTrackingNumber = (length = 10) => {
+    return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+};
+exports.generateExternalTrackingNumber = generateExternalTrackingNumber;
 const generateAcl = (customerType) => {
     if (customerType === types_1.UserTypes.CUSTOMER) {
         return {
