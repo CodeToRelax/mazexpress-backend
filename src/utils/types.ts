@@ -94,12 +94,16 @@ export interface IShipments {
   esn: string;
   csn: string;
   size: {
-    weight: string;
-    height: string;
-    width: string;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
   };
   shipmentDestination: Cities;
   shippingMethod: shippingMethod;
+  extraCosts: number;
+  note: string;
+  status: string;
 }
 
 export type shipmentDestination = 'benghazi' | 'musrata' | 'tripoli';

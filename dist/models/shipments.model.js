@@ -37,6 +37,11 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
             lowercase: true,
             required: true,
         },
+        length: {
+            type: Number,
+            lowercase: true,
+            required: true,
+        },
     },
     shipmentDestination: {
         type: String,
@@ -44,6 +49,21 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
         lowercase: true,
     },
     shippingMethod: {
+        type: String,
+        required: true,
+        lowercase: true,
+    },
+    extraCosts: {
+        type: Number,
+        required: true,
+        lowercase: true,
+    },
+    note: {
+        type: String,
+        required: true,
+        lowercase: true,
+    },
+    status: {
         type: String,
         required: true,
         lowercase: true,
