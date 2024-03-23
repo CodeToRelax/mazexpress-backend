@@ -1,21 +1,20 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import ShipmentsCollection from '@/models/shipments.model';
-import WarehouseCollection from '@/models/warehouse.model';
 import { generateExternalTrackingNumber } from '@/utils/helpers';
 import { IShipments } from '@/utils/types';
 
 // pass in filters
 const getShipments = async () => {
   try {
-    const warehouses = await WarehouseCollection.find({});
-    return warehouses;
+    const shipments = await ShipmentsCollection.find({});
+    return shipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
   }
 };
 
-const getShipment = async (_id: string) => {
-  const user = ShipmentsCollection.findById({ _id });
+const getShipment = async (shipmentEsn: string) => {
+  const user = ShipmentsCollection.findOne({ esn: shipmentEsn });
   return user;
 };
 

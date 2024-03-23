@@ -6,19 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShipmentsController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
-const warehouse_model_1 = __importDefault(require("../models/warehouse.model"));
 const helpers_1 = require("../utils/helpers");
 const getShipments = async () => {
     try {
-        const warehouses = await warehouse_model_1.default.find({});
-        return warehouses;
+        const shipments = await shipments_model_1.default.find({});
+        return shipments;
     }
     catch (error) {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
     }
 };
-const getShipment = async (_id) => {
-    const user = shipments_model_1.default.findById({ _id });
+const getShipment = async (shipmentEsn) => {
+    const user = shipments_model_1.default.findOne({ esn: shipmentEsn });
     return user;
 };
 const createShipment = async (body) => {

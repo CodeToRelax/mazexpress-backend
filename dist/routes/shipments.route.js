@@ -21,9 +21,9 @@ router.get('/getShipments', async (req, res) => {
         }
     }
 });
-router.get('/getShipment/:id', async (req, res) => {
+router.get('/getShipment/:esn', async (req, res) => {
     try {
-        const shipment = await shipments_controller_1.ShipmentsController.getShipment(req.params.id);
+        const shipment = await shipments_controller_1.ShipmentsController.getShipment(req.params.esn);
         return res.status(200).json(shipment);
     }
     catch (error) {
