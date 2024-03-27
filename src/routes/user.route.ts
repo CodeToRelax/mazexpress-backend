@@ -1,6 +1,7 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import { UserTypes } from '@/utils/types';
 import { createUserValidation, toggleUserValidation } from '@/validation/auth.validation';
 import { AdminUpdateUserValidation, UpdateProfileValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
@@ -14,7 +15,7 @@ const router = Router({
 // (admin)
 router.get('/getAllUsers', async (req, res) => {
   try {
-    const results = await UserController.getAllUsers();
+    const results = await UserController.getAllUsers(req.query.userType as UserTypes);
     return res.status(200).json(results);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

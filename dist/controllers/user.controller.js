@@ -11,8 +11,11 @@ const getUser = async (_id) => {
     const user = user_model_1.default.findById({ _id });
     return user;
 };
-const getAllUsers = async () => {
-    const users = await user_model_1.default.find({});
+const getAllUsers = async (type) => {
+    const filters = {
+        userType: type,
+    };
+    const users = await user_model_1.default.find(type ? filters : {});
     return users;
 };
 const updateUser = async (filter, body) => {

@@ -11,7 +11,7 @@ const router = (0, express_1.Router)({
 });
 router.get('/getAllUsers', async (req, res) => {
     try {
-        const results = await user_controller_1.UserController.getAllUsers();
+        const results = await user_controller_1.UserController.getAllUsers(req.query.userType);
         return res.status(200).json(results);
     }
     catch (error) {
