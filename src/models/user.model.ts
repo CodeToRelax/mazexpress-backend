@@ -1,9 +1,10 @@
 import { Cities, Countries, IUser } from '@/utils/types';
 import mongoose from 'mongoose';
 import validator from 'validator';
+import paginate from 'mongoose-paginate-v2';
 
 // add DB error handling
-export const UserSchema = new mongoose.Schema<IUser>({
+export const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -88,5 +89,10 @@ export const UserSchema = new mongoose.Schema<IUser>({
   disabled: { type: Boolean, required: true },
 });
 
-const UserCollection = mongoose.model<IUser>('User', UserSchema);
+UserSchema.plugin(paginate);
+
+interface UserDocument extends mongoose.Document, IUser {}
+
+const UserCollection = mongoose.model<UserDocument, mongoose.PaginateModel<UserDocument>>('User', UserSchema, 'user');
+
 export default UserCollection;

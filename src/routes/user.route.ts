@@ -14,8 +14,13 @@ const router = Router({
 
 // (admin)
 router.get('/getAllUsers', async (req, res) => {
+  const { page } = req.query;
   try {
-    const results = await UserController.getAllUsers(req.query.userType as UserTypes);
+    const paginationOptions = {
+      page: parseInt(page as string, 10) || 1,
+      limit: 10,
+    };
+    const results = await UserController.getAllUsers(paginationOptions, req.query.userType as UserTypes);
     return res.status(200).json(results);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

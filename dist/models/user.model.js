@@ -7,6 +7,7 @@ exports.UserSchema = void 0;
 const types_1 = require("../utils/types");
 const mongoose_1 = __importDefault(require("mongoose"));
 const validator_1 = __importDefault(require("validator"));
+const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
 exports.UserSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
@@ -85,6 +86,7 @@ exports.UserSchema = new mongoose_1.default.Schema({
     firebaseId: { type: String, required: true },
     disabled: { type: Boolean, required: true },
 });
-const UserCollection = mongoose_1.default.model('User', exports.UserSchema);
+exports.UserSchema.plugin(mongoose_paginate_v2_1.default);
+const UserCollection = mongoose_1.default.model('User', exports.UserSchema, 'user');
 exports.default = UserCollection;
 //# sourceMappingURL=user.model.js.map

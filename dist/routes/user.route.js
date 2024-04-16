@@ -10,8 +10,13 @@ const router = (0, express_1.Router)({
     caseSensitive: true,
 });
 router.get('/getAllUsers', async (req, res) => {
+    const { page } = req.query;
     try {
-        const results = await user_controller_1.UserController.getAllUsers(req.query.userType);
+        const paginationOptions = {
+            page: parseInt(page, 10) || 1,
+            limit: 10,
+        };
+        const results = await user_controller_1.UserController.getAllUsers(paginationOptions, req.query.userType);
         return res.status(200).json(results);
     }
     catch (error) {
