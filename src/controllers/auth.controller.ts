@@ -8,8 +8,9 @@ const createUser = async (body: IUser, customerType: UserTypes) => {
   try {
     const fbUser = await FirebaseController.createFirebaseUser({
       email: body.email,
-      password: body.password,
+      password: body.password!,
     });
+    delete body['password'];
     const mongoUserBody = new UserCollection({
       ...body,
       address: {

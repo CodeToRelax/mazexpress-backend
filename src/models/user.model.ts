@@ -19,12 +19,12 @@ export const UserSchema = new mongoose.Schema<IUser>({
     required: true,
     lowercase: true,
   },
-  password: {
-    type: String,
-    required: true,
-    lowercase: true,
-    minlength: 8,
-  },
+  // password: {
+  //   type: String,
+  //   required: true,
+  //   lowercase: true,
+  //   minlength: 8,
+  // },
   birthdate: {
     type: String,
     required: true,

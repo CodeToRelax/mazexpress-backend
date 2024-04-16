@@ -23,12 +23,6 @@ exports.UserSchema = new mongoose_1.default.Schema({
         required: true,
         lowercase: true,
     },
-    password: {
-        type: String,
-        required: true,
-        lowercase: true,
-        minlength: 8,
-    },
     birthdate: {
         type: String,
         required: true,

@@ -15,6 +15,7 @@ const createUser = async (body, customerType) => {
             email: body.email,
             password: body.password,
         });
+        delete body['password'];
         const mongoUserBody = new user_model_1.default({
             ...body,
             address: {
