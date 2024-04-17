@@ -11,11 +11,8 @@ const getUser = async (_id) => {
     const user = user_model_1.default.findById({ _id });
     return user;
 };
-const getAllUsers = async (paginationOtpions, type) => {
-    const filters = {
-        userType: type,
-    };
-    const users = await user_model_1.default.paginate(type ? filters : {}, paginationOtpions);
+const getAllUsers = async (paginationOtpions, filters) => {
+    const users = await user_model_1.default.paginate(filters, paginationOtpions);
     return users;
 };
 const updateUser = async (filter, body) => {

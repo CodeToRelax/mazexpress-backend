@@ -5,9 +5,9 @@ import { IShipments } from '@/utils/types';
 import { PaginateOptions } from 'mongoose';
 
 // pass in filters
-const getShipments = async (paginationOtpions: PaginateOptions) => {
+const getShipments = async (paginationOtpions: PaginateOptions, filters: IShipments) => {
   try {
-    const shipments = await ShipmentsCollection.paginate({}, paginationOtpions);
+    const shipments = await ShipmentsCollection.paginate(filters, paginationOtpions);
     return shipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);

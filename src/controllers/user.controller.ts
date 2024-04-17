@@ -1,6 +1,6 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user.model';
-import { IAdminUpdateProfile, ICustomerProfileStatus, ICustomerUpdateProfile, UserTypes } from '@/utils/types';
+import { IAdminUpdateProfile, ICustomerProfileStatus, ICustomerUpdateProfile, IUser } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import { PaginateOptions } from 'mongoose';
 
@@ -10,11 +10,8 @@ const getUser = async (_id: string) => {
 };
 
 // filter and pagination are needed
-const getAllUsers = async (paginationOtpions: PaginateOptions, type?: UserTypes) => {
-  const filters = {
-    userType: type,
-  };
-  const users = await UserCollection.paginate(type ? filters : {}, paginationOtpions);
+const getAllUsers = async (paginationOtpions: PaginateOptions, filters: IUser) => {
+  const users = await UserCollection.paginate(filters, paginationOtpions);
   return users;
 };
 
