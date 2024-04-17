@@ -1,8 +1,9 @@
 import { IShipments } from '@/utils/types';
 import mongoose from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 
 // add DB error handling
-export const ShipmentsSchema = new mongoose.Schema<IShipments>({
+export const ShipmentsSchema = new mongoose.Schema({
   isn: {
     type: String,
     required: true,
@@ -67,5 +68,13 @@ export const ShipmentsSchema = new mongoose.Schema<IShipments>({
   },
 });
 
-const ShipmentsCollection = mongoose.model<IShipments>('Shipments', ShipmentsSchema);
+ShipmentsSchema.plugin(paginate);
+
+interface ShipmentDocument extends mongoose.Document, IShipments {}
+
+const ShipmentsCollection = mongoose.model<ShipmentDocument, mongoose.PaginateModel<ShipmentDocument>>(
+  'Shipments',
+  ShipmentsSchema,
+  'shipments'
+);
 export default ShipmentsCollection;

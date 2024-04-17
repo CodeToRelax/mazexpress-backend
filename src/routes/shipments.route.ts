@@ -11,8 +11,14 @@ const router = Router({
 
 // (admin)
 router.get('/getShipments', async (req, res) => {
+  const { page } = req.query;
+
   try {
-    const shipments = await ShipmentsController.getShipments();
+    const paginationOptions = {
+      page: parseInt(page as string, 10) || 1,
+      limit: 10,
+    };
+    const shipments = await ShipmentsController.getShipments(paginationOptions);
     return res.status(200).json(shipments);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

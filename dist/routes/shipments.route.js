@@ -8,8 +8,13 @@ const router = (0, express_1.Router)({
     caseSensitive: true,
 });
 router.get('/getShipments', async (req, res) => {
+    const { page } = req.query;
     try {
-        const shipments = await shipments_controller_1.ShipmentsController.getShipments();
+        const paginationOptions = {
+            page: parseInt(page, 10) || 1,
+            limit: 10,
+        };
+        const shipments = await shipments_controller_1.ShipmentsController.getShipments(paginationOptions);
         return res.status(200).json(shipments);
     }
     catch (error) {

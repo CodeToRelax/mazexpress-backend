@@ -7,9 +7,9 @@ exports.ShipmentsController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const helpers_1 = require("../utils/helpers");
-const getShipments = async () => {
+const getShipments = async (paginationOtpions) => {
     try {
-        const shipments = await shipments_model_1.default.find({});
+        const shipments = await shipments_model_1.default.paginate({}, paginationOtpions);
         return shipments;
     }
     catch (error) {

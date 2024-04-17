@@ -2,11 +2,12 @@ import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import ShipmentsCollection from '@/models/shipments.model';
 import { generateExternalTrackingNumber } from '@/utils/helpers';
 import { IShipments } from '@/utils/types';
+import { PaginateOptions } from 'mongoose';
 
 // pass in filters
-const getShipments = async () => {
+const getShipments = async (paginationOtpions: PaginateOptions) => {
   try {
-    const shipments = await ShipmentsCollection.find({});
+    const shipments = await ShipmentsCollection.paginate({}, paginationOtpions);
     return shipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
