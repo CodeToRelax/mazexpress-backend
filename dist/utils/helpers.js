@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateShippingNumber = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
+exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateShippingNumber = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
+const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
 const validateLibyanNumber = (phoneNumber) => {
     const allowedCarriers = ['91', '92', '94', '95'];
@@ -18,6 +22,10 @@ const validateUserBirthdate = (value) => {
     return true;
 };
 exports.validateUserBirthdate = validateUserBirthdate;
+const sanitizeSearchParam = (searchParam) => {
+    return validator_1.default.escape(searchParam.toString());
+};
+exports.sanitizeSearchParam = sanitizeSearchParam;
 const generateShippingNumber = (customerType, city) => {
     if (customerType === types_1.UserTypes.ADMIN)
         return '0000';

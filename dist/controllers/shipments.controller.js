@@ -9,6 +9,26 @@ const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const helpers_1 = require("../utils/helpers");
 const getShipments = async (paginationOtpions, filters) => {
     try {
+        if (filters.searchParam) {
+            let query = {};
+            if (filters.searchParam) {
+                const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
+                query = {
+                    $or: [
+                        { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                        { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                        { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                        { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+                        { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    ],
+                };
+            }
+            else {
+                query = filters;
+            }
+            const shipments = await shipments_model_1.default.paginate(query, paginationOtpions);
+            return shipments;
+        }
         const shipments = await shipments_model_1.default.paginate(filters, paginationOtpions);
         return shipments;
     }

@@ -7,11 +7,32 @@ exports.UserController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const firebase_controller_1 = require("./firebase.controller");
+const helpers_1 = require("../utils/helpers");
 const getUser = async (_id) => {
     const user = user_model_1.default.findById({ _id });
     return user;
 };
 const getAllUsers = async (paginationOtpions, filters) => {
+    if (filters.searchParam) {
+        let query = {};
+        if (filters.searchParam) {
+            const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
+            query = {
+                $or: [
+                    { email: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    { firstName: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    { lastName: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+                ],
+            };
+        }
+        else {
+            query = filters;
+        }
+        const users = await user_model_1.default.paginate(query, paginationOtpions);
+        return users;
+    }
     const users = await user_model_1.default.paginate(filters, paginationOtpions);
     return users;
 };

@@ -1,12 +1,32 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import ShipmentsCollection from '@/models/shipments.model';
-import { generateExternalTrackingNumber } from '@/utils/helpers';
-import { IShipments } from '@/utils/types';
+import { generateExternalTrackingNumber, sanitizeSearchParam } from '@/utils/helpers';
+import { IShipments, IShipmentsFilters } from '@/utils/types';
 import { PaginateOptions } from 'mongoose';
 
 // pass in filters
-const getShipments = async (paginationOtpions: PaginateOptions, filters: IShipments) => {
+const getShipments = async (paginationOtpions: PaginateOptions, filters: IShipmentsFilters) => {
   try {
+    if (filters.searchParam) {
+      let query = {};
+
+      if (filters.searchParam) {
+        const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+        query = {
+          $or: [
+            { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+          ],
+        };
+      } else {
+        query = filters;
+      }
+      const shipments = await ShipmentsCollection.paginate(query, paginationOtpions);
+      return shipments;
+    }
     const shipments = await ShipmentsCollection.paginate(filters, paginationOtpions);
     return shipments;
   } catch (error) {

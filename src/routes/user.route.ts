@@ -1,7 +1,7 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { IUser } from '@/utils/types';
+import { IGetAllUsersFilters } from '@/utils/types';
 import { createUserValidation, toggleUserValidation } from '@/validation/auth.validation';
 import { AdminUpdateUserValidation, UpdateProfileValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
@@ -25,7 +25,7 @@ router.get('/getAllUsers', async (req, res) => {
     delete filters.sort;
     delete filters.limit;
 
-    const results = await UserController.getAllUsers(paginationOptions, filters as unknown as IUser);
+    const results = await UserController.getAllUsers(paginationOptions, filters as unknown as IGetAllUsersFilters);
     return res.status(200).json(results);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

@@ -1,8 +1,14 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import UserCollection from '@/models/user.model';
-import { IAdminUpdateProfile, ICustomerProfileStatus, ICustomerUpdateProfile, IUser } from '@/utils/types';
+import {
+  IAdminUpdateProfile,
+  ICustomerProfileStatus,
+  ICustomerUpdateProfile,
+  IGetAllUsersFilters,
+} from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import { PaginateOptions } from 'mongoose';
+import { sanitizeSearchParam } from '@/utils/helpers';
 
 const getUser = async (_id: string) => {
   const user = UserCollection.findById({ _id });
@@ -10,7 +16,28 @@ const getUser = async (_id: string) => {
 };
 
 // filter and pagination are needed
-const getAllUsers = async (paginationOtpions: PaginateOptions, filters: IUser) => {
+const getAllUsers = async (paginationOtpions: PaginateOptions, filters: IGetAllUsersFilters) => {
+  if (filters.searchParam) {
+    let query = {};
+    if (filters.searchParam) {
+      const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+      query = {
+        $or: [
+          { email: { $regex: sanitizedSearchParam, $options: 'i' } },
+          { firstName: { $regex: sanitizedSearchParam, $options: 'i' } },
+          { lastName: { $regex: sanitizedSearchParam, $options: 'i' } },
+          { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+          { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+        ],
+      };
+    } else {
+      query = filters;
+    }
+
+    const users = await UserCollection.paginate(query, paginationOtpions);
+    return users;
+  }
+
   const users = await UserCollection.paginate(filters, paginationOtpions);
   return users;
 };

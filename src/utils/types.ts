@@ -16,6 +16,10 @@ export interface IUser {
   gender: UserGender;
 }
 
+export interface IGetAllUsersFilters extends IUser {
+  searchParam: string;
+}
+
 export interface IUserUpdate
   extends Omit<
     IUser,
@@ -104,6 +108,10 @@ export interface IShipments {
   extraCosts: number;
   note: string;
   status: string;
+}
+
+export interface IShipmentsFilters extends IShipments {
+  searchParam: string;
 }
 
 export type shipmentDestination = 'benghazi' | 'musrata' | 'tripoli';

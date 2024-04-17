@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { IUserACL, UserTypes } from './types';
 
 export const validateLibyanNumber = (phoneNumber: string) => {
@@ -13,6 +14,10 @@ export const validateUserBirthdate = (value: Date) => {
   minDate.setFullYear(minDate.getFullYear() - 80);
   if (value < minDate) return false;
   return true;
+};
+
+export const sanitizeSearchParam = (searchParam: string | number) => {
+  return validator.escape(searchParam.toString());
 };
 
 // const getUserRules = async (req, res, next) => {

@@ -1,6 +1,6 @@
 import { ShipmentsController } from '@/controllers/shipments.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { IShipments } from '@/utils/types';
+import { IShipmentsFilters } from '@/utils/types';
 import { createShipmentValidation, updateShipmentValidation } from '@/validation/shipments.validation';
 import { Router } from 'express';
 
@@ -23,7 +23,10 @@ router.get('/getShipments', async (req, res) => {
     delete filters.page;
     delete filters.sort;
     delete filters.limit;
-    const shipments = await ShipmentsController.getShipments(paginationOptions, filters as unknown as IShipments);
+    const shipments = await ShipmentsController.getShipments(
+      paginationOptions,
+      filters as unknown as IShipmentsFilters
+    );
     return res.status(200).json(shipments);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
