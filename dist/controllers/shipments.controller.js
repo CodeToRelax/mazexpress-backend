@@ -18,8 +18,6 @@ const getShipments = async (paginationOtpions, filters) => {
                         { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
                         { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
                         { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                        { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
-                        { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
                     ],
                 };
             }
