@@ -78,6 +78,23 @@ router.patch('/updateShipment/:id', async (req, res) => {
         }
     }
 });
+router.patch('/updateShipments', async (req, res) => {
+    try {
+        const { error } = shipments_validation_1.updateShipmentsValidation.validate(req.body);
+        if (error)
+            return res.status(403).json(error);
+        await shipments_controller_1.ShipmentsController.updateShipments(req.body);
+        return res.status(200).json({ ...req.body });
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
 router.delete('/deleteShipment/:id', async (req, res) => {
     try {
         await shipments_controller_1.ShipmentsController.deleteShipment(req.params.id);

@@ -61,6 +61,15 @@ const updateShipment = async (_id, body) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
     }
 };
+const updateShipments = async (body) => {
+    try {
+        const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
+        return res;
+    }
+    catch (error) {
+        throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
+    }
+};
 const deleteShipment = async (_id) => {
     try {
         const res = await shipments_model_1.default.findByIdAndDelete(_id);
@@ -75,6 +84,7 @@ exports.ShipmentsController = {
     getShipment,
     createShipment,
     updateShipment,
+    updateShipments,
     deleteShipment,
 };
 //# sourceMappingURL=shipments.controller.js.map

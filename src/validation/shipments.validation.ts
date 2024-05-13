@@ -51,3 +51,18 @@ export const updateShipmentValidation = joi.object({
     )
     .required(),
 });
+
+export const updateShipmentsValidation = joi.object({
+  shipmentsId: joi.array().items(joi.string()).required(),
+  shipmentStatus: joi
+    .string()
+    .valid(
+      'recieved at warehouse',
+      'shipped to destination',
+      'on hold',
+      'at sorting facility',
+      'on hold',
+      'ready for pick up'
+    )
+    .required(),
+});

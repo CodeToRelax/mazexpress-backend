@@ -1,7 +1,7 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import ShipmentsCollection from '@/models/shipments.model';
 import { generateExternalTrackingNumber, sanitizeSearchParam } from '@/utils/helpers';
-import { IShipments, IShipmentsFilters } from '@/utils/types';
+import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
 import { PaginateOptions } from 'mongoose';
 
 // pass in filters
@@ -60,6 +60,18 @@ const updateShipment = async (_id: string, body: IShipments) => {
   }
 };
 
+const updateShipments = async (body: IUpdateShipments) => {
+  try {
+    const res = await ShipmentsCollection.updateMany(
+      { _id: { $in: body.shipmentsId } },
+      { status: body.shipmentStatus }
+    );
+    return res;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
+  }
+};
+
 const deleteShipment = async (_id: string) => {
   try {
     const res = await ShipmentsCollection.findByIdAndDelete(_id);
@@ -74,5 +86,6 @@ export const ShipmentsController = {
   getShipment,
   createShipment,
   updateShipment,
+  updateShipments,
   deleteShipment,
 };

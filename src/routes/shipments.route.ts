@@ -1,7 +1,11 @@
 import { ShipmentsController } from '@/controllers/shipments.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { IShipmentsFilters } from '@/utils/types';
-import { createShipmentValidation, updateShipmentValidation } from '@/validation/shipments.validation';
+import {
+  createShipmentValidation,
+  updateShipmentValidation,
+  updateShipmentsValidation,
+} from '@/validation/shipments.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -75,6 +79,23 @@ router.patch('/updateShipment/:id', async (req, res) => {
     const { error } = updateShipmentValidation.validate(req.body);
     if (error) return res.status(403).json(error);
     await ShipmentsController.updateShipment(req.params.id, req.body);
+    return res.status(200).json({ ...req.body });
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
+// (admin)
+router.patch('/updateShipments', async (req, res) => {
+  try {
+    // validate body
+    const { error } = updateShipmentsValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    await ShipmentsController.updateShipments(req.body);
     return res.status(200).json({ ...req.body });
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
