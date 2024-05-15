@@ -25,6 +25,7 @@ export const checkUserRules = async (acls: IUserACL, req: Request) => {
   const methodName = req.method as keyof IUserACL;
   const baseUrl = req.baseUrl.slice(1) as appServices;
   const urlPath = req.path as string;
+  console.log(urlPath);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-expect-error
   if (!acls[methodName] || !acls[methodName][baseUrl] || !acls[methodName][baseUrl]?.includes(urlPath)) {

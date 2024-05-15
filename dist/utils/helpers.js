@@ -30,6 +30,7 @@ const checkUserRules = async (acls, req) => {
     const methodName = req.method;
     const baseUrl = req.baseUrl.slice(1);
     const urlPath = req.path;
+    console.log(urlPath);
     if (!acls[methodName] || !acls[methodName][baseUrl] || !acls[methodName][baseUrl]?.includes(urlPath)) {
         return false;
     }

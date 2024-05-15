@@ -1,7 +1,9 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { IGetAllUsersFilters } from '@/utils/types';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { checkUserRules } from '@/utils/helpers';
+import { CustomExpressRequest, IGetAllUsersFilters } from '@/utils/types';
 import { createUserValidation, toggleUserValidation } from '@/validation/auth.validation';
 import { AdminUpdateUserValidation, UpdateProfileValidation, deleteUserValidation } from '@/validation/user.validation';
 import { Router } from 'express';
@@ -37,9 +39,12 @@ router.get('/getAllUsers', async (req, res) => {
 });
 
 // get a single user (admin/customer)
-router.get('/:id', async (req, res) => {
+router.get('/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
   try {
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
     const results = await UserController.getUser(req.params.id);
     return res.status(200).json(results);
   } catch (error) {
