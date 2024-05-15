@@ -1,13 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_controller_1 = require("../controllers/auth.controller");
 const user_controller_1 = require("../controllers/user.controller");
 const error_middleware_1 = require("../middlewares/error.middleware");
-const jwt_middleware_1 = __importDefault(require("../middlewares/jwt.middleware"));
-const helpers_1 = require("../utils/helpers");
 const auth_validation_1 = require("../validation/auth.validation");
 const user_validation_1 = require("../validation/user.validation");
 const express_1 = require("express");
@@ -37,13 +32,10 @@ router.get('/getAllUsers', async (req, res) => {
         }
     }
 });
-router.get('/:id', jwt_middleware_1.default, async (req, res) => {
+router.get('/:id', async (req, res) => {
     if (!req.params.id)
         throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
     try {
-        const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
-        if (!hasValidRules)
-            throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
         const results = await user_controller_1.UserController.getUser(req.params.id);
         return res.status(200).json(results);
     }
