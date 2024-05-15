@@ -27,20 +27,6 @@ router.post('/signUp', async (req, res) => {
   }
 });
 
-// // reset password
-// router.patch('/:id/resetPassword', async (req, res) => {
-//   try {
-//     const results = await AuthController.adminResetUserPassword(req.params.id, 'newPassword');
-//     return res.status(200).json(results);
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(401).json({
-//       comment: 'error',
-//     });
-//     // throw error (erorr handler)
-//   }
-// });
-
 // get user acl
 router.get('/acl/:id', async (req, res) => {
   try {
@@ -55,7 +41,7 @@ router.get('/acl/:id', async (req, res) => {
   }
 });
 
-// get user acl
+// update user acl
 router.patch('/acl', async (req, res) => {
   try {
     // validate body

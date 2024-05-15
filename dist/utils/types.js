@@ -19,8 +19,9 @@ var UserTypes;
     UserTypes["CUSTOMER"] = "customer";
 })(UserTypes || (exports.UserTypes = UserTypes = {}));
 const systemServices = ['auth', 'user', 'warehouse'];
-const getEndpoints = [];
-const postEndpoints = ['/auth/signUp'];
+const getEndpoints = ['/getShippingConfig'];
+const postEndpoints = ['/signUp', '/updateShippingConfig'];
 const updateEndpoints = [];
 const deleteEndpoints = [];
+const patchEndpoints = [];
 //# sourceMappingURL=types.js.map

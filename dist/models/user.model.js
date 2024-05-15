@@ -80,7 +80,7 @@ exports.UserSchema = new mongoose_1.default.Schema({
         required: true,
     },
     acl: {
-        type: String,
+        type: Object,
         required: true,
     },
     firebaseId: { type: String, required: true },

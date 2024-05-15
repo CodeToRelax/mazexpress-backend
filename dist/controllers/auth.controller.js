@@ -25,7 +25,7 @@ const createUser = async (body, customerType) => {
             username: (0, helpers_1.generateRandomUsername)(),
             userType: customerType,
             uniqueShippingNumber: (0, helpers_1.generateShippingNumber)(customerType, body.address.city),
-            acl: JSON.stringify((0, helpers_1.generateAcl)(customerType)),
+            acl: (0, helpers_1.generateAcl)(customerType),
             firebaseId: fbUser.uid,
             disabled: fbUser.disabled,
         });

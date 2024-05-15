@@ -1,3 +1,11 @@
+import { DecodedIdToken } from 'firebase-admin/auth';
+import { Request } from 'express';
+
+export interface CustomExpressRequest extends Request {
+  user?: DecodedIdToken;
+  role?: UserTypes;
+}
+
 export interface IUser {
   username?: string;
   firstName: string;
@@ -10,7 +18,7 @@ export interface IUser {
   privacyPolicy: IUserPrivacyPolicy;
   userType?: keyof typeof UserTypes;
   uniqueShippingNumber?: string;
-  acl?: IUserACL;
+  acl: string;
   firebaseId: string;
   disabled: boolean;
   gender: UserGender;
@@ -136,25 +144,29 @@ export interface IUpdateUserAdmin {
 }
 
 const systemServices = ['auth', 'user', 'warehouse'] as const;
-type appServices = (typeof systemServices)[number];
+export type appServices = (typeof systemServices)[number];
 
-const getEndpoints = [] as const;
-const postEndpoints = ['/auth/signUp'] as const;
+const getEndpoints = ['/getShippingConfig'] as const;
+const postEndpoints = ['/signUp', '/updateShippingConfig'] as const;
 const updateEndpoints = [] as const;
 const deleteEndpoints = [] as const;
+const patchEndpoints = [] as const;
 
 export interface IUserACL {
-  get: {
+  GET: {
     [key in appServices]?: (typeof getEndpoints)[number][];
   };
-  post: {
+  POST: {
     [key in appServices]?: (typeof postEndpoints)[number][];
   };
-  update: {
+  UPDATE: {
     [key in appServices]?: (typeof updateEndpoints)[number][];
   };
-  delete: {
+  DELETE: {
     [key in appServices]?: (typeof deleteEndpoints)[number][];
+  };
+  PATCH: {
+    [key in appServices]?: (typeof patchEndpoints)[number][];
   };
 }
 

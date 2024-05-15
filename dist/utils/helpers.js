@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateShippingNumber = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
+exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
 const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
 const validateLibyanNumber = (phoneNumber) => {
@@ -26,6 +26,16 @@ const sanitizeSearchParam = (searchParam) => {
     return validator_1.default.escape(searchParam.toString());
 };
 exports.sanitizeSearchParam = sanitizeSearchParam;
+const checkUserRules = async (acls, req) => {
+    const methodName = req.method;
+    const baseUrl = req.baseUrl.slice(1);
+    const urlPath = req.path;
+    if (!acls[methodName] || !acls[methodName][baseUrl] || !acls[methodName][baseUrl]?.includes(urlPath)) {
+        return false;
+    }
+    return true;
+};
+exports.checkUserRules = checkUserRules;
 const generateShippingNumber = (customerType, city) => {
     if (customerType === types_1.UserTypes.ADMIN)
         return '0000';
@@ -53,17 +63,19 @@ exports.generateExternalTrackingNumber = generateExternalTrackingNumber;
 const generateAcl = (customerType) => {
     if (customerType === types_1.UserTypes.CUSTOMER) {
         return {
-            get: {},
-            post: { auth: ['/auth/signUp'] },
-            update: {},
-            delete: {},
+            GET: {},
+            POST: { auth: ['/signUp'] },
+            UPDATE: {},
+            DELETE: {},
+            PATCH: {},
         };
     }
     return {
-        get: {},
-        post: { auth: ['/auth/signUp'] },
-        update: {},
-        delete: {},
+        GET: {},
+        POST: { auth: ['/signUp'] },
+        UPDATE: {},
+        DELETE: {},
+        PATCH: {},
     };
 };
 exports.generateAcl = generateAcl;

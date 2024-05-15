@@ -1,7 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const warehouse_controller_1 = require("../controllers/warehouse.controller");
 const error_middleware_1 = require("../middlewares/error.middleware");
+const jwt_middleware_1 = __importDefault(require("../middlewares/jwt.middleware"));
+const types_1 = require("../utils/types");
 const warehouse_validation_1 = require("../validation/warehouse.validation");
 const express_1 = require("express");
 const router = (0, express_1.Router)({
@@ -21,7 +26,9 @@ router.get('/getWarehouses', async (req, res) => {
         }
     }
 });
-router.post('/createWarehouse', async (req, res) => {
+router.post('/createWarehouse', jwt_middleware_1.default, async (req, res) => {
+    if (req.user?.role !== types_1.UserTypes.ADMIN)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = warehouse_validation_1.createWarehouseValidation.validate(req.body);
         if (error)

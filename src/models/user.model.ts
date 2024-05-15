@@ -82,7 +82,7 @@ export const UserSchema = new mongoose.Schema({
     required: true,
   },
   acl: {
-    type: String,
+    type: Object,
     required: true,
   },
   firebaseId: { type: String, required: true },

@@ -1,5 +1,6 @@
 import validator from 'validator';
-import { IUserACL, UserTypes } from './types';
+import { IUserACL, UserTypes, appServices } from './types';
+import { Request } from 'express';
 
 export const validateLibyanNumber = (phoneNumber: string) => {
   const allowedCarriers = ['91', '92', '94', '95'];
@@ -20,38 +21,17 @@ export const sanitizeSearchParam = (searchParam: string | number) => {
   return validator.escape(searchParam.toString());
 };
 
-// const getUserRules = async (req, res, next) => {
-//   try {
-//     //extract and decode JWT
-//     const extractedToken = extractJwt(req);
-//     const decodedToken = decodeJwt(extractedToken);
-
-//     //get rules from dynamo
-//     const TableName = dynamoTable;
-//     let queryParams = {
-//       KeyConditionExpression: "PK = :PK AND begins_with (SK, :SK)",
-//       ExpressionAttributeValues: {
-//         ":PK": decodedToken.sub,
-//         ":SK": `user_rules`,
-//       },
-//       TableName,
-//     };
-//     const userRules = await dynamoV2.query(queryParams).promise();
-
-//     //check if rules match req type, baseUrl and path
-//     if (
-//       !userRules.Items[0].rules[req.method] ||
-//       !userRules.Items[0].rules[req.method][req.baseUrl] ||
-//       !userRules.Items[0].rules[req.method][req.baseUrl].includes(req.path)
-//     ) {
-//       return res.status(401).json("unathorized access to resource");
-//     }
-//     next();
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(401).json("unathorized access to resource");
-//   }
-// };
+export const checkUserRules = async (acls: IUserACL, req: Request) => {
+  const methodName = req.method as keyof IUserACL;
+  const baseUrl = req.baseUrl.slice(1) as appServices;
+  const urlPath = req.path as string;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-expect-error
+  if (!acls[methodName] || !acls[methodName][baseUrl] || !acls[methodName][baseUrl]?.includes(urlPath)) {
+    return false;
+  }
+  return true;
+};
 
 export const generateShippingNumber = (customerType: UserTypes, city: string): string => {
   if (customerType === UserTypes.ADMIN) return '0000';
@@ -90,16 +70,18 @@ export const generateExternalTrackingNumber = (length: number = 10): string => {
 export const generateAcl = (customerType: UserTypes): IUserACL => {
   if (customerType === UserTypes.CUSTOMER) {
     return {
-      get: {},
-      post: { auth: ['/auth/signUp'] },
-      update: {},
-      delete: {},
+      GET: {},
+      POST: { auth: ['/signUp'] },
+      UPDATE: {},
+      DELETE: {},
+      PATCH: {},
     };
   }
   return {
-    get: {},
-    post: { auth: ['/auth/signUp'] },
-    update: {},
-    delete: {},
+    GET: {},
+    POST: { auth: ['/signUp'] },
+    UPDATE: {},
+    DELETE: {},
+    PATCH: {},
   };
 };

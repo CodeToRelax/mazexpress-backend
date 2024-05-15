@@ -1,5 +1,7 @@
 import { WarehouseController } from '@/controllers/warehouse.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { CustomExpressRequest, UserTypes } from '@/utils/types';
 import { createWarehouseValidation } from '@/validation/warehouse.validation';
 import { Router } from 'express';
 
@@ -9,7 +11,6 @@ const router = Router({
 
 // --- api methods config service--- //
 
-// (admin)
 router.get('/getWarehouses', async (req, res) => {
   try {
     const wareHouses = await WarehouseController.getWarehouses();
@@ -24,7 +25,9 @@ router.get('/getWarehouses', async (req, res) => {
 });
 
 // (admin)
-router.post('/createWarehouse', async (req, res) => {
+router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  if (req.user?.role !== UserTypes.ADMIN)
+    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     // validate body
     const { error } = createWarehouseValidation.validate(req.body);
