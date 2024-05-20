@@ -62,6 +62,11 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
         required: true,
         lowercase: true,
     },
+    estimatedArrival: {
+        type: Date,
+    },
+}, {
+    timestamps: true,
 });
 exports.ShipmentsSchema.plugin(mongoose_paginate_v2_1.default);
 const ShipmentsCollection = mongoose_1.default.model('Shipments', exports.ShipmentsSchema, 'shipments');

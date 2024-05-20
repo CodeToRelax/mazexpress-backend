@@ -38,9 +38,13 @@ const getShipment = async (shipmentEsn: string) => {
 };
 
 const createShipment = async (body: IShipments) => {
+  const currentDate = new Date();
+  const estimatedArrivalDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+
   const newShipment: IShipments = {
     ...body,
     esn: generateExternalTrackingNumber(),
+    estimatedArrival: estimatedArrivalDate,
   };
   try {
     const shipmentInstance = new ShipmentsCollection(newShipment);

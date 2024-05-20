@@ -116,6 +116,7 @@ export interface IShipments {
   extraCosts: number;
   note: string;
   status: string;
+  estimatedArrival: Date;
 }
 
 export interface IUpdateShipments {

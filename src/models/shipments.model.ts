@@ -3,63 +3,71 @@ import mongoose from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 
 // add DB error handling
-export const ShipmentsSchema = new mongoose.Schema({
-  isn: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-  esn: {
-    type: String,
-    lowercase: true,
-  },
-  csn: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-  size: {
-    weight: {
+export const ShipmentsSchema = new mongoose.Schema(
+  {
+    isn: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    esn: {
+      type: String,
+      lowercase: true,
+    },
+    csn: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    size: {
+      weight: {
+        type: Number,
+        lowercase: true,
+      },
+      height: {
+        type: Number,
+        lowercase: true,
+      },
+      width: {
+        type: Number,
+        lowercase: true,
+      },
+      length: {
+        type: Number,
+        lowercase: true,
+      },
+    },
+    shipmentDestination: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    shippingMethod: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    extraCosts: {
       type: Number,
       lowercase: true,
     },
-    height: {
-      type: Number,
+    note: {
+      type: String,
       lowercase: true,
     },
-    width: {
-      type: Number,
+    status: {
+      type: String,
+      required: true,
       lowercase: true,
     },
-    length: {
-      type: Number,
-      lowercase: true,
+    estimatedArrival: {
+      type: Date,
     },
   },
-  shipmentDestination: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-  shippingMethod: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-  extraCosts: {
-    type: Number,
-    lowercase: true,
-  },
-  note: {
-    type: String,
-    lowercase: true,
-  },
-  status: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 ShipmentsSchema.plugin(paginate);
 
