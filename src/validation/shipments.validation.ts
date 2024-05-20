@@ -17,7 +17,7 @@ export const createShipmentValidation = joi.object({
     .valid(
       'recieved at warehouse',
       'shipped to destination',
-      'on hold',
+      'transit',
       'at sorting facility',
       'on hold',
       'ready for pick up'

@@ -19,7 +19,7 @@ exports.createShipmentValidation = joi_1.default.object({
     note: joi_1.default.string(),
     status: joi_1.default
         .string()
-        .valid('recieved at warehouse', 'shipped to destination', 'on hold', 'at sorting facility', 'on hold', 'ready for pick up')
+        .valid('recieved at warehouse', 'shipped to destination', 'transit', 'at sorting facility', 'on hold', 'ready for pick up')
         .required(),
 });
 exports.updateShipmentValidation = joi_1.default.object({
