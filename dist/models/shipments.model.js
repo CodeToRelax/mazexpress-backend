@@ -14,7 +14,6 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
     },
     esn: {
         type: String,
-        required: true,
         lowercase: true,
     },
     csn: {
@@ -26,22 +25,18 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
         weight: {
             type: Number,
             lowercase: true,
-            required: true,
         },
         height: {
             type: Number,
             lowercase: true,
-            required: true,
         },
         width: {
             type: Number,
             lowercase: true,
-            required: true,
         },
         length: {
             type: Number,
             lowercase: true,
-            required: true,
         },
     },
     shipmentDestination: {
@@ -56,12 +51,10 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
     },
     extraCosts: {
         type: Number,
-        required: true,
         lowercase: true,
     },
     note: {
         type: String,
-        required: true,
         lowercase: true,
     },
     status: {

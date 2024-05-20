@@ -1,13 +1,12 @@
 import joi from 'joi';
 
 export const createShipmentValidation = joi.object({
-  isn: joi.string().lowercase().required(),
   csn: joi.string().lowercase().required(),
   size: joi.object({
-    weight: joi.number().required(),
-    height: joi.number().required(),
-    width: joi.number().required(),
-    length: joi.number().required(),
+    weight: joi.number(),
+    height: joi.number(),
+    width: joi.number(),
+    length: joi.number(),
   }),
   shipmentDestination: joi.string().valid('benghazi', 'tripoli', 'musrata').required(),
   shippingMethod: joi.string().valid('air', 'sea').required(),

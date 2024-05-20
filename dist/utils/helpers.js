@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
+exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
 const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
 const validateLibyanNumber = (phoneNumber) => {
@@ -51,6 +51,17 @@ const generateShippingNumber = (customerType, city) => {
     return result;
 };
 exports.generateShippingNumber = generateShippingNumber;
+const generateTrackingCode = () => {
+    const letters = Array.from({ length: 3 }, () => String.fromCharCode(Math.floor(Math.random() * 26) + 65));
+    const numbers = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10).toString());
+    const combined = letters.concat(numbers);
+    for (let i = combined.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [combined[i], combined[j]] = [combined[j], combined[i]];
+    }
+    return combined.join('');
+};
+exports.generateTrackingCode = generateTrackingCode;
 const generateRandomUsername = (length = 10) => {
     return Math.random()
         .toString(20)

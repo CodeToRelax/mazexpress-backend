@@ -35,12 +35,10 @@ exports.WarehouseSchema = new mongoose_1.default.Schema({
         },
         city: {
             type: String,
-            required: true,
             lowercase: true,
         },
         country: {
             type: String,
-            required: true,
             lowercase: true,
         },
         googleMapsUrl: {

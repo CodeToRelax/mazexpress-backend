@@ -58,6 +58,22 @@ export const generateShippingNumber = (customerType: UserTypes, city: string): s
   return result;
 };
 
+export const generateTrackingCode = (): string => {
+  const letters = Array.from({ length: 3 }, () => String.fromCharCode(Math.floor(Math.random() * 26) + 65));
+  const numbers = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10).toString());
+
+  // Combine letters and numbers
+  const combined = letters.concat(numbers);
+
+  // Shuffle the combined array
+  for (let i = combined.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [combined[i], combined[j]] = [combined[j], combined[i]];
+  }
+
+  return combined.join('');
+};
+
 export const generateRandomUsername = (length: number = 10): string => {
   return Math.random()
     .toString(20)

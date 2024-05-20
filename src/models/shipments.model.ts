@@ -11,7 +11,6 @@ export const ShipmentsSchema = new mongoose.Schema({
   },
   esn: {
     type: String,
-    required: true,
     lowercase: true,
   },
   csn: {
@@ -23,22 +22,18 @@ export const ShipmentsSchema = new mongoose.Schema({
     weight: {
       type: Number,
       lowercase: true,
-      required: true,
     },
     height: {
       type: Number,
       lowercase: true,
-      required: true,
     },
     width: {
       type: Number,
       lowercase: true,
-      required: true,
     },
     length: {
       type: Number,
       lowercase: true,
-      required: true,
     },
   },
   shipmentDestination: {
@@ -53,12 +48,10 @@ export const ShipmentsSchema = new mongoose.Schema({
   },
   extraCosts: {
     type: Number,
-    required: true,
     lowercase: true,
   },
   note: {
     type: String,
-    required: true,
     lowercase: true,
   },
   status: {

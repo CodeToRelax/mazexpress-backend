@@ -6,13 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateShipmentsValidation = exports.updateShipmentValidation = exports.createShipmentValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.createShipmentValidation = joi_1.default.object({
-    isn: joi_1.default.string().lowercase().required(),
     csn: joi_1.default.string().lowercase().required(),
     size: joi_1.default.object({
-        weight: joi_1.default.number().required(),
-        height: joi_1.default.number().required(),
-        width: joi_1.default.number().required(),
-        length: joi_1.default.number().required(),
+        weight: joi_1.default.number(),
+        height: joi_1.default.number(),
+        width: joi_1.default.number(),
+        length: joi_1.default.number(),
     }),
     shipmentDestination: joi_1.default.string().valid('benghazi', 'tripoli', 'musrata').required(),
     shippingMethod: joi_1.default.string().valid('air', 'sea').required(),

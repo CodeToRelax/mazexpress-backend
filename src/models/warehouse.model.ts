@@ -32,12 +32,10 @@ export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
     },
     city: {
       type: String,
-      required: true,
       lowercase: true,
     }, // type for Libya or turkey cities
     country: {
       type: String,
-      required: true,
       lowercase: true,
     }, // type for Libya or turkey
     googleMapsUrl: {
