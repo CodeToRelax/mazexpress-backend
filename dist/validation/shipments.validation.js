@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateShipmentsValidation = exports.updateShipmentValidation = exports.createShipmentValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.createShipmentValidation = joi_1.default.object({
+    isn: joi_1.default.string().lowercase(),
     csn: joi_1.default.string().lowercase().required(),
     size: joi_1.default.object({
         weight: joi_1.default.number(),
@@ -23,7 +24,7 @@ exports.createShipmentValidation = joi_1.default.object({
         .required(),
 });
 exports.updateShipmentValidation = joi_1.default.object({
-    isn: joi_1.default.string().lowercase().required(),
+    isn: joi_1.default.string().lowercase(),
     csn: joi_1.default.string().lowercase().required(),
     size: joi_1.default.object({
         weight: joi_1.default.number().required(),

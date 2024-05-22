@@ -1,6 +1,7 @@
 import joi from 'joi';
 
 export const createShipmentValidation = joi.object({
+  isn: joi.string().lowercase(),
   csn: joi.string().lowercase().required(),
   size: joi.object({
     weight: joi.number(),
@@ -26,7 +27,7 @@ export const createShipmentValidation = joi.object({
 });
 
 export const updateShipmentValidation = joi.object({
-  isn: joi.string().lowercase().required(),
+  isn: joi.string().lowercase(),
   csn: joi.string().lowercase().required(),
   size: joi.object({
     weight: joi.number().required(),

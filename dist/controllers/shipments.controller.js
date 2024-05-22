@@ -43,6 +43,7 @@ const createShipment = async (body) => {
     const estimatedArrivalDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
     const newShipment = {
         ...body,
+        isn: body.isn ? body.isn : '',
         esn: (0, helpers_1.generateExternalTrackingNumber)(),
         estimatedArrival: estimatedArrivalDate,
     };

@@ -43,6 +43,7 @@ const createShipment = async (body: IShipments) => {
 
   const newShipment: IShipments = {
     ...body,
+    isn: body.isn ? body.isn : '',
     esn: generateExternalTrackingNumber(),
     estimatedArrival: estimatedArrivalDate,
   };

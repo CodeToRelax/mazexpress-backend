@@ -9,7 +9,6 @@ const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
 exports.ShipmentsSchema = new mongoose_1.default.Schema({
     isn: {
         type: String,
-        required: true,
         lowercase: true,
     },
     esn: {

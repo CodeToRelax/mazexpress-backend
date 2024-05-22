@@ -7,7 +7,6 @@ export const ShipmentsSchema = new mongoose.Schema(
   {
     isn: {
       type: String,
-      required: true,
       lowercase: true,
     },
     esn: {
