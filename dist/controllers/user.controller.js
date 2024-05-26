@@ -12,6 +12,10 @@ const getUser = async (_id) => {
     const user = user_model_1.default.findById({ _id });
     return user;
 };
+const getAllUsersUnpaginated = async () => {
+    const users = await user_model_1.default.find({});
+    return users;
+};
 const getAllUsers = async (paginationOtpions, filters) => {
     if (filters.searchParam) {
         let query = {};
@@ -84,5 +88,6 @@ exports.UserController = {
     updateUser,
     deleteUser,
     toggleUser,
+    getAllUsersUnpaginated,
 };
 //# sourceMappingURL=user.controller.js.map

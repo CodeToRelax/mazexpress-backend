@@ -18,7 +18,21 @@ router.get('/getShipments', async (req, res) => {
         delete filters.page;
         delete filters.sort;
         delete filters.limit;
-        const shipments = await shipments_controller_1.ShipmentsController.getShipments(paginationOptions, filters);
+        const shipments = await shipments_controller_1.ShipmentsController.getShipments(filters, paginationOptions);
+        return res.status(200).json(shipments);
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
+router.get('/getShipmentsUnpaginated', async (req, res) => {
+    try {
+        const shipments = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated();
         return res.status(200).json(shipments);
     }
     catch (error) {
@@ -99,6 +113,20 @@ router.delete('/deleteShipment/:id', async (req, res) => {
     try {
         await shipments_controller_1.ShipmentsController.deleteShipment(req.params.id);
         return res.status(200).json('success');
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
+router.get('/getInvoiceShipments', async (req, res) => {
+    try {
+        const shipment = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
+        return res.status(200).json(shipment);
     }
     catch (error) {
         if (error instanceof error_middleware_1.CustomErrorHandler) {

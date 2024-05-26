@@ -38,6 +38,19 @@ router.get('/getAllUsers', async (req, res) => {
   }
 });
 
+router.get('/getAllUsersUnpaginated', async (req, res) => {
+  try {
+    const results = await UserController.getAllUsersUnpaginated();
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
 // get a single user (admin/customer)
 router.get('/:id', async (req: CustomExpressRequest, res) => {
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');

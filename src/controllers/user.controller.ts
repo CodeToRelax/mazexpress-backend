@@ -16,6 +16,12 @@ const getUser = async (_id: string) => {
 };
 
 // filter and pagination are needed
+const getAllUsersUnpaginated = async () => {
+  const users = await UserCollection.find({});
+  return users;
+};
+
+// filter and pagination are needed
 const getAllUsers = async (paginationOtpions: PaginateOptions, filters: IGetAllUsersFilters) => {
   if (filters.searchParam) {
     let query = {};
@@ -93,4 +99,5 @@ export const UserController = {
   updateUser,
   deleteUser,
   toggleUser,
+  getAllUsersUnpaginated,
 };

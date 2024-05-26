@@ -5,7 +5,7 @@ import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
 import { PaginateOptions } from 'mongoose';
 
 // pass in filters
-const getShipments = async (paginationOtpions: PaginateOptions, filters: IShipmentsFilters) => {
+const getShipments = async (filters: IShipmentsFilters, paginationOtpions?: PaginateOptions) => {
   try {
     if (filters.searchParam) {
       let query = {};
@@ -26,6 +26,15 @@ const getShipments = async (paginationOtpions: PaginateOptions, filters: IShipme
       return shipments;
     }
     const shipments = await ShipmentsCollection.paginate(filters, paginationOtpions);
+    return shipments;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
+  }
+};
+
+const getShipmentsUnpaginated = async (filters?: { status: string }) => {
+  try {
+    const shipments = await ShipmentsCollection.find(filters ? filters : {});
     return shipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
@@ -93,4 +102,5 @@ export const ShipmentsController = {
   updateShipment,
   updateShipments,
   deleteShipment,
+  getShipmentsUnpaginated,
 };
