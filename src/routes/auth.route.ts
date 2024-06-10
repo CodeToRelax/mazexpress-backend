@@ -1,7 +1,9 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { UserTypes } from '@/utils/types';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { checkUserRules } from '@/utils/helpers';
+import { CustomExpressRequest, UserTypes } from '@/utils/types';
 import { signupValidation, updateAclValidation } from '@/validation/auth.validation';
 import { Router } from 'express';
 
@@ -28,7 +30,10 @@ router.post('/signUp', async (req, res) => {
 });
 
 // get user acl
-router.get('/acl/:id', async (req, res) => {
+// (admin)
+router.get('/acl/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     const user = await UserController.getUser(req.params.id);
     return res.status(200).json(user?.acl);
@@ -42,7 +47,10 @@ router.get('/acl/:id', async (req, res) => {
 });
 
 // update user acl
-router.patch('/acl', async (req, res) => {
+router.patch('/acl', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = updateAclValidation.validate(req.body);
