@@ -1,6 +1,8 @@
 import { ShipmentsController } from '@/controllers/shipments.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-import { IShipmentsFilters } from '@/utils/types';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { checkUserRules } from '@/utils/helpers';
+import { CustomExpressRequest, IShipmentsFilters } from '@/utils/types';
 import {
   createShipmentValidation,
   updateShipmentValidation,
@@ -14,10 +16,12 @@ const router = Router({
 
 // --- api methods config service--- //
 
-// (admin)
-router.get('/getShipments', async (req, res) => {
-  const { page } = req.query;
+// (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
+router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
+  const { page } = req.query;
   try {
     const paginationOptions = {
       page: parseInt(page as string, 10) || 1,
@@ -41,7 +45,11 @@ router.get('/getShipments', async (req, res) => {
   }
 });
 
-router.get('/getShipmentsUnpaginated', async (req, res) => {
+// (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
+router.get('/getShipmentsUnpaginated', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     const shipments = await ShipmentsController.getShipmentsUnpaginated();
     return res.status(200).json(shipments);
@@ -54,8 +62,11 @@ router.get('/getShipmentsUnpaginated', async (req, res) => {
   }
 });
 
-// (admin)
-router.get('/getShipment/:esn', async (req, res) => {
+// (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
+router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     const shipment = await ShipmentsController.getShipment(req.params.esn);
     return res.status(200).json(shipment);
@@ -69,7 +80,10 @@ router.get('/getShipment/:esn', async (req, res) => {
 });
 
 // (admin)
-router.post('/createShipment', async (req, res) => {
+router.post('/createShipment', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = createShipmentValidation.validate(req.body);
@@ -86,7 +100,10 @@ router.post('/createShipment', async (req, res) => {
 });
 
 // (admin)
-router.patch('/updateShipment/:id', async (req, res) => {
+router.patch('/updateShipment/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = updateShipmentValidation.validate(req.body);
@@ -103,7 +120,10 @@ router.patch('/updateShipment/:id', async (req, res) => {
 });
 
 // (admin)
-router.patch('/updateShipments', async (req, res) => {
+router.patch('/updateShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = updateShipmentsValidation.validate(req.body);
@@ -120,7 +140,10 @@ router.patch('/updateShipments', async (req, res) => {
 });
 
 // (admin)
-router.delete('/deleteShipment/:id', async (req, res) => {
+router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     await ShipmentsController.deleteShipment(req.params.id);
     return res.status(200).json('success');

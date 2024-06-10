@@ -1,13 +1,21 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const shipments_controller_1 = require("../controllers/shipments.controller");
 const error_middleware_1 = require("../middlewares/error.middleware");
+const jwt_middleware_1 = __importDefault(require("../middlewares/jwt.middleware"));
+const helpers_1 = require("../utils/helpers");
 const shipments_validation_1 = require("../validation/shipments.validation");
 const express_1 = require("express");
 const router = (0, express_1.Router)({
     caseSensitive: true,
 });
-router.get('/getShipments', async (req, res) => {
+router.get('/getShipments', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     const { page } = req.query;
     try {
         const paginationOptions = {
@@ -30,7 +38,10 @@ router.get('/getShipments', async (req, res) => {
         }
     }
 });
-router.get('/getShipmentsUnpaginated', async (req, res) => {
+router.get('/getShipmentsUnpaginated', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const shipments = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated();
         return res.status(200).json(shipments);
@@ -44,7 +55,10 @@ router.get('/getShipmentsUnpaginated', async (req, res) => {
         }
     }
 });
-router.get('/getShipment/:esn', async (req, res) => {
+router.get('/getShipment/:esn', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const shipment = await shipments_controller_1.ShipmentsController.getShipment(req.params.esn);
         return res.status(200).json(shipment);
@@ -58,7 +72,10 @@ router.get('/getShipment/:esn', async (req, res) => {
         }
     }
 });
-router.post('/createShipment', async (req, res) => {
+router.post('/createShipment', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = shipments_validation_1.createShipmentValidation.validate(req.body);
         if (error)
@@ -75,7 +92,10 @@ router.post('/createShipment', async (req, res) => {
         }
     }
 });
-router.patch('/updateShipment/:id', async (req, res) => {
+router.patch('/updateShipment/:id', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = shipments_validation_1.updateShipmentValidation.validate(req.body);
         if (error)
@@ -92,7 +112,10 @@ router.patch('/updateShipment/:id', async (req, res) => {
         }
     }
 });
-router.patch('/updateShipments', async (req, res) => {
+router.patch('/updateShipments', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = shipments_validation_1.updateShipmentsValidation.validate(req.body);
         if (error)
@@ -109,7 +132,10 @@ router.patch('/updateShipments', async (req, res) => {
         }
     }
 });
-router.delete('/deleteShipment/:id', async (req, res) => {
+router.delete('/deleteShipment/:id', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         await shipments_controller_1.ShipmentsController.deleteShipment(req.params.id);
         return res.status(200).json('success');
