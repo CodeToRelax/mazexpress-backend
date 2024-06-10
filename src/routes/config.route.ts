@@ -1,7 +1,7 @@
 import { ConfigController } from '@/controllers/config.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
-// import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
-// import { checkUserRules } from '@/utils/helpers';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { checkUserRules } from '@/utils/helpers';
 import { CustomExpressRequest } from '@/utils/types';
 import { UpdateshippingConfigValidation } from '@/validation/config.validation';
 import { Router } from 'express';
@@ -11,8 +11,8 @@ const router = Router({
 });
 
 // --- api methods config service--- //
-
-router.get('/getShippingConfig', async (req: CustomExpressRequest, res) => {
+// (admin)
+router.get('/getShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
     // const hasValidRules = await checkUserRules(req.user?.acl, req);
     // if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -28,7 +28,7 @@ router.get('/getShippingConfig', async (req: CustomExpressRequest, res) => {
 });
 
 // (admin)
-router.post('/updateShippingConfig', async (req: CustomExpressRequest, res) => {
+router.post('/updateShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
     // const hasValidRules = await checkUserRules(req.user?.acl, req);
     // if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
