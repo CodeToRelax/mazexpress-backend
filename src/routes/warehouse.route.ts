@@ -10,8 +10,8 @@ const router = Router({
 });
 
 // --- api methods config service--- //
-
-router.get('/getWarehouses', async (req, res) => {
+// works for all
+router.get('/getWarehouses', AuthenticateFbJWT, async (req, res) => {
   try {
     const wareHouses = await WarehouseController.getWarehouses();
     return res.status(200).json(wareHouses);
@@ -44,7 +44,9 @@ router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequ
 });
 
 // (admin)
-router.patch('/updateWarehouse/:id', async (req, res) => {
+router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  if (req.user?.role !== UserTypes.ADMIN)
+    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     // validate body
     const { error } = createWarehouseValidation.validate(req.body);
@@ -61,7 +63,9 @@ router.patch('/updateWarehouse/:id', async (req, res) => {
 });
 
 // (admin)
-router.delete('/deleteWarehouse/:id', async (req, res) => {
+router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  if (req.user?.role !== UserTypes.ADMIN)
+    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     await WarehouseController.deleteWarehouse(req.params.id);
     return res.status(200).json('success');

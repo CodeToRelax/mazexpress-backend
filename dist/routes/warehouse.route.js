@@ -12,7 +12,7 @@ const express_1 = require("express");
 const router = (0, express_1.Router)({
     caseSensitive: true,
 });
-router.get('/getWarehouses', async (req, res) => {
+router.get('/getWarehouses', jwt_middleware_1.default, async (req, res) => {
     try {
         const wareHouses = await warehouse_controller_1.WarehouseController.getWarehouses();
         return res.status(200).json(wareHouses);
@@ -45,7 +45,9 @@ router.post('/createWarehouse', jwt_middleware_1.default, async (req, res) => {
         }
     }
 });
-router.patch('/updateWarehouse/:id', async (req, res) => {
+router.patch('/updateWarehouse/:id', jwt_middleware_1.default, async (req, res) => {
+    if (req.user?.role !== types_1.UserTypes.ADMIN)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = warehouse_validation_1.createWarehouseValidation.validate(req.body);
         if (error)
@@ -62,7 +64,9 @@ router.patch('/updateWarehouse/:id', async (req, res) => {
         }
     }
 });
-router.delete('/deleteWarehouse/:id', async (req, res) => {
+router.delete('/deleteWarehouse/:id', jwt_middleware_1.default, async (req, res) => {
+    if (req.user?.role !== types_1.UserTypes.ADMIN)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         await warehouse_controller_1.WarehouseController.deleteWarehouse(req.params.id);
         return res.status(200).json('success');
