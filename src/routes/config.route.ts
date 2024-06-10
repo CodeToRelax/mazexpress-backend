@@ -14,8 +14,8 @@ const router = Router({
 // (admin)
 router.get('/getShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
-    // const hasValidRules = await checkUserRules(req.user?.acl, req);
-    // if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     const shippingConfig = await ConfigController.getShippingConfig();
     return res.status(200).json(shippingConfig);
   } catch (error) {
@@ -30,8 +30,8 @@ router.get('/getShippingConfig', AuthenticateFbJWT, async (req: CustomExpressReq
 // (admin)
 router.post('/updateShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
-    // const hasValidRules = await checkUserRules(req.user?.acl, req);
-    // if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     // validate body
     const { error } = UpdateshippingConfigValidation.validate(req.body);
     if (error) return res.status(403).json(error);

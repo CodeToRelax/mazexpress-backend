@@ -21,10 +21,17 @@ export const sanitizeSearchParam = (searchParam: string | number) => {
   return validator.escape(searchParam.toString());
 };
 
+const getBasePath = (urlPath: string) => {
+  // Split the URL by '/' and take the first two elements
+  const parts = urlPath.split('/');
+  // Join the first two parts with '/' to form the base path
+  return `${parts[0]}/${parts[1]}`;
+};
+
 export const checkUserRules = async (acls: IUserACL, req: Request) => {
   const methodName = req.method as keyof IUserACL;
   const baseUrl = req.baseUrl.slice(1) as appServices;
-  const urlPath = req.path as string;
+  const urlPath = getBasePath(req.path);
   console.log(urlPath);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-expect-error

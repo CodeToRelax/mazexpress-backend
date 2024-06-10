@@ -1,7 +1,8 @@
 import { WarehouseController } from '@/controllers/warehouse.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
-import { CustomExpressRequest, UserTypes } from '@/utils/types';
+import { checkUserRules } from '@/utils/helpers';
+import { CustomExpressRequest } from '@/utils/types';
 import { createWarehouseValidation } from '@/validation/warehouse.validation';
 import { Router } from 'express';
 
@@ -26,8 +27,9 @@ router.get('/getWarehouses', AuthenticateFbJWT, async (req, res) => {
 
 // (admin)
 router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  if (req.user?.role !== UserTypes.ADMIN)
-    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = createWarehouseValidation.validate(req.body);
@@ -45,8 +47,8 @@ router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequ
 
 // (admin)
 router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  if (req.user?.role !== UserTypes.ADMIN)
-    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     // validate body
     const { error } = createWarehouseValidation.validate(req.body);
@@ -64,8 +66,8 @@ router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpres
 
 // (admin)
 router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  if (req.user?.role !== UserTypes.ADMIN)
-    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     await WarehouseController.deleteWarehouse(req.params.id);
     return res.status(200).json('success');

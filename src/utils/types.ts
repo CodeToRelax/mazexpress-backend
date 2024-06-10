@@ -144,7 +144,7 @@ export interface IUpdateUserAdmin {
   phoneNumber: string;
 }
 
-const systemServices = ['auth', 'user', 'warehouse'] as const;
+const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments'] as const;
 export type appServices = (typeof systemServices)[number];
 
 const getEndpoints = ['/getShippingConfig'] as const;

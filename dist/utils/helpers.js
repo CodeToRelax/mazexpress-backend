@@ -26,10 +26,14 @@ const sanitizeSearchParam = (searchParam) => {
     return validator_1.default.escape(searchParam.toString());
 };
 exports.sanitizeSearchParam = sanitizeSearchParam;
+const getBasePath = (urlPath) => {
+    const parts = urlPath.split('/');
+    return `${parts[0]}/${parts[1]}`;
+};
 const checkUserRules = async (acls, req) => {
     const methodName = req.method;
     const baseUrl = req.baseUrl.slice(1);
-    const urlPath = req.path;
+    const urlPath = getBasePath(req.path);
     console.log(urlPath);
     if (!acls[methodName] || !acls[methodName][baseUrl] || !acls[methodName][baseUrl]?.includes(urlPath)) {
         return false;
