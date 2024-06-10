@@ -1,15 +1,23 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_controller_1 = require("../controllers/auth.controller");
 const user_controller_1 = require("../controllers/user.controller");
 const error_middleware_1 = require("../middlewares/error.middleware");
+const jwt_middleware_1 = __importDefault(require("../middlewares/jwt.middleware"));
+const helpers_1 = require("../utils/helpers");
 const auth_validation_1 = require("../validation/auth.validation");
 const user_validation_1 = require("../validation/user.validation");
 const express_1 = require("express");
 const router = (0, express_1.Router)({
     caseSensitive: true,
 });
-router.get('/getAllUsers', async (req, res) => {
+router.get('/getAllUsers', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     const { page } = req.query;
     try {
         const paginationOptions = {
@@ -32,7 +40,10 @@ router.get('/getAllUsers', async (req, res) => {
         }
     }
 });
-router.get('/getAllUsersUnpaginated', async (req, res) => {
+router.get('/getAllUsersUnpaginated', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const results = await user_controller_1.UserController.getAllUsersUnpaginated();
         return res.status(200).json(results);
@@ -57,7 +68,10 @@ router.get('/:id', async (req, res) => {
         throw new error_middleware_1.CustomErrorHandler(404, 'common.error', 'common.userNotFound', error);
     }
 });
-router.post('/createUser', async (req, res) => {
+router.post('/createUser', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = auth_validation_1.createUserValidation.validate(req.body);
         if (error)
@@ -74,7 +88,10 @@ router.post('/createUser', async (req, res) => {
         }
     }
 });
-router.patch('/toggleUser', async (req, res) => {
+router.patch('/toggleUser', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = auth_validation_1.toggleUserValidation.validate(req.body);
         if (error)
@@ -91,7 +108,10 @@ router.patch('/toggleUser', async (req, res) => {
         }
     }
 });
-router.patch('/updateUser/:id', async (req, res) => {
+router.patch('/updateUser/:id', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     if (!req.params.id)
         throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
     try {
@@ -111,12 +131,12 @@ router.patch('/updateUser/:id', async (req, res) => {
         }
     }
 });
-router.patch('/updateProfile', async (req, res) => {
+router.patch('/updateProfile', jwt_middleware_1.default, async (req, res) => {
     try {
         const { error } = user_validation_1.UpdateProfileValidation.validate(req.body);
         if (error)
             return res.status(403).json(error);
-        const results = await user_controller_1.UserController.updateUser({ _id: '' }, req.body);
+        const results = await user_controller_1.UserController.updateUser({ _id: req.user?.mongoId }, req.body);
         return res.status(200).json(results);
     }
     catch (error) {
@@ -128,7 +148,10 @@ router.patch('/updateProfile', async (req, res) => {
         }
     }
 });
-router.delete('/deleteUser', async (req, res) => {
+router.delete('/deleteUser', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = user_validation_1.deleteUserValidation.validate(req.body);
         if (error)

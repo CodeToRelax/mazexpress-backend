@@ -1,6 +1,8 @@
 import { AuthController } from '@/controllers/auth.controller';
 import { UserController } from '@/controllers/user.controller';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { checkUserRules } from '@/utils/helpers';
 // import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
 // import { checkUserRules } from '@/utils/helpers';
 import { CustomExpressRequest, IGetAllUsersFilters } from '@/utils/types';
@@ -15,7 +17,10 @@ const router = Router({
 // --- api methods user service--- //
 
 // (admin)
-router.get('/getAllUsers', async (req, res) => {
+router.get('/getAllUsers', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   const { page } = req.query;
   try {
     const paginationOptions = {
@@ -38,7 +43,11 @@ router.get('/getAllUsers', async (req, res) => {
   }
 });
 
-router.get('/getAllUsersUnpaginated', async (req, res) => {
+// (admin)
+router.get('/getAllUsersUnpaginated', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     const results = await UserController.getAllUsersUnpaginated();
     return res.status(200).json(results);
@@ -51,7 +60,7 @@ router.get('/getAllUsersUnpaginated', async (req, res) => {
   }
 });
 
-// get a single user (admin/customer)
+// TODO get a single user (admin/customer) (breaking changes)
 router.get('/:id', async (req: CustomExpressRequest, res) => {
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
   try {
@@ -66,7 +75,10 @@ router.get('/:id', async (req: CustomExpressRequest, res) => {
 });
 
 // (admin)
-router.post('/createUser', async (req, res) => {
+router.post('/createUser', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = createUserValidation.validate(req.body);
@@ -83,8 +95,11 @@ router.post('/createUser', async (req, res) => {
   }
 });
 
-// toggle user
-router.patch('/toggleUser', async (req, res) => {
+// toggle user (admin)
+router.patch('/toggleUser', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = toggleUserValidation.validate(req.body);
@@ -101,9 +116,11 @@ router.patch('/toggleUser', async (req, res) => {
 });
 
 // update user (admin)
-router.patch('/updateUser/:id', async (req, res) => {
-  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+router.patch('/updateUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
+  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
   try {
     // validate body
     const { error } = AdminUpdateUserValidation.validate(req.body);
@@ -120,14 +137,13 @@ router.patch('/updateUser/:id', async (req, res) => {
   }
 });
 
-// update user profile (for cutsomers)
-// TODO check jwt id
-router.patch('/updateProfile', async (req, res) => {
+// all users using their Id from JWT
+router.patch('/updateProfile', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
     // validate body
     const { error } = UpdateProfileValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    const results = await UserController.updateUser({ _id: '' }, req.body);
+    const results = await UserController.updateUser({ _id: req.user?.mongoId }, req.body);
     return res.status(200).json(results); // TODO profile update message
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
@@ -139,7 +155,10 @@ router.patch('/updateProfile', async (req, res) => {
 });
 
 // delete user (admin)
-router.delete('/deleteUser', async (req, res) => {
+router.delete('/deleteUser', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     const { error } = deleteUserValidation.validate(req.body);
     if (error) return res.status(403).json(error);
