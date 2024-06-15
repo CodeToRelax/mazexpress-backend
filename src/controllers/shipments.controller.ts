@@ -9,15 +9,18 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
   try {
     let query: any = {};
 
-    // Handle searchParam filter
     if (filters.searchParam) {
-      const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
-      query.$or = [
+    const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+    query = {
+      $or: [
         { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
         { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
         { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-      ];
-    }
+      ],
+    };
+  } else {
+    query = {...filters};
+  }
 
     // Handle date filters
     if (filters.from || filters.to) {
@@ -31,9 +34,6 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
         query.createdAt.$lte = toDate;
       }
     }
-
-    // Combine filters with query if any other filters exist
-    query = { ...query, ...filters };
 
     // Fetch shipments based on the constructed query
     const shipments = await ShipmentsCollection.paginate(query, paginationOptions);
