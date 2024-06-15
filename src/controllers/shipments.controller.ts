@@ -5,41 +5,38 @@ import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
 import { PaginateOptions } from 'mongoose';
 
 // pass in filters
-const getShipments = async (filters: IShipmentsFilters, paginationOtpions?: PaginateOptions) => {
+const getShipments = async (filters: IShipmentsFilters, paginationOptions?: PaginateOptions) => {
   try {
+    let query: any = {};
+
+    // Handle searchParam filter
     if (filters.searchParam) {
-      let query = {};
-
-      if (filters.searchParam) {
-        const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
-        query = {
-          $or: [
-            { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
-            { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
-            { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-          ],
-        };
-      } else {
-        query = filters;
-      }
-
-      // Handle date filters
-          if (filters.from || filters.to) {
-            query.createdAt = {};
-            if (filters.from) {
-              const fromDate = new Date(filters.from);
-              query.createdAt.$gte = fromDate;
-            }
-            if (filters.to) {
-              const toDate = new Date(filters.to);
-              query.createdAt.$lte = toDate;
-            }
-          }
-      
-      const shipments = await ShipmentsCollection.paginate(query, paginationOtpions);
-      return shipments;
+      const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+      query.$or = [
+        { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+        { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+        { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+      ];
     }
-    const shipments = await ShipmentsCollection.paginate(filters, paginationOtpions);
+
+    // Handle date filters
+    if (filters.from || filters.to) {
+      query.createdAt = {};
+      if (filters.from) {
+        const fromDate = new Date(filters.from);
+        query.createdAt.$gte = fromDate;
+      }
+      if (filters.to) {
+        const toDate = new Date(filters.to);
+        query.createdAt.$lte = toDate;
+      }
+    }
+
+    // Combine filters with query if any other filters exist
+    query = { ...query, ...filters };
+
+    // Fetch shipments based on the constructed query
+    const shipments = await ShipmentsCollection.paginate(query, paginationOptions);
     return shipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
