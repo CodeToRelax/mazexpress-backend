@@ -22,6 +22,20 @@ const getShipments = async (filters: IShipmentsFilters, paginationOtpions?: Pagi
       } else {
         query = filters;
       }
+
+      // Handle date filters
+          if (filters.from || filters.to) {
+            query.createdAt = {};
+            if (filters.from) {
+              const fromDate = new Date(filters.from);
+              query.createdAt.$gte = fromDate;
+            }
+            if (filters.to) {
+              const toDate = new Date(filters.to);
+              query.createdAt.$lte = toDate;
+            }
+          }
+      
       const shipments = await ShipmentsCollection.paginate(query, paginationOtpions);
       return shipments;
     }
