@@ -151,11 +151,36 @@ export interface IUpdateUserAdmin {
 const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments'] as const;
 export type appServices = (typeof systemServices)[number];
 
-const getEndpoints = ['/getShippingConfig'] as const;
-const postEndpoints = ['/signUp', '/updateShippingConfig'] as const;
+const getEndpoints = [
+  '/getShippingConfig',
+  '/getWarehouses',
+  '/acl',
+  '/getAllUsers',
+  '/getAllUsersUnpaginated',
+  '/',
+  '/getShipments',
+  '/getShipmentsUnpaginated',
+  '/getShipment',
+  '/getInvoiceShipments',
+] as const;
+const postEndpoints = [
+  '/signUp',
+  '/updateShippingConfig',
+  '/createWarehouse',
+  '/createUser',
+  '/createShipment',
+] as const;
 const updateEndpoints = [] as const;
-const deleteEndpoints = [] as const;
-const patchEndpoints = [] as const;
+const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipment'] as const;
+const patchEndpoints = [
+  '/updateWarehouse',
+  '/acl',
+  '/toggleUser',
+  '/updateUser',
+  '/updateProfile',
+  '/updateShipment',
+  '/updateShipments',
+] as const;
 
 export interface IUserACL {
   GET: {

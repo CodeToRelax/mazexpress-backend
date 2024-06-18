@@ -19,9 +19,34 @@ var UserTypes;
     UserTypes["CUSTOMER"] = "customer";
 })(UserTypes || (exports.UserTypes = UserTypes = {}));
 const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments'];
-const getEndpoints = ['/getShippingConfig'];
-const postEndpoints = ['/signUp', '/updateShippingConfig'];
+const getEndpoints = [
+    '/getShippingConfig',
+    '/getWarehouses',
+    '/acl',
+    '/getAllUsers',
+    '/getAllUsersUnpaginated',
+    '/',
+    '/getShipments',
+    '/getShipmentsUnpaginated',
+    '/getShipment',
+    '/getInvoiceShipments',
+];
+const postEndpoints = [
+    '/signUp',
+    '/updateShippingConfig',
+    '/createWarehouse',
+    '/createUser',
+    '/createShipment',
+];
 const updateEndpoints = [];
-const deleteEndpoints = [];
-const patchEndpoints = [];
+const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipment'];
+const patchEndpoints = [
+    '/updateWarehouse',
+    '/acl',
+    '/toggleUser',
+    '/updateUser',
+    '/updateProfile',
+    '/updateShipment',
+    '/updateShipments',
+];
 //# sourceMappingURL=types.js.map

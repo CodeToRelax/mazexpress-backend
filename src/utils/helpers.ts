@@ -94,18 +94,70 @@ export const generateExternalTrackingNumber = (length: number = 10): string => {
 export const generateAcl = (customerType: UserTypes): IUserACL => {
   if (customerType === UserTypes.CUSTOMER) {
     return {
-      GET: {},
-      POST: { auth: ['/signUp'] },
-      UPDATE: {},
-      DELETE: {},
-      PATCH: {},
+      GET: {
+        warehouse: ['/getWarehouses'],
+        config: [],
+        auth: [],
+        user: ['/'],
+        shipments: ['/getShipments', '/getShipment'],
+      },
+      POST: {
+        warehouse: [],
+        auth: ['/signUp'],
+        config: [],
+        user: [],
+        shipments: [],
+      },
+      DELETE: {
+        warehouse: [],
+        user: [],
+        shipments: [],
+      },
+      PATCH: {
+        warehouse: [],
+        auth: [],
+        user: ['/updateProfile'],
+        shipments: [],
+      },
+      UPDATE: {
+        warehouse: [],
+        auth: [],
+        user: [],
+        shipments: [],
+      },
     };
   }
   return {
-    GET: {},
-    POST: { auth: ['/signUp'] },
-    UPDATE: {},
-    DELETE: {},
-    PATCH: {},
+    GET: {
+      warehouse: ['/getWarehouses'],
+      config: [],
+      auth: [],
+      user: ['/getAllUsers', '/getAllUsersUnpaginated', '/'],
+      shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
+    },
+    POST: {
+      warehouse: [],
+      auth: [],
+      config: [],
+      user: ['/createUser'],
+      shipments: ['/createShipment'],
+    },
+    DELETE: {
+      warehouse: [],
+      user: [],
+      shipments: [],
+    },
+    PATCH: {
+      warehouse: ['/updateWarehouse'],
+      auth: [],
+      user: ['/toggleUser', '/updateUser', '/updateProfile'],
+      shipments: ['/updateShipment', '/updateShipments'],
+    },
+    UPDATE: {
+      warehouse: [],
+      auth: [],
+      user: [],
+      shipments: [],
+    },
   };
 };
