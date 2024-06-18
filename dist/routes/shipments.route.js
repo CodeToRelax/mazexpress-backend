@@ -59,6 +59,8 @@ router.get('/getShipment/:esn', jwt_middleware_1.default, async (req, res) => {
     const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
     if (!hasValidRules)
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    if (!req.params.esn)
+        throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
     try {
         const shipment = await shipments_controller_1.ShipmentsController.getShipment(req.params.esn);
         return res.status(200).json(shipment);
@@ -72,9 +74,17 @@ router.get('/getShipment/:esn', jwt_middleware_1.default, async (req, res) => {
         }
     }
 });
-router.get('/getInvoiceShipments', async (req, res) => {
+router.get('/getInvoiceShipments/:id', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    if (!req.params.id)
+        throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
     try {
-        const shipment = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
+        const shipment = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({
+            status: 'ready for pick up',
+            _id: req.params.id,
+        });
         return res.status(200).json(shipment);
     }
     catch (error) {

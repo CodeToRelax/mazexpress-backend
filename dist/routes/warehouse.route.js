@@ -70,6 +70,8 @@ router.delete('/deleteWarehouse/:id', jwt_middleware_1.default, async (req, res)
     const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
     if (!hasValidRules)
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    if (!req.params.id)
+        throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
     try {
         await warehouse_controller_1.WarehouseController.deleteWarehouse(req.params.id);
         return res.status(200).json('success');

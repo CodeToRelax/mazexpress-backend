@@ -68,6 +68,8 @@ router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpres
 router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+
   try {
     await WarehouseController.deleteWarehouse(req.params.id);
     return res.status(200).json('success');

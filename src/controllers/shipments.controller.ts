@@ -52,7 +52,7 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
   }
 };
 
-const getShipmentsUnpaginated = async (filters?: { status: string }) => {
+const getShipmentsUnpaginated = async (filters?: { status: string; _id: string }) => {
   try {
     const shipments = await ShipmentsCollection.find(filters ? filters : {});
     return shipments;

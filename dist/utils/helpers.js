@@ -83,7 +83,7 @@ const generateAcl = (customerType) => {
                 warehouse: ['/getWarehouses'],
                 config: [],
                 auth: [],
-                user: ['/'],
+                user: ['/getUser'],
                 shipments: ['/getShipments', '/getShipment'],
             },
             POST: {
@@ -117,7 +117,7 @@ const generateAcl = (customerType) => {
             warehouse: ['/getWarehouses'],
             config: [],
             auth: [],
-            user: ['/getAllUsers', '/getAllUsersUnpaginated', '/'],
+            user: ['/getAllUsers', '/getAllUsersUnpaginated', '/getUser'],
             shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
         },
         POST: {

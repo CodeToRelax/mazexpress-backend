@@ -25,7 +25,7 @@ const getEndpoints = [
     '/acl',
     '/getAllUsers',
     '/getAllUsersUnpaginated',
-    '/',
+    '/getUser',
     '/getShipments',
     '/getShipmentsUnpaginated',
     '/getShipment',

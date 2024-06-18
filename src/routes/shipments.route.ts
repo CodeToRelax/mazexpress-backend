@@ -72,6 +72,8 @@ router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequ
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
+  if (!req.params.esn) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+
   try {
     const shipment = await ShipmentsController.getShipment(req.params.esn);
     return res.status(200).json(shipment);
@@ -86,9 +88,17 @@ router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequ
 
 // TODO get invoice by user ID
 // (admin)
-router.get('/getInvoiceShipments', async (req, res) => {
+router.get('/getInvoiceShipments/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
+  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+
   try {
-    const shipment = await ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
+    const shipment = await ShipmentsController.getShipmentsUnpaginated({
+      status: 'ready for pick up',
+      _id: req.params.id,
+    });
     return res.status(200).json(shipment);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

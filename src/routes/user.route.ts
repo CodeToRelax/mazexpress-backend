@@ -61,7 +61,10 @@ router.get('/getAllUsersUnpaginated', AuthenticateFbJWT, async (req: CustomExpre
 });
 
 // TODO get a single user (admin/customer) (breaking changes)
-router.get('/:id', async (req: CustomExpressRequest, res) => {
+router.get('/getUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
   try {
     // const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -139,6 +142,9 @@ router.patch('/updateUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequ
 
 // all users using their Id from JWT (TODO)
 router.patch('/updateProfile', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     // validate body
     const { error } = UpdateProfileValidation.validate(req.body);

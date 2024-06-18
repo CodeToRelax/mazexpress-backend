@@ -57,7 +57,10 @@ router.get('/getAllUsersUnpaginated', jwt_middleware_1.default, async (req, res)
         }
     }
 });
-router.get('/:id', async (req, res) => {
+router.get('/getUser/:id', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     if (!req.params.id)
         throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
     try {
@@ -132,6 +135,9 @@ router.patch('/updateUser/:id', jwt_middleware_1.default, async (req, res) => {
     }
 });
 router.patch('/updateProfile', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const { error } = user_validation_1.UpdateProfileValidation.validate(req.body);
         if (error)
