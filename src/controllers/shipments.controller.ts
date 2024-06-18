@@ -27,7 +27,6 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
     } else {
       query = { ...filters };
     }
-
     // Handle date filters
     if (filters.from || filters.to) {
       query.createdAt = {};
@@ -39,7 +38,11 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
         const toDate = new Date(filters.to);
         query.createdAt.$lte = toDate;
       }
+      delete query.from;
+      delete query.to;
     }
+
+    console.log(query);
 
     // Fetch shipments based on the constructed query
     const shipments = await ShipmentsCollection.paginate(query, paginationOptions);

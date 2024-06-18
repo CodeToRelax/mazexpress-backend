@@ -20,9 +20,9 @@ const router = Router({
 // --- api methods config service--- //
 
 // (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
-router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  const hasValidRules = await checkUserRules(req.user?.acl, req);
-  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+router.get('/getShipments', async (req: CustomExpressRequest, res) => {
+  // const hasValidRules = await checkUserRules(req.user?.acl, req);
+  // if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
   const { page } = req.query;
   try {

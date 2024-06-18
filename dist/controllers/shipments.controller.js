@@ -33,7 +33,10 @@ const getShipments = async (filters, paginationOptions) => {
                 const toDate = new Date(filters.to);
                 query.createdAt.$lte = toDate;
             }
+            delete query.from;
+            delete query.to;
         }
+        console.log(query);
         const shipments = await shipments_model_1.default.paginate(query, paginationOptions);
         return shipments;
     }
