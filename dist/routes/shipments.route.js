@@ -12,7 +12,10 @@ const express_1 = require("express");
 const router = (0, express_1.Router)({
     caseSensitive: true,
 });
-router.get('/getShipments', async (req, res) => {
+router.get('/getShipments', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     const { page } = req.query;
     try {
         const paginationOptions = {
