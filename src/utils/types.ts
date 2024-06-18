@@ -26,6 +26,8 @@ export interface IUser {
 
 export interface IGetAllUsersFilters extends IUser {
   searchParam: string;
+  from: string;
+  to: string;
 }
 
 export interface IUserUpdate
