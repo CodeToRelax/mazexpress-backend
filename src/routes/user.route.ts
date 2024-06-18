@@ -137,7 +137,7 @@ router.patch('/updateUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequ
   }
 });
 
-// all users using their Id from JWT
+// all users using their Id from JWT (TODO)
 router.patch('/updateProfile', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
     // validate body

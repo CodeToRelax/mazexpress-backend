@@ -14,6 +14,9 @@ const router = Router({
   caseSensitive: true,
 });
 
+// TODO check user type and return shipments accordingly
+// check admin location when returning shipments
+
 // --- api methods config service--- //
 
 // (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
@@ -45,6 +48,7 @@ router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest,
   }
 });
 
+// check user type and return shipments accordingly
 // (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
 router.get('/getShipmentsUnpaginated', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -62,6 +66,7 @@ router.get('/getShipmentsUnpaginated', AuthenticateFbJWT, async (req: CustomExpr
   }
 });
 
+// check user type and return shipments accordingly
 // (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
 router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -69,6 +74,21 @@ router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequ
 
   try {
     const shipment = await ShipmentsController.getShipment(req.params.esn);
+    return res.status(200).json(shipment);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
+// TODO get invoice by user ID
+// (admin)
+router.get('/getInvoiceShipments', async (req, res) => {
+  try {
+    const shipment = await ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
     return res.status(200).json(shipment);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
@@ -99,6 +119,7 @@ router.post('/createShipment', AuthenticateFbJWT, async (req: CustomExpressReque
   }
 });
 
+// check for admin location except for mohammed
 // (admin)
 router.patch('/updateShipment/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -147,20 +168,6 @@ router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpres
   try {
     await ShipmentsController.deleteShipment(req.params.id);
     return res.status(200).json('success');
-  } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-    }
-  }
-});
-
-// (admin)
-router.get('/getInvoiceShipments', async (req, res) => {
-  try {
-    const shipment = await ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
-    return res.status(200).json(shipment);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
       throw error;

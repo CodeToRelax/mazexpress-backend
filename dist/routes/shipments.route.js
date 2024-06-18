@@ -72,6 +72,20 @@ router.get('/getShipment/:esn', jwt_middleware_1.default, async (req, res) => {
         }
     }
 });
+router.get('/getInvoiceShipments', async (req, res) => {
+    try {
+        const shipment = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
+        return res.status(200).json(shipment);
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
 router.post('/createShipment', jwt_middleware_1.default, async (req, res) => {
     const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
     if (!hasValidRules)
@@ -139,20 +153,6 @@ router.delete('/deleteShipment/:id', jwt_middleware_1.default, async (req, res) 
     try {
         await shipments_controller_1.ShipmentsController.deleteShipment(req.params.id);
         return res.status(200).json('success');
-    }
-    catch (error) {
-        if (error instanceof error_middleware_1.CustomErrorHandler) {
-            throw error;
-        }
-        else {
-            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-        }
-    }
-});
-router.get('/getInvoiceShipments', async (req, res) => {
-    try {
-        const shipment = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({ status: 'ready for pick up' });
-        return res.status(200).json(shipment);
     }
     catch (error) {
         if (error instanceof error_middleware_1.CustomErrorHandler) {
