@@ -4,23 +4,29 @@ import { generateExternalTrackingNumber, sanitizeSearchParam } from '@/utils/hel
 import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
 import { PaginateOptions } from 'mongoose';
 
+interface Query {
+  $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
+  createdAt?: { $gte?: Date; $lte?: Date };
+  [key: string]: unknown; // For additional dynamic properties
+}
+
 // pass in filters
 const getShipments = async (filters: IShipmentsFilters, paginationOptions?: PaginateOptions) => {
   try {
-    let query: any = {};
+    let query: Query = {};
 
     if (filters.searchParam) {
-    const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
-    query = {
-      $or: [
-        { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
-        { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
-        { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-      ],
-    };
-  } else {
-    query = {...filters};
-  }
+      const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+      query = {
+        $or: [
+          { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+          { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+          { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+        ],
+      };
+    } else {
+      query = { ...filters };
+    }
 
     // Handle date filters
     if (filters.from || filters.to) {

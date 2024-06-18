@@ -7,27 +7,34 @@ exports.ShipmentsController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const helpers_1 = require("../utils/helpers");
-const getShipments = async (filters, paginationOtpions) => {
+const getShipments = async (filters, paginationOptions) => {
     try {
+        let query = {};
         if (filters.searchParam) {
-            let query = {};
-            if (filters.searchParam) {
-                const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
-                query = {
-                    $or: [
-                        { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                        { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                        { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    ],
-                };
-            }
-            else {
-                query = filters;
-            }
-            const shipments = await shipments_model_1.default.paginate(query, paginationOtpions);
-            return shipments;
+            const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
+            query = {
+                $or: [
+                    { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                    { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                ],
+            };
         }
-        const shipments = await shipments_model_1.default.paginate(filters, paginationOtpions);
+        else {
+            query = { ...filters };
+        }
+        if (filters.from || filters.to) {
+            query.createdAt = {};
+            if (filters.from) {
+                const fromDate = new Date(filters.from);
+                query.createdAt.$gte = fromDate;
+            }
+            if (filters.to) {
+                const toDate = new Date(filters.to);
+                query.createdAt.$lte = toDate;
+            }
+        }
+        const shipments = await shipments_model_1.default.paginate(query, paginationOptions);
         return shipments;
     }
     catch (error) {

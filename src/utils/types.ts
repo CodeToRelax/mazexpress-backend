@@ -128,6 +128,8 @@ export interface IUpdateShipments {
 
 export interface IShipmentsFilters extends IShipments {
   searchParam: string;
+  from: string;
+  to: string;
 }
 
 export type shipmentDestination = 'benghazi' | 'musrata' | 'tripoli';
