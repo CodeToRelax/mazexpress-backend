@@ -49,7 +49,7 @@ exports.toggleUserValidation = joi_1.default.object({
     status: joi_1.default.string().valid('enable', 'disable').required(),
 });
 exports.updateAclValidation = joi_1.default.object({
-    userId: joi_1.default.string().guid().required(),
+    userId: joi_1.default.string().required(),
     rules: joi_1.default
         .object({
         DELETE: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),

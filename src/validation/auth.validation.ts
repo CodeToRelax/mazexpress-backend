@@ -47,7 +47,7 @@ export const toggleUserValidation = joi.object({
 });
 
 export const updateAclValidation = joi.object({
-  userId: joi.string().guid().required(),
+  userId: joi.string().required(),
   rules: joi
     .object({
       DELETE: joi.object().pattern(joi.string(), joi.any()),
