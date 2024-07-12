@@ -20,7 +20,7 @@ exports.createShipmentValidation = joi_1.default.object({
     note: joi_1.default.string(),
     status: joi_1.default
         .string()
-        .valid('recieved at warehouse', 'shipped to destination', 'transit', 'at sorting facility', 'on hold', 'ready for pick up')
+        .valid('recieved at warehouse', 'shipped to destination', 'on hold', 'at sorting facility', 'ready for pick up', 'delivered')
         .required(),
 });
 exports.updateShipmentValidation = joi_1.default.object({
@@ -38,14 +38,14 @@ exports.updateShipmentValidation = joi_1.default.object({
     note: joi_1.default.string(),
     status: joi_1.default
         .string()
-        .valid('recieved at warehouse', 'shipped to destination', 'on hold', 'at sorting facility', 'on hold', 'ready for pick up')
+        .valid('recieved at warehouse', 'shipped to destination', 'on hold', 'at sorting facility', 'ready for pick up', 'delivered')
         .required(),
 });
 exports.updateShipmentsValidation = joi_1.default.object({
     shipmentsId: joi_1.default.array().items(joi_1.default.string()).required(),
     shipmentStatus: joi_1.default
         .string()
-        .valid('recieved at warehouse', 'shipped to destination', 'on hold', 'at sorting facility', 'on hold', 'ready for pick up')
+        .valid('recieved at warehouse', 'shipped to destination', 'on hold', 'at sorting facility', 'ready for pick up', 'delivered')
         .required(),
 });
 //# sourceMappingURL=shipments.validation.js.map

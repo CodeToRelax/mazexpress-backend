@@ -18,10 +18,10 @@ export const createShipmentValidation = joi.object({
     .valid(
       'recieved at warehouse',
       'shipped to destination',
-      'transit',
-      'at sorting facility',
       'on hold',
-      'ready for pick up'
+      'at sorting facility',
+      'ready for pick up',
+      'delivered'
     )
     .required(),
 });
@@ -46,8 +46,8 @@ export const updateShipmentValidation = joi.object({
       'shipped to destination',
       'on hold',
       'at sorting facility',
-      'on hold',
-      'ready for pick up'
+      'ready for pick up',
+      'delivered'
     )
     .required(),
 });
@@ -61,8 +61,8 @@ export const updateShipmentsValidation = joi.object({
       'shipped to destination',
       'on hold',
       'at sorting facility',
-      'on hold',
-      'ready for pick up'
+      'ready for pick up',
+      'delivered'
     )
     .required(),
 });
