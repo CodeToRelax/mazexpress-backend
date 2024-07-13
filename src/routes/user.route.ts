@@ -140,7 +140,7 @@ router.patch('/updateUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequ
   }
 });
 
-// all users using their Id from JWT (TODO)
+// all users using their Id from JWT
 router.patch('/updateProfile', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -150,7 +150,7 @@ router.patch('/updateProfile', AuthenticateFbJWT, async (req: CustomExpressReque
     const { error } = UpdateProfileValidation.validate(req.body);
     if (error) return res.status(403).json(error);
     const results = await UserController.updateUser({ _id: req.user?.mongoId }, req.body);
-    return res.status(200).json(results); // TODO profile update message
+    return res.status(200).json(results);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
       throw error;
