@@ -12,7 +12,7 @@ import ConfigRouter from '@/routes/config.route';
 
 const createExpressServer = () => {
   const App: Application = express();
-
+  console.log('test');
   // request middlewares
   App.use(cors());
   App.use(bodyParser.json());
