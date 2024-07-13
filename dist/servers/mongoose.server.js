@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const ConnectToMongoDB = async (uri) => {
     try {
         await mongoose_1.default.connect(uri, {
+            dbName: 'prod',
             serverApi: {
                 version: mongodb_1.ServerApiVersion.v1,
                 strict: true,

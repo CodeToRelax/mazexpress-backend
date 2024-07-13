@@ -20,7 +20,7 @@ const fbApp = Firebase.initializeApp({
 export const fbAuth = getAuth(fbApp);
 
 // --- DB connection --- //
-const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@main.ybp56ng.mongodb.net/`;
+const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.zcp9uit.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 ConnectToMongoDB(DB_URI);
 // --- server connection --- //
 const port = process.env.PORT ? process.env.PORT : 3002;

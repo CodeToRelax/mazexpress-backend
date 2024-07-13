@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 const ConnectToMongoDB = async (uri: string) => {
   try {
     await mongoose.connect(uri, {
+      dbName: 'prod',
       serverApi: {
         version: ServerApiVersion.v1,
         strict: true,

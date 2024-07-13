@@ -42,7 +42,7 @@ const fbApp = Firebase.initializeApp({
     projectId: process.env.FIREBASE_PROJECT_ID,
 });
 exports.fbAuth = (0, auth_1.getAuth)(fbApp);
-const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@main.ybp56ng.mongodb.net/`;
+const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.zcp9uit.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 (0, mongoose_server_1.default)(DB_URI);
 const port = process.env.PORT ? process.env.PORT : 3002;
 const server = (0, express_server_1.default)();

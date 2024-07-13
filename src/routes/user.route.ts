@@ -58,7 +58,7 @@ router.get('/getAllUsersUnpaginated', AuthenticateFbJWT, async (req: CustomExpre
   }
 });
 
-// TODO get a single user (admin/customer) (breaking changes)
+// (admin)
 router.get('/getUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
