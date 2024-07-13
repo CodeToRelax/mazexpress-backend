@@ -18,56 +18,77 @@ interface Query {
 }
 
 // pass in filters
-const getShipments = async (filters: IShipmentsFilters, paginationOptions?: PaginateOptions) => {
+const getShipments = async (filters: IShipmentsFilters, paginationOptions?: PaginateOptions, user?: DecodedIdToken) => {
+  let query: Query = {};
+  if (filters.searchParam) {
+    const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+    query = {
+      $or: [
+        { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+        { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+        { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+      ],
+    };
+  } else {
+    query = { ...filters };
+  }
+  if (filters.from || filters.to) {
+    query.createdAt = {};
+    if (filters.from) {
+      const fromDate = new Date(filters.from);
+      query.createdAt.$gte = fromDate;
+    }
+    if (filters.to) {
+      const toDate = new Date(filters.to);
+      query.createdAt.$lte = toDate;
+    }
+    delete query.from;
+    delete query.to;
+  }
   try {
-    let query: Query = {};
-
-    if (filters.searchParam) {
-      const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
-      query = {
-        $or: [
-          { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
-          { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
-          { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-        ],
-      };
-    } else {
-      query = { ...filters };
+    const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+    let validShipments: IShipments[] = [];
+    const userCountry = mongoUser[0]?.address.country;
+    if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+      const finalFilters = { ...query, csn: mongoUser[0].uniqueShippingNumber };
+      validShipments = await ShipmentsCollection.find(filters ? finalFilters : {});
+      return validShipments;
     }
-    // Handle date filters
-    if (filters.from || filters.to) {
-      query.createdAt = {};
-      if (filters.from) {
-        const fromDate = new Date(filters.from);
-        query.createdAt.$gte = fromDate;
-      }
-      if (filters.to) {
-        const toDate = new Date(filters.to);
-        query.createdAt.$lte = toDate;
-      }
-      delete query.from;
-      delete query.to;
-    }
+    validShipments = await ShipmentsCollection.find(filters ? query : {});
+    const adminAccessableShipments = validShipments.filter((shipment) =>
+      checkAdminResponsibility(userCountry as countriesEnum, shipment.status)
+    );
 
-    console.log(query);
-
-    // Fetch shipments based on the constructed query
-    const shipments = await ShipmentsCollection.paginate(query, paginationOptions);
-    return shipments;
+    return adminAccessableShipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
   }
 };
 
-const getShipmentsUnpaginated = async (filters?: { status: string; _id: string }) => {
+const getShipmentsUnpaginated = async (filters?: { status?: string; _id?: string }, user?: DecodedIdToken) => {
   try {
-    const shipments = await ShipmentsCollection.find(filters ? filters : {});
-    return shipments;
+    const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+    let validShipments: IShipments[] = [];
+    const userCountry = mongoUser[0]?.address.country;
+    if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+      const finalFilters = { ...filters, csn: mongoUser[0].uniqueShippingNumber };
+      validShipments = await ShipmentsCollection.find(filters ? finalFilters : {});
+      return validShipments;
+    }
+
+    validShipments = await ShipmentsCollection.find(filters ? filters : {});
+
+    const adminAccessableShipments = validShipments.filter((shipment) =>
+      checkAdminResponsibility(userCountry as countriesEnum, shipment.status)
+    );
+
+    return adminAccessableShipments;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
   }
 };
 
+// anyone can check any shipment similar for tracking
 const getShipment = async (shipmentEsn: string) => {
   const user = ShipmentsCollection.findOne({ esn: shipmentEsn });
   return user;

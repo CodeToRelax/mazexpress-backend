@@ -26,7 +26,7 @@ router.get('/getShipments', jwt_middleware_1.default, async (req, res) => {
         delete filters.page;
         delete filters.sort;
         delete filters.limit;
-        const shipments = await shipments_controller_1.ShipmentsController.getShipments(filters, paginationOptions);
+        const shipments = await shipments_controller_1.ShipmentsController.getShipments(filters, paginationOptions, req.user);
         return res.status(200).json(shipments);
     }
     catch (error) {
@@ -43,7 +43,7 @@ router.get('/getShipmentsUnpaginated', jwt_middleware_1.default, async (req, res
     if (!hasValidRules)
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
-        const shipments = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated();
+        const shipments = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({}, req?.user);
         return res.status(200).json(shipments);
     }
     catch (error) {
@@ -84,7 +84,7 @@ router.get('/getInvoiceShipments/:id', jwt_middleware_1.default, async (req, res
         const shipment = await shipments_controller_1.ShipmentsController.getShipmentsUnpaginated({
             status: 'ready for pick up',
             _id: req.params.id,
-        });
+        }, req?.user);
         return res.status(200).json(shipment);
     }
     catch (error) {

@@ -8,8 +8,8 @@ export enum countriesEnum {
 }
 
 const countriesPerStatus = {
-  [countriesEnum.LIBYA]: ['recieved at warehouse', 'shipped to destination'],
-  [countriesEnum.TURKEY]: ['ready for pick up', 'delivered'],
+  [countriesEnum.TURKEY]: ['recieved at warehouse', 'shipped to destination'],
+  [countriesEnum.LIBYA]: ['ready for pick up', 'delivered'],
 };
 
 export const validateLibyanNumber = (phoneNumber: string) => {

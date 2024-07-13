@@ -14,10 +14,7 @@ const router = Router({
   caseSensitive: true,
 });
 
-// TODO check user type and return shipments accordingly
-// check admin location when returning shipments
-
-// (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
+// check by user type and return accordingly
 router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -34,7 +31,8 @@ router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest,
     delete filters.limit;
     const shipments = await ShipmentsController.getShipments(
       filters as unknown as IShipmentsFilters,
-      paginationOptions
+      paginationOptions,
+      req.user
     );
     return res.status(200).json(shipments);
   } catch (error) {
@@ -46,14 +44,13 @@ router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest,
   }
 });
 
-// check user type and return shipments accordingly
-// (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
+// check by user type and return accordingly
 router.get('/getShipmentsUnpaginated', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
   try {
-    const shipments = await ShipmentsController.getShipmentsUnpaginated();
+    const shipments = await ShipmentsController.getShipmentsUnpaginated({}, req?.user);
     return res.status(200).json(shipments);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
@@ -64,8 +61,7 @@ router.get('/getShipmentsUnpaginated', AuthenticateFbJWT, async (req: CustomExpr
   }
 });
 
-// check user type and return shipments accordingly
-// (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
+// anyone can use it for tracking shipments
 router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -84,19 +80,19 @@ router.get('/getShipment/:esn', AuthenticateFbJWT, async (req: CustomExpressRequ
   }
 });
 
-// TODO get invoice by user ID
 // (admin)
 router.get('/getInvoiceShipments/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-
   try {
-    const shipment = await ShipmentsController.getShipmentsUnpaginated({
-      status: 'ready for pick up',
-      _id: req.params.id,
-    });
+    const shipment = await ShipmentsController.getShipmentsUnpaginated(
+      {
+        status: 'ready for pick up',
+        _id: req.params.id,
+      },
+      req?.user
+    );
     return res.status(200).json(shipment);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
@@ -107,7 +103,6 @@ router.get('/getInvoiceShipments/:id', AuthenticateFbJWT, async (req: CustomExpr
   }
 });
 
-// ______________________________________________________________
 // (admin per location except for mohammed)
 router.post('/createShipment', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);

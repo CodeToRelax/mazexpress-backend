@@ -8,47 +8,64 @@ const error_middleware_1 = require("../middlewares/error.middleware");
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
-const getShipments = async (filters, paginationOptions) => {
+const getShipments = async (filters, paginationOptions, user) => {
+    let query = {};
+    if (filters.searchParam) {
+        const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
+        query = {
+            $or: [
+                { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
+                { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
+            ],
+        };
+    }
+    else {
+        query = { ...filters };
+    }
+    if (filters.from || filters.to) {
+        query.createdAt = {};
+        if (filters.from) {
+            const fromDate = new Date(filters.from);
+            query.createdAt.$gte = fromDate;
+        }
+        if (filters.to) {
+            const toDate = new Date(filters.to);
+            query.createdAt.$lte = toDate;
+        }
+        delete query.from;
+        delete query.to;
+    }
     try {
-        let query = {};
-        if (filters.searchParam) {
-            const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
-            query = {
-                $or: [
-                    { isn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    { esn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    { csn: { $regex: sanitizedSearchParam, $options: 'i' } },
-                ],
-            };
+        const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+        let validShipments = [];
+        const userCountry = mongoUser[0]?.address.country;
+        if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+            const finalFilters = { ...query, csn: mongoUser[0].uniqueShippingNumber };
+            validShipments = await shipments_model_1.default.find(filters ? finalFilters : {});
+            return validShipments;
         }
-        else {
-            query = { ...filters };
-        }
-        if (filters.from || filters.to) {
-            query.createdAt = {};
-            if (filters.from) {
-                const fromDate = new Date(filters.from);
-                query.createdAt.$gte = fromDate;
-            }
-            if (filters.to) {
-                const toDate = new Date(filters.to);
-                query.createdAt.$lte = toDate;
-            }
-            delete query.from;
-            delete query.to;
-        }
-        console.log(query);
-        const shipments = await shipments_model_1.default.paginate(query, paginationOptions);
-        return shipments;
+        validShipments = await shipments_model_1.default.find(filters ? query : {});
+        const adminAccessableShipments = validShipments.filter((shipment) => (0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status));
+        return adminAccessableShipments;
     }
     catch (error) {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
     }
 };
-const getShipmentsUnpaginated = async (filters) => {
+const getShipmentsUnpaginated = async (filters, user) => {
     try {
-        const shipments = await shipments_model_1.default.find(filters ? filters : {});
-        return shipments;
+        const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+        let validShipments = [];
+        const userCountry = mongoUser[0]?.address.country;
+        if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+            const finalFilters = { ...filters, csn: mongoUser[0].uniqueShippingNumber };
+            validShipments = await shipments_model_1.default.find(filters ? finalFilters : {});
+            return validShipments;
+        }
+        validShipments = await shipments_model_1.default.find(filters ? filters : {});
+        const adminAccessableShipments = validShipments.filter((shipment) => (0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status));
+        return adminAccessableShipments;
     }
     catch (error) {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
