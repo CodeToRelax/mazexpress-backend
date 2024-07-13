@@ -54,6 +54,7 @@ const updateUser = async (
 ) => {
   try {
     const res = await UserCollection.findOneAndUpdate(filter, { ...body });
+
     return res;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.userUpdateError', 'errorMessageTemp', error);

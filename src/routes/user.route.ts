@@ -14,8 +14,6 @@ const router = Router({
   caseSensitive: true,
 });
 
-// --- api methods user service--- //
-
 // (admin)
 router.get('/getAllUsers', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -132,6 +130,8 @@ router.patch('/updateUser/:id', AuthenticateFbJWT, async (req: CustomExpressRequ
     const results = await UserController.updateUser(filter, req.body);
     return res.status(200).json(results);
   } catch (error) {
+    console.log(error);
+
     if (error instanceof CustomErrorHandler) {
       throw error;
     } else {

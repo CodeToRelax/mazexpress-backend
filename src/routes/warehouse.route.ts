@@ -10,8 +10,7 @@ const router = Router({
   caseSensitive: true,
 });
 
-// --- api methods config service--- //
-// works for all
+// (anyone)
 router.get('/getWarehouses', AuthenticateFbJWT, async (req, res) => {
   try {
     const wareHouses = await WarehouseController.getWarehouses();
@@ -25,7 +24,7 @@ router.get('/getWarehouses', AuthenticateFbJWT, async (req, res) => {
   }
 });
 
-// (admin)
+// (admin's)
 router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -45,7 +44,7 @@ router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequ
   }
 });
 
-// (admin)
+// (admin's)
 router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -64,7 +63,7 @@ router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpres
   }
 });
 
-// (admin)
+// (admin's)
 router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');

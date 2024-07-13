@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShipmentsController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
+const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
 const getShipments = async (filters, paginationOptions) => {
     try {
@@ -75,7 +76,11 @@ const createShipment = async (body) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.createShipmentError', 'errorMessageTemp', error);
     }
 };
-const updateShipment = async (_id, body) => {
+const updateShipment = async (_id, body, user) => {
+    const shipment = await shipments_model_1.default.find({ _id });
+    const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+    if (!(0, helpers_1.checkAdminResponsibility)(mongoUser[0]?.address.country, shipment[0].status))
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
         return res;
@@ -84,7 +89,15 @@ const updateShipment = async (_id, body) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
     }
 };
-const updateShipments = async (body) => {
+const updateShipments = async (body, user) => {
+    const shipments = await shipments_model_1.default.find({ _id: { $in: body.shipmentsId } });
+    const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+    const userCountry = mongoUser[0]?.address.country;
+    for (const shipment of shipments) {
+        if (!(0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status)) {
+            throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+        }
+    }
     try {
         const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
         return res;

@@ -17,8 +17,6 @@ const router = Router({
 // TODO check user type and return shipments accordingly
 // check admin location when returning shipments
 
-// --- api methods config service--- //
-
 // (admin and customer) // TODO filter shipments by user type and return only shipments related to customers
 router.get('/getShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -109,7 +107,8 @@ router.get('/getInvoiceShipments/:id', AuthenticateFbJWT, async (req: CustomExpr
   }
 });
 
-// (admin)
+// ______________________________________________________________
+// (admin per location except for mohammed)
 router.post('/createShipment', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -129,17 +128,15 @@ router.post('/createShipment', AuthenticateFbJWT, async (req: CustomExpressReque
   }
 });
 
-// check for admin location except for mohammed
-// (admin)
+// (admin per location except for mohammed)
 router.patch('/updateShipment/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-
   try {
     // validate body
     const { error } = updateShipmentValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    await ShipmentsController.updateShipment(req.params.id, req.body);
+    await ShipmentsController.updateShipment(req.params.id, req.body, req.user);
     return res.status(200).json({ ...req.body });
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
@@ -150,7 +147,7 @@ router.patch('/updateShipment/:id', AuthenticateFbJWT, async (req: CustomExpress
   }
 });
 
-// (admin)
+// (admin per location except for mohammed)
 router.patch('/updateShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -159,7 +156,7 @@ router.patch('/updateShipments', AuthenticateFbJWT, async (req: CustomExpressReq
     // validate body
     const { error } = updateShipmentsValidation.validate(req.body);
     if (error) return res.status(403).json(error);
-    await ShipmentsController.updateShipments(req.body);
+    await ShipmentsController.updateShipments(req.body, req.user);
     return res.status(200).json({ ...req.body });
   } catch (error) {
     if (error instanceof CustomErrorHandler) {
@@ -170,7 +167,7 @@ router.patch('/updateShipments', AuthenticateFbJWT, async (req: CustomExpressReq
   }
 });
 
-// (admin)
+// (admin per location except for mohammed)
 router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');

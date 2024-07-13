@@ -126,6 +126,7 @@ router.patch('/updateUser/:id', jwt_middleware_1.default, async (req, res) => {
         return res.status(200).json(results);
     }
     catch (error) {
+        console.log(error);
         if (error instanceof error_middleware_1.CustomErrorHandler) {
             throw error;
         }

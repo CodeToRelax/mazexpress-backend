@@ -15,14 +15,8 @@ export const createShipmentValidation = joi.object({
   note: joi.string(),
   status: joi
     .string()
-    .valid(
-      'recieved at warehouse',
-      'shipped to destination',
-      'on hold',
-      'at sorting facility',
-      'ready for pick up',
-      'delivered'
-    )
+    .valid('received at warehouse', 'shipped to destination', 'ready for pick up', 'delivered')
+    .insensitive()
     .required(),
 });
 
@@ -41,14 +35,9 @@ export const updateShipmentValidation = joi.object({
   note: joi.string(),
   status: joi
     .string()
-    .valid(
-      'recieved at warehouse',
-      'shipped to destination',
-      'on hold',
-      'at sorting facility',
-      'ready for pick up',
-      'delivered'
-    )
+    .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+    .insensitive()
+
     .required(),
 });
 
@@ -56,13 +45,7 @@ export const updateShipmentsValidation = joi.object({
   shipmentsId: joi.array().items(joi.string()).required(),
   shipmentStatus: joi
     .string()
-    .valid(
-      'recieved at warehouse',
-      'shipped to destination',
-      'on hold',
-      'at sorting facility',
-      'ready for pick up',
-      'delivered'
-    )
+    .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+    .insensitive()
     .required(),
 });

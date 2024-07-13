@@ -13,13 +13,13 @@ exports.UpdateProfileValidation = joi_1.default.object({
 exports.AdminUpdateUserValidation = joi_1.default.object({
     firstName: joi_1.default.string().lowercase().min(3).required(),
     lastName: joi_1.default.string().lowercase().min(3).required(),
-    birthdate: joi_1.default.string().allow('').lowercase(),
+    birthdate: joi_1.default.string().allow('').lowercase().optional(),
     address: joi_1.default.object({
         street: joi_1.default.string().required(),
         city: joi_1.default.string().required(),
         specificDescription: joi_1.default.string().optional(),
     }),
-    phoneNumber: joi_1.default.number().required(),
+    phoneNumber: joi_1.default.number().optional(),
 });
 exports.deleteUserValidation = joi_1.default.object({
     mongoId: joi_1.default.string().required(),

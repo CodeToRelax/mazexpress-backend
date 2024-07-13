@@ -11,7 +11,7 @@ const router = Router({
 });
 
 // --- api methods config service--- //
-// (admin)
+// (admin's)
 router.get('/getShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
     const hasValidRules = await checkUserRules(req.user?.acl, req);
@@ -27,7 +27,7 @@ router.get('/getShippingConfig', AuthenticateFbJWT, async (req: CustomExpressReq
   }
 });
 
-// (admin)
+// (admin's)
 router.post('/updateShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   try {
     const hasValidRules = await checkUserRules(req.user?.acl, req);

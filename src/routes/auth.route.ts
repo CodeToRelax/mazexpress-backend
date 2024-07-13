@@ -11,7 +11,7 @@ const router = Router({
   caseSensitive: true,
 });
 
-// create user
+// create user (anyone)
 router.post('/signUp', async (req, res) => {
   try {
     // validate body
@@ -29,8 +29,7 @@ router.post('/signUp', async (req, res) => {
   }
 });
 
-// get user acl
-// (admin)
+// get user acl (admin only mohammed)
 router.get('/acl/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
@@ -46,11 +45,10 @@ router.get('/acl/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res)
   }
 });
 
-// update user acl
+// update user acl (admin only mohammed)
 router.patch('/acl', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-
   try {
     // validate body
     const { error } = updateAclValidation.validate(req.body);

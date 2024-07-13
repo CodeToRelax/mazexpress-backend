@@ -9,13 +9,13 @@ export const UpdateProfileValidation = joi.object({
 export const AdminUpdateUserValidation = joi.object({
   firstName: joi.string().lowercase().min(3).required(),
   lastName: joi.string().lowercase().min(3).required(),
-  birthdate: joi.string().allow('').lowercase(),
+  birthdate: joi.string().allow('').lowercase().optional(),
   address: joi.object({
     street: joi.string().required(),
     city: joi.string().required(),
     specificDescription: joi.string().optional(),
   }),
-  phoneNumber: joi.number().required(),
+  phoneNumber: joi.number().optional(),
 });
 
 export const deleteUserValidation = joi.object({

@@ -3,9 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = void 0;
+exports.checkAdminResponsibility = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = exports.countriesEnum = void 0;
 const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
+var countriesEnum;
+(function (countriesEnum) {
+    countriesEnum["LIBYA"] = "libya";
+    countriesEnum["TURKEY"] = "turkey";
+})(countriesEnum || (exports.countriesEnum = countriesEnum = {}));
+const countriesPerStatus = {
+    [countriesEnum.LIBYA]: ['recieved at warehouse', 'shipped to destination'],
+    [countriesEnum.TURKEY]: ['ready for pick up', 'delivered'],
+};
 const validateLibyanNumber = (phoneNumber) => {
     const allowedCarriers = ['91', '92', '94', '95'];
     const firstTwoNumbers = phoneNumber.slice(0, 2);
@@ -147,4 +156,8 @@ const generateAcl = (customerType) => {
     };
 };
 exports.generateAcl = generateAcl;
+const checkAdminResponsibility = (adminCountry, status) => {
+    return countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
+};
+exports.checkAdminResponsibility = checkAdminResponsibility;
 //# sourceMappingURL=helpers.js.map

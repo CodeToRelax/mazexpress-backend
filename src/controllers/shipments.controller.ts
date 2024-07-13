@@ -1,7 +1,14 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import ShipmentsCollection from '@/models/shipments.model';
-import { generateExternalTrackingNumber, sanitizeSearchParam } from '@/utils/helpers';
+import UserCollection from '@/models/user.model';
+import {
+  checkAdminResponsibility,
+  countriesEnum,
+  generateExternalTrackingNumber,
+  sanitizeSearchParam,
+} from '@/utils/helpers';
 import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
+import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
 
 interface Query {
@@ -85,7 +92,11 @@ const createShipment = async (body: IShipments) => {
   }
 };
 
-const updateShipment = async (_id: string, body: IShipments) => {
+const updateShipment = async (_id: string, body: IShipments, user?: DecodedIdToken) => {
+  const shipment = await ShipmentsCollection.find({ _id });
+  const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  if (!checkAdminResponsibility(mongoUser[0]?.address.country as countriesEnum, shipment[0].status))
+    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     const res = await ShipmentsCollection.findOneAndUpdate({ _id }, { ...body });
     return res;
@@ -94,7 +105,16 @@ const updateShipment = async (_id: string, body: IShipments) => {
   }
 };
 
-const updateShipments = async (body: IUpdateShipments) => {
+const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) => {
+  const shipments = await ShipmentsCollection.find({ _id: { $in: body.shipmentsId } });
+  const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  const userCountry = mongoUser[0]?.address.country;
+
+  for (const shipment of shipments) {
+    if (!checkAdminResponsibility(userCountry as countriesEnum, shipment.status)) {
+      throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+    }
+  }
   try {
     const res = await ShipmentsCollection.updateMany(
       { _id: { $in: body.shipmentsId } },

@@ -2,6 +2,16 @@ import validator from 'validator';
 import { IUserACL, UserTypes, appServices } from './types';
 import { Request } from 'express';
 
+export enum countriesEnum {
+  LIBYA = 'libya',
+  TURKEY = 'turkey',
+}
+
+const countriesPerStatus = {
+  [countriesEnum.LIBYA]: ['recieved at warehouse', 'shipped to destination'],
+  [countriesEnum.TURKEY]: ['ready for pick up', 'delivered'],
+};
+
 export const validateLibyanNumber = (phoneNumber: string) => {
   const allowedCarriers = ['91', '92', '94', '95'];
   const firstTwoNumbers = phoneNumber.slice(0, 2);
@@ -160,4 +170,11 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
       shipments: [],
     },
   };
+};
+
+export const checkAdminResponsibility = (adminCountry: countriesEnum, status: string) => {
+  return countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
+
+  // create object with country keys
+  // check if status exists in this admin country key
 };
