@@ -126,7 +126,12 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
   }
 };
 
-const deleteShipment = async (_id: string) => {
+const deleteShipment = async (_id: string, user?: DecodedIdToken) => {
+  const shipment = await ShipmentsCollection.find({ _id });
+  const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  if (!checkAdminResponsibility(mongoUser[0]?.address.country as countriesEnum, shipment[0].status))
+    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
   try {
     const res = await ShipmentsCollection.findByIdAndDelete(_id);
     return res;

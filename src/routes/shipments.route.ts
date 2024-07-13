@@ -173,7 +173,7 @@ router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpres
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
   try {
-    await ShipmentsController.deleteShipment(req.params.id);
+    await ShipmentsController.deleteShipment(req.params.id, req.user);
     return res.status(200).json('success');
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

@@ -106,7 +106,11 @@ const updateShipments = async (body, user) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
     }
 };
-const deleteShipment = async (_id) => {
+const deleteShipment = async (_id, user) => {
+    const shipment = await shipments_model_1.default.find({ _id });
+    const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+    if (!(0, helpers_1.checkAdminResponsibility)(mongoUser[0]?.address.country, shipment[0].status))
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const res = await shipments_model_1.default.findByIdAndDelete(_id);
         return res;
