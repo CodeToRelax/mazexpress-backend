@@ -36,20 +36,24 @@ const getShipments = async (filters, paginationOptions, user) => {
         delete query.from;
         delete query.to;
     }
+    const sortOptions = { createdAt: -1 };
     try {
         const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
         let validShipments = [];
         const userCountry = mongoUser[0]?.address.country;
         if (user?.mongoId === '6692c0d7888a7f31998c180e') {
-            validShipments = await shipments_model_1.default.paginate(query, paginationOptions);
+            validShipments = await shipments_model_1.default.paginate(query, { ...paginationOptions, sort: sortOptions });
             return validShipments;
         }
         if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
             const finalFilters = { ...query, csn: mongoUser[0].uniqueShippingNumber };
-            validShipments = await shipments_model_1.default.paginate(finalFilters, paginationOptions);
+            validShipments = await shipments_model_1.default.paginate(finalFilters, { ...paginationOptions, sort: sortOptions });
             return validShipments;
         }
-        const adminResults = await shipments_model_1.default.paginate(filters ? query : {}, paginationOptions);
+        const adminResults = await shipments_model_1.default.paginate(filters ? query : {}, {
+            ...paginationOptions,
+            sort: sortOptions,
+        });
         const adminAccessableShipments = adminResults.docs.filter((shipment) => (0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status));
         return {
             totalDocs: adminResults.totalDocs,
