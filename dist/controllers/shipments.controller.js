@@ -41,17 +41,23 @@ const getShipments = async (filters, paginationOptions, user) => {
         let validShipments = [];
         const userCountry = mongoUser[0]?.address.country;
         if (user?.mongoId === '6692c0d7888a7f31998c180e') {
-            validShipments = await shipments_model_1.default.find(filters ? filters : {});
+            validShipments = await shipments_model_1.default.paginate(query, paginationOptions);
             return validShipments;
         }
         if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
             const finalFilters = { ...query, csn: mongoUser[0].uniqueShippingNumber };
-            validShipments = await shipments_model_1.default.find(filters ? finalFilters : {});
+            validShipments = await shipments_model_1.default.paginate(finalFilters, paginationOptions);
             return validShipments;
         }
-        validShipments = await shipments_model_1.default.find(filters ? query : {});
-        const adminAccessableShipments = validShipments.filter((shipment) => (0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status));
-        return adminAccessableShipments;
+        const adminResults = await shipments_model_1.default.paginate(filters ? query : {}, paginationOptions);
+        const adminAccessableShipments = adminResults.docs.filter((shipment) => (0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status));
+        return {
+            totalDocs: adminResults.totalDocs,
+            totalPages: adminResults.totalPages,
+            page: adminResults.page,
+            limit: adminResults.limit,
+            docs: adminAccessableShipments,
+        };
     }
     catch (error) {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.getShipmentsError', 'errorMessageTemp', error);
