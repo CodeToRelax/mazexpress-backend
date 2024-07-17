@@ -9,6 +9,7 @@ import UserRouter from '@/routes/user.route';
 import WarehouseRouter from '@/routes/warehouse.route';
 import ShipmentsRoute from '@/routes/shipments.route';
 import ConfigRouter from '@/routes/config.route';
+import DashboardRouter from '@/routes/dashboard.route';
 
 const createExpressServer = () => {
   const App: Application = express();
@@ -30,6 +31,7 @@ const createExpressServer = () => {
   App.use('/warehouse', WarehouseRouter);
   App.use('/shipments', ShipmentsRoute);
   App.use('/config', ConfigRouter);
+  App.use('/dashboard', DashboardRouter);
 
   // response middlewares
   App.use(ErrorMiddleware);

@@ -18,7 +18,7 @@ var UserTypes;
     UserTypes["ADMIN"] = "admin";
     UserTypes["CUSTOMER"] = "customer";
 })(UserTypes || (exports.UserTypes = UserTypes = {}));
-const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments'];
+const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments', 'dashboard'];
 const getEndpoints = [
     '/getShippingConfig',
     '/getWarehouses',
@@ -30,6 +30,8 @@ const getEndpoints = [
     '/getShipmentsUnpaginated',
     '/getShipment',
     '/getInvoiceShipments',
+    '/getShipmentsStatusCount',
+    '/getUserAndShipmentCountPerYear',
 ];
 const postEndpoints = [
     '/signUp',

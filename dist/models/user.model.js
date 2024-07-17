@@ -85,6 +85,8 @@ exports.UserSchema = new mongoose_1.default.Schema({
     },
     firebaseId: { type: String, required: true },
     disabled: { type: Boolean, required: true },
+}, {
+    timestamps: true,
 });
 exports.UserSchema.plugin(mongoose_paginate_v2_1.default);
 const UserCollection = mongoose_1.default.model('User', exports.UserSchema, 'user');

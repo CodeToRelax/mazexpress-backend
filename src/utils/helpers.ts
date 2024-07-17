@@ -110,6 +110,7 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
         auth: [],
         user: ['/getUser'],
         shipments: ['/getShipments', '/getShipment'],
+        dashboard: [],
       },
       POST: {
         warehouse: [],
@@ -144,6 +145,7 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
       auth: [],
       user: ['/getAllUsers', '/getAllUsersUnpaginated', '/getUser'],
       shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
+      dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear'],
     },
     POST: {
       warehouse: [],

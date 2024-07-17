@@ -148,7 +148,7 @@ export interface IUpdateUserAdmin {
   phoneNumber: string;
 }
 
-const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments'] as const;
+const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments', 'dashboard'] as const;
 export type appServices = (typeof systemServices)[number];
 
 const getEndpoints = [
@@ -162,6 +162,8 @@ const getEndpoints = [
   '/getShipmentsUnpaginated',
   '/getShipment',
   '/getInvoiceShipments',
+  '/getShipmentsStatusCount',
+  '/getUserAndShipmentCountPerYear',
 ] as const;
 const postEndpoints = [
   '/signUp',
