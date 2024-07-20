@@ -81,13 +81,16 @@ const getOrdersPerDay = async (day) => {
         const [dd, mm, yyyy] = day.split('/');
         const startDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00Z`);
         const endDate = new Date(`${yyyy}-${mm}-${dd}T23:59:59Z`);
-        const shipments = await shipments_model_1.default.find({
+        const shipments = await shipments_model_1.default.countDocuments({
             createdAt: {
                 $gte: startDate,
                 $lte: endDate,
             },
         });
-        return shipments;
+        return {
+            date: day,
+            count: shipments,
+        };
     }
     catch (error) {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.configUpdateError', 'errorMessageTemp', error);

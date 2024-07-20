@@ -92,13 +92,16 @@ const getOrdersPerDay = async (day: string) => {
     const endDate = new Date(`${yyyy}-${mm}-${dd}T23:59:59Z`);
 
     // Find shipments created on this day
-    const shipments = await ShipmentsCollection.find({
+    const shipments = await ShipmentsCollection.countDocuments({
       createdAt: {
         $gte: startDate,
         $lte: endDate,
       },
     });
-    return shipments;
+    return {
+      date: day,
+      count: shipments,
+    };
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.configUpdateError', 'errorMessageTemp', error);
   }
