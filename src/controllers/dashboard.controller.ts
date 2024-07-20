@@ -84,7 +84,28 @@ const getUserAndShipmentCountPerYear = async (year: string) => {
   }
 };
 
+const getOrdersPerDay = async (day: string) => {
+  try {
+    const [dd, mm, yyyy] = day.split('/');
+
+    const startDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00Z`);
+    const endDate = new Date(`${yyyy}-${mm}-${dd}T23:59:59Z`);
+
+    // Find shipments created on this day
+    const shipments = await ShipmentsCollection.find({
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+    return shipments;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.configUpdateError', 'errorMessageTemp', error);
+  }
+};
+
 export const DashboardController = {
   getShipmentCountByStatus,
   getUserAndShipmentCountPerYear,
+  getOrdersPerDay,
 };

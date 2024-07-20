@@ -44,4 +44,29 @@ router.get('/getUserAndShipmentCountPerYear', AuthenticateFbJWT, async (req: Cus
   }
 });
 
+router.get('/getOrdersPerDay', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  try {
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
+    const filterDay = req.query.date as string;
+
+    if (!filterDay) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+
+    const [dd, mm, yyyy] = filterDay.split('/');
+    if (!dd || !mm || !yyyy) {
+      throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+    }
+
+    const results = await DashboardController.getOrdersPerDay(filterDay);
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
 export default router;
