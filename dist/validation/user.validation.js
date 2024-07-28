@@ -18,8 +18,11 @@ exports.AdminUpdateUserValidation = joi_1.default.object({
         street: joi_1.default.string().required(),
         city: joi_1.default.string().required(),
         specificDescription: joi_1.default.string().optional(),
+        country: joi_1.default.string().optional(),
     }),
     phoneNumber: joi_1.default.number().optional(),
+    gender: joi_1.default.string().optional(),
+    email: joi_1.default.string().optional(),
 });
 exports.deleteUserValidation = joi_1.default.object({
     mongoId: joi_1.default.string().required(),

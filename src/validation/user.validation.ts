@@ -14,8 +14,11 @@ export const AdminUpdateUserValidation = joi.object({
     street: joi.string().required(),
     city: joi.string().required(),
     specificDescription: joi.string().optional(),
+    country: joi.string().optional(),
   }),
   phoneNumber: joi.number().optional(),
+  gender: joi.string().optional(),
+  email: joi.string().optional(),
 });
 
 export const deleteUserValidation = joi.object({
