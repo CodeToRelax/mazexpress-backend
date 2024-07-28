@@ -12,7 +12,7 @@ var countriesEnum;
     countriesEnum["TURKEY"] = "turkey";
 })(countriesEnum || (exports.countriesEnum = countriesEnum = {}));
 const countriesPerStatus = {
-    [countriesEnum.TURKEY]: ['recieved at warehouse', 'shipped to destination'],
+    [countriesEnum.TURKEY]: ['received at warehouse', 'shipped to destination'],
     [countriesEnum.LIBYA]: ['ready for pick up', 'delivered'],
 };
 const validateLibyanNumber = (phoneNumber) => {

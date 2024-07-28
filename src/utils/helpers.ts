@@ -8,7 +8,7 @@ export enum countriesEnum {
 }
 
 const countriesPerStatus = {
-  [countriesEnum.TURKEY]: ['recieved at warehouse', 'shipped to destination'],
+  [countriesEnum.TURKEY]: ['received at warehouse', 'shipped to destination'],
   [countriesEnum.LIBYA]: ['ready for pick up', 'delivered'],
 };
 
