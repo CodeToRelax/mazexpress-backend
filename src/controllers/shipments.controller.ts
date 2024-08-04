@@ -7,6 +7,7 @@ import {
   generateExternalTrackingNumber,
   sanitizeSearchParam,
 } from '@/utils/helpers';
+import { sendEmail } from '@/utils/mailtrap';
 import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
 import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
@@ -87,23 +88,27 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
 const getShipmentsUnpaginated = async (filters?: { status?: string; _id?: string }, user?: DecodedIdToken) => {
   try {
     const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+    const customer = await UserCollection.find({ _id: filters?._id });
     let validShipments: IShipments[] = [];
-    const userCountry = mongoUser[0]?.address.country;
+    const adminCountry = mongoUser[0]?.address.country;
 
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
-      validShipments = await ShipmentsCollection.find(filters ? filters : {});
+      validShipments = await ShipmentsCollection.find({
+        status: filters?.status,
+        csn: customer[0].uniqueShippingNumber,
+      });
       return validShipments;
     }
     if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
-      const finalFilters = { ...filters, csn: mongoUser[0].uniqueShippingNumber };
-      validShipments = await ShipmentsCollection.find(filters ? finalFilters : {});
+      const finalFilters = { status: filters?.status, csn: mongoUser[0].uniqueShippingNumber };
+      validShipments = await ShipmentsCollection.find(finalFilters);
       return validShipments;
     }
 
-    validShipments = await ShipmentsCollection.find(filters ? filters : {});
+    validShipments = await ShipmentsCollection.find({ status: filters?.status, csn: customer[0].uniqueShippingNumber });
 
     const adminAccessableShipments = validShipments.filter((shipment) =>
-      checkAdminResponsibility(userCountry as countriesEnum, shipment.status)
+      checkAdminResponsibility(adminCountry as countriesEnum, shipment.status)
     );
 
     return adminAccessableShipments;
@@ -139,15 +144,25 @@ const createShipment = async (body: IShipments) => {
 
 const updateShipment = async (_id: string, body: IShipments, user?: DecodedIdToken) => {
   const shipment = await ShipmentsCollection.find({ _id });
-  const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  // admin user
+  const adminUser = await UserCollection.find({ _id: user?.mongoId });
+  const customerUser = await UserCollection.find({ uniqueShippingNumber: shipment[0]?.csn.toUpperCase() });
+  console.log(shipment);
+  console.log(customerUser);
   if (user?.mongoId === '6692c0d7888a7f31998c180e') {
     const res = await ShipmentsCollection.findOneAndUpdate({ _id }, { ...body });
+    if (body.status !== shipment[0].status) {
+      await sendEmail('mohammedzeo.tech@gmail.com', customerUser[0].firstName, shipment[0].esn, body.status);
+    }
     return res;
   }
-  if (!checkAdminResponsibility(mongoUser[0]?.address.country as countriesEnum, shipment[0].status))
+  if (!checkAdminResponsibility(adminUser[0]?.address.country as countriesEnum, shipment[0].status))
     throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   try {
     const res = await ShipmentsCollection.findOneAndUpdate({ _id }, { ...body });
+    if (body.status !== shipment[0].status) {
+      await sendEmail('mohammedzeo.tech@gmail.com', customerUser[0].firstName, shipment[0].esn, shipment[0].status);
+    }
     return res;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
@@ -156,6 +171,7 @@ const updateShipment = async (_id: string, body: IShipments, user?: DecodedIdTok
 
 const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) => {
   const shipments = await ShipmentsCollection.find({ _id: { $in: body.shipmentsId } });
+  // admin
   const mongoUser = await UserCollection.find({ _id: user?.mongoId });
   const userCountry = mongoUser[0]?.address.country;
 
@@ -164,6 +180,14 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
       { _id: { $in: body.shipmentsId } },
       { status: body.shipmentStatus }
     );
+    if (res.modifiedCount > 0) {
+      shipments.forEach(async (shipment) => {
+        console.log(shipment);
+        const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn.toUpperCase() });
+        console.log(customer);
+        await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, body.shipmentStatus);
+      });
+    }
     return res;
   }
 
@@ -177,6 +201,14 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
       { _id: { $in: body.shipmentsId } },
       { status: body.shipmentStatus }
     );
+    if (res.modifiedCount > 0) {
+      shipments.forEach(async (shipment) => {
+        console.log(shipment);
+        const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn });
+        console.log(customer);
+        await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, shipment.status);
+      });
+    }
     return res;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
