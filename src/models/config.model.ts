@@ -13,6 +13,11 @@ export const ConfigSchema = new mongoose.Schema<ISystemConfig>({
     required: true,
     unique: true,
   },
+  libyanExchangeRate: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
 });
 
 const ConfigCollection = mongoose.model<ISystemConfig>('Config', ConfigSchema);

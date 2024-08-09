@@ -138,6 +138,7 @@ export type shippingMethod = 'air' | 'sea';
 export interface ISystemConfig {
   shippingCost: number;
   shippingFactor: number;
+  libyanExchangeRate: number;
 }
 
 export interface IUpdateUserAdmin {
