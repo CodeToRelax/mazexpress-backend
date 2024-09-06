@@ -173,5 +173,21 @@ router.delete('/deleteShipment/:id', jwt_middleware_1.default, async (req, res) 
         }
     }
 });
+router.get('/trackShipment/:esn', async (req, res) => {
+    if (!req.params.esn)
+        throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+    try {
+        const shipment = await shipments_controller_1.ShipmentsController.getShipment(req.params.esn);
+        return res.status(200).json(shipment);
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
 exports.default = router;
 //# sourceMappingURL=shipments.route.js.map

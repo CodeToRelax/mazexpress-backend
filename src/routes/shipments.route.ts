@@ -179,4 +179,18 @@ router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpres
   }
 });
 
+router.get('/trackShipment/:esn', async (req, res) => {
+  if (!req.params.esn) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+  try {
+    const shipment = await ShipmentsController.getShipment(req.params.esn);
+    return res.status(200).json(shipment);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
 export default router;
