@@ -204,3 +204,15 @@ export interface IUserACL {
 }
 
 export type IUserStatus = 'enable' | 'disable';
+
+interface Dimensions {
+  length: string;
+  width: string;
+  height: string;
+}
+
+export interface ShipmentPayload {
+  shippingMethod: 'air' | 'sea';
+  dimensions?: Dimensions; // Optional field, since weight could also be used instead of dimensions
+  weight?: string; // Optional field, only present if dimensions are not used
+}

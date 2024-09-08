@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShipmentsController = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
+const config_model_1 = __importDefault(require("../models/config.model"));
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
@@ -196,6 +197,19 @@ const deleteShipment = async (_id, user) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentDeleteError', 'errorMessageTemp', error);
     }
 };
+const calculateShippingPrice = async (body) => {
+    const config = await config_model_1.default.findOneAndUpdate({ _id: '65db6c55d3a4d41e6ac96432' }, { ...body });
+    if (!config?.shippingCost || !config?.libyanExchangeRate) {
+        return 'Online Calculation is paused now';
+    }
+    const finalPrice = (0, helpers_1.calculateShippingPriceUtil)(body.shippingMethod, body.weight, body.dimensions, config?.shippingCost, config?.libyanExchangeRate);
+    try {
+        return finalPrice;
+    }
+    catch (error) {
+        throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentDeleteError', 'errorMessageTemp', error);
+    }
+};
 exports.ShipmentsController = {
     getShipments,
     getShipment,
@@ -204,5 +218,6 @@ exports.ShipmentsController = {
     updateShipments,
     deleteShipment,
     getShipmentsUnpaginated,
+    calculateShippingPrice,
 };
 //# sourceMappingURL=shipments.controller.js.map

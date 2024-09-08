@@ -193,4 +193,18 @@ router.get('/trackShipment/:esn', async (req, res) => {
   }
 });
 
+router.post('/calculateShippingPrice', async (req, res) => {
+  try {
+    const results = await ShipmentsController.calculateShippingPrice(req.body);
+    console.log(results);
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
 export default router;

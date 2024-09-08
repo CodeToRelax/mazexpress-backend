@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkAdminResponsibility = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = exports.countriesEnum = void 0;
+exports.calculateShippingPriceUtil = exports.checkAdminResponsibility = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = exports.countriesEnum = void 0;
 const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
 var countriesEnum;
@@ -162,4 +162,30 @@ const checkAdminResponsibility = (adminCountry, status) => {
     return countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
 };
 exports.checkAdminResponsibility = checkAdminResponsibility;
+const calculateShippingPriceUtil = (shippingMethod, weight, dimensions, dollarPrice, libyanExchangeRate) => {
+    const actualWeight = parseFloat(weight ? weight : '0');
+    let dimensionalWeight;
+    if (dimensions && dimensions.length && dimensions.width && dimensions.height) {
+        const length = parseFloat(dimensions.length);
+        const width = parseFloat(dimensions.width);
+        const height = parseFloat(dimensions.height);
+        if (shippingMethod === 'sea') {
+            dimensionalWeight = (length * width * height) / 4720;
+        }
+        else if (shippingMethod === 'air') {
+            dimensionalWeight = (length * width * height) / 5000;
+        }
+    }
+    const finalWeight = dimensionalWeight && dimensionalWeight > actualWeight ? dimensionalWeight : actualWeight;
+    let price = 0;
+    const usdPrice = Number(dollarPrice * libyanExchangeRate);
+    if (shippingMethod === 'sea') {
+        price = finalWeight * 2.5;
+    }
+    else if (shippingMethod === 'air') {
+        price = finalWeight * usdPrice;
+    }
+    return price;
+};
+exports.calculateShippingPriceUtil = calculateShippingPriceUtil;
 //# sourceMappingURL=helpers.js.map

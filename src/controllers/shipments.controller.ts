@@ -1,14 +1,16 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import ConfigCollection from '@/models/config.model';
 import ShipmentsCollection from '@/models/shipments.model';
 import UserCollection from '@/models/user.model';
 import {
+  calculateShippingPriceUtil,
   checkAdminResponsibility,
   countriesEnum,
   generateExternalTrackingNumber,
   sanitizeSearchParam,
 } from '@/utils/helpers';
 import { sendEmail } from '@/utils/mailtrap';
-import { IShipments, IShipmentsFilters, IUpdateShipments } from '@/utils/types';
+import { IShipments, IShipmentsFilters, IUpdateShipments, ShipmentPayload } from '@/utils/types';
 import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
 
@@ -235,6 +237,26 @@ const deleteShipment = async (_id: string, user?: DecodedIdToken) => {
   }
 };
 
+const calculateShippingPrice = async (body: ShipmentPayload) => {
+  const config = await ConfigCollection.findOneAndUpdate({ _id: '65db6c55d3a4d41e6ac96432' }, { ...body });
+
+  if (!config?.shippingCost || !config?.libyanExchangeRate) {
+    return 'Online Calculation is paused now';
+  }
+  const finalPrice = calculateShippingPriceUtil(
+    body.shippingMethod,
+    body.weight,
+    body.dimensions,
+    config?.shippingCost,
+    config?.libyanExchangeRate
+  );
+  try {
+    return finalPrice;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.shipmentDeleteError', 'errorMessageTemp', error);
+  }
+};
+
 export const ShipmentsController = {
   getShipments,
   getShipment,
@@ -243,4 +265,5 @@ export const ShipmentsController = {
   updateShipments,
   deleteShipment,
   getShipmentsUnpaginated,
+  calculateShippingPrice,
 };

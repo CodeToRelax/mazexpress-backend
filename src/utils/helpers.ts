@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { IUserACL, UserTypes, appServices } from './types';
+import { IUserACL, ShipmentPayload, UserTypes, appServices } from './types';
 import { Request } from 'express';
 
 export enum countriesEnum {
@@ -179,4 +179,43 @@ export const checkAdminResponsibility = (adminCountry: countriesEnum, status: st
 
   // create object with country keys
   // check if status exists in this admin country key
+};
+
+export const calculateShippingPriceUtil = (
+  shippingMethod: ShipmentPayload['shippingMethod'],
+  weight: ShipmentPayload['weight'],
+  dimensions: ShipmentPayload['dimensions'],
+  dollarPrice: number,
+  libyanExchangeRate: number
+) => {
+  const actualWeight = parseFloat(weight ? weight : '0');
+  let dimensionalWeight;
+
+  // Calculate dimensional weight
+  if (dimensions && dimensions.length && dimensions.width && dimensions.height) {
+    const length = parseFloat(dimensions.length);
+    const width = parseFloat(dimensions.width);
+    const height = parseFloat(dimensions.height);
+
+    if (shippingMethod === 'sea') {
+      dimensionalWeight = (length * width * height) / 4720;
+    } else if (shippingMethod === 'air') {
+      dimensionalWeight = (length * width * height) / 5000;
+    }
+  }
+
+  // Use the greater of actual weight or dimensional weight
+  const finalWeight = dimensionalWeight && dimensionalWeight > actualWeight ? dimensionalWeight : actualWeight;
+
+  let price = 0;
+  const usdPrice = Number(dollarPrice * libyanExchangeRate);
+
+  // Calculate the price based on shipping method
+  if (shippingMethod === 'sea') {
+    price = finalWeight * 2.5; // Price for sea shipping in dinar
+  } else if (shippingMethod === 'air') {
+    price = finalWeight * usdPrice; // Price for air shipping in USD
+  }
+
+  return price;
 };

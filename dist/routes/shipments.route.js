@@ -189,5 +189,20 @@ router.get('/trackShipment/:esn', async (req, res) => {
         }
     }
 });
+router.post('/calculateShippingPrice', async (req, res) => {
+    try {
+        const results = await shipments_controller_1.ShipmentsController.calculateShippingPrice(req.body);
+        console.log(results);
+        return res.status(200).json(results);
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
 exports.default = router;
 //# sourceMappingURL=shipments.route.js.map
