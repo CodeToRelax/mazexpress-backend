@@ -43,11 +43,12 @@ const getShipments = async (filters, paginationOptions, user) => {
         const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
         let validShipments = [];
         const userCountry = mongoUser[0]?.address.country;
+        const userType = mongoUser[0].userType?.toUpperCase();
         if (user?.mongoId === '6692c0d7888a7f31998c180e') {
             validShipments = await shipments_model_1.default.paginate(query, { ...paginationOptions, sort: sortOptions });
             return validShipments;
         }
-        if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+        if (mongoUser && userType === 'CUSTOMER') {
             const finalFilters = { ...query, csn: mongoUser[0].uniqueShippingNumber };
             validShipments = await shipments_model_1.default.paginate(finalFilters, { ...paginationOptions, sort: sortOptions });
             return validShipments;
