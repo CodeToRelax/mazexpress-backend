@@ -49,3 +49,7 @@ export const updateShipmentsValidation = joi.object({
     .insensitive()
     .required(),
 });
+
+export const deleteShipmentsValidation = joi.object({
+  shipmentsId: joi.array().items(joi.string()).required(),
+});

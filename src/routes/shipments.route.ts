@@ -5,6 +5,7 @@ import { checkUserRules } from '@/utils/helpers';
 import { CustomExpressRequest, IShipmentsFilters } from '@/utils/types';
 import {
   createShipmentValidation,
+  deleteShipmentsValidation,
   updateShipmentValidation,
   updateShipmentsValidation,
 } from '@/validation/shipments.validation';
@@ -168,7 +169,9 @@ router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpres
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
   try {
-    await ShipmentsController.deleteShipment(req.params.id, req.user);
+    const { error } = deleteShipmentsValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    await ShipmentsController.deleteShipment(req.body, req.user);
     return res.status(200).json('success');
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

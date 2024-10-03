@@ -181,17 +181,21 @@ const updateShipments = async (body, user) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
     }
 };
-const deleteShipment = async (_id, user) => {
-    const shipment = await shipments_model_1.default.find({ _id });
+const deleteShipment = async (body, user) => {
+    const shipments = await shipments_model_1.default.find({ _id: { $in: body.shipmentsId } });
     const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+    const userCountry = mongoUser[0]?.address.country;
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
-        const res = await shipments_model_1.default.findByIdAndDelete(_id);
+        const res = await shipments_model_1.default.deleteMany({ _id: { $in: body.shipmentsId } });
         return res;
     }
-    if (!(0, helpers_1.checkAdminResponsibility)(mongoUser[0]?.address.country, shipment[0].status))
-        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    for (const shipment of shipments) {
+        if (!(0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status)) {
+            throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+        }
+    }
     try {
-        const res = await shipments_model_1.default.findByIdAndDelete(_id);
+        const res = await shipments_model_1.default.deleteMany({ _id: { $in: body.shipmentsId } });
         return res;
     }
     catch (error) {

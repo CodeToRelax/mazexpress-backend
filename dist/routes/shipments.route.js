@@ -161,7 +161,10 @@ router.delete('/deleteShipment/:id', jwt_middleware_1.default, async (req, res) 
     if (!hasValidRules)
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
-        await shipments_controller_1.ShipmentsController.deleteShipment(req.params.id, req.user);
+        const { error } = shipments_validation_1.deleteShipmentsValidation.validate(req.body);
+        if (error)
+            return res.status(403).json(error);
+        await shipments_controller_1.ShipmentsController.deleteShipment(req.body, req.user);
         return res.status(200).json('success');
     }
     catch (error) {

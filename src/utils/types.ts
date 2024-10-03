@@ -126,6 +126,10 @@ export interface IUpdateShipments {
   shipmentStatus: string;
 }
 
+export interface IDeleteShipments {
+  shipmentsId: string[];
+}
+
 export interface IShipmentsFilters extends IShipments {
   searchParam: string;
   from: string;

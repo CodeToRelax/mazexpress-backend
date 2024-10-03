@@ -10,7 +10,7 @@ import {
   sanitizeSearchParam,
 } from '@/utils/helpers';
 import { sendEmail } from '@/utils/mailtrap';
-import { IShipments, IShipmentsFilters, IUpdateShipments, ShipmentPayload } from '@/utils/types';
+import { IDeleteShipments, IShipments, IShipmentsFilters, IUpdateShipments, ShipmentPayload } from '@/utils/types';
 import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
 
@@ -217,20 +217,22 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
   }
 };
 
-const deleteShipment = async (_id: string, user?: DecodedIdToken) => {
-  const shipment = await ShipmentsCollection.find({ _id });
+const deleteShipment = async (body: IDeleteShipments, user?: DecodedIdToken) => {
+  const shipments = await ShipmentsCollection.find({ _id: { $in: body.shipmentsId } });
   const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  const userCountry = mongoUser[0]?.address.country;
 
   if (user?.mongoId === '6692c0d7888a7f31998c180e') {
-    const res = await ShipmentsCollection.findByIdAndDelete(_id);
+    const res = await ShipmentsCollection.deleteMany({ _id: { $in: body.shipmentsId } });
     return res;
   }
-
-  if (!checkAdminResponsibility(mongoUser[0]?.address.country as countriesEnum, shipment[0].status))
-    throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-
+  for (const shipment of shipments) {
+    if (!checkAdminResponsibility(userCountry as countriesEnum, shipment.status)) {
+      throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+    }
+  }
   try {
-    const res = await ShipmentsCollection.findByIdAndDelete(_id);
+    const res = await ShipmentsCollection.deleteMany({ _id: { $in: body.shipmentsId } });
     return res;
   } catch (error) {
     throw new CustomErrorHandler(400, 'common.shipmentDeleteError', 'errorMessageTemp', error);
