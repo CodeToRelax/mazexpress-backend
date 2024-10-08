@@ -21,6 +21,11 @@ exports.ConfigSchema = new mongoose_1.default.Schema({
         required: true,
         unique: true,
     },
+    seaShippingPrice: {
+        type: Number,
+        required: true,
+        unique: true,
+    },
 });
 const ConfigCollection = mongoose_1.default.model('Config', exports.ConfigSchema);
 exports.default = ConfigCollection;

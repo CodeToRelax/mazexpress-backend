@@ -164,7 +164,7 @@ router.patch('/updateShipments', AuthenticateFbJWT, async (req: CustomExpressReq
 });
 
 // (admin per location except for mohammed)
-router.delete('/deleteShipment/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+router.delete('/deleteShipments', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
   const hasValidRules = await checkUserRules(req.user?.acl, req);
   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 

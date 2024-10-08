@@ -13,6 +13,7 @@ const getShippingConfig = async () => {
 
 const updateShippingConfig = async (body: ISystemConfig) => {
   try {
+    console.log(body);
     const res = await ConfigCollection.findOneAndUpdate({ _id: '65db6c55d3a4d41e6ac96432' }, { ...body });
     return res;
   } catch (error) {

@@ -143,6 +143,7 @@ export interface ISystemConfig {
   shippingCost: number;
   shippingFactor: number;
   libyanExchangeRate: number;
+  seaShippingPrice: number;
 }
 
 export interface IUpdateUserAdmin {

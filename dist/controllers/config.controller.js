@@ -17,6 +17,7 @@ const getShippingConfig = async () => {
 };
 const updateShippingConfig = async (body) => {
     try {
+        console.log(body);
         const res = await config_model_1.default.findOneAndUpdate({ _id: '65db6c55d3a4d41e6ac96432' }, { ...body });
         return res;
     }
