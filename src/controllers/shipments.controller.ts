@@ -158,8 +158,12 @@ const updateShipment = async (_id: string, body: IShipments, user?: DecodedIdTok
     // }
     return res;
   }
-  if (!checkAdminResponsibility(adminUser[0]?.address.country as countriesEnum, shipment[0].status))
+  console.log('route', adminUser[0]?.address.country);
+  console.log('route', shipment[0].status);
+  if (!checkAdminResponsibility(adminUser[0]?.address.country as countriesEnum, shipment[0].status)) {
+    console.log('unauthorized');
     throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+  }
   try {
     const res = await ShipmentsCollection.findOneAndUpdate({ _id }, { ...body });
     // if (body.status !== shipment[0].status) {

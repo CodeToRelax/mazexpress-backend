@@ -159,7 +159,9 @@ const generateAcl = (customerType) => {
 };
 exports.generateAcl = generateAcl;
 const checkAdminResponsibility = (adminCountry, status) => {
-    return countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
+    console.log('main function', adminCountry, status);
+    const res = countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
+    return res;
 };
 exports.checkAdminResponsibility = checkAdminResponsibility;
 const calculateShippingPriceUtil = (shippingMethod, weight, dimensions, dollarPrice, libyanExchangeRate) => {

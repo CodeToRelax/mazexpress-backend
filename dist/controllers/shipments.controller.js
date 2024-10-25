@@ -127,8 +127,12 @@ const updateShipment = async (_id, body, user) => {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
         return res;
     }
-    if (!(0, helpers_1.checkAdminResponsibility)(adminUser[0]?.address.country, shipment[0].status))
+    console.log('route', adminUser[0]?.address.country);
+    console.log('route', shipment[0].status);
+    if (!(0, helpers_1.checkAdminResponsibility)(adminUser[0]?.address.country, shipment[0].status)) {
+        console.log('unauthorized');
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    }
     try {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
         return res;
