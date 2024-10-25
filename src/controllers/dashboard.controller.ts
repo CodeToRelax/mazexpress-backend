@@ -9,34 +9,47 @@ const getShipmentCountByStatus = async () => {
         $group: {
           _id: '$status',
           count: { $sum: 1 },
+          totalWeight: { $sum: '$size.weight' },
         },
       },
     ]);
 
     const response = {
-      total: 0,
-      receivedAtWarehouse: 0,
-      shippedToDestination: 0,
-      readyForPickUp: 0,
-      delivered: 0,
+      total: {
+        count: 0,
+        weight: 0,
+      },
+      receivedAtWarehouse: {
+        count: 0,
+        weight: 0,
+      },
+      shippedToDestination: {
+        count: 0,
+        weight: 0,
+      },
+      readyForPickUp: {
+        count: 0,
+        weight: 0,
+      },
     };
 
     results.forEach((result) => {
-      response.total += result.count;
       switch (result._id) {
         case 'received at warehouse':
-          response.receivedAtWarehouse = result.count;
+          response.receivedAtWarehouse.count = result.count;
+          response.receivedAtWarehouse.weight = result.totalWeight;
           break;
         case 'shipped to destination':
-          response.shippedToDestination = result.count;
+          response.shippedToDestination.count = result.count;
+          response.shippedToDestination.weight = result.totalWeight;
           break;
         case 'ready for pick up':
-          response.readyForPickUp = result.count;
+          response.readyForPickUp.count = result.count;
+          response.readyForPickUp.weight = result.totalWeight;
           break;
         case 'delivered':
-          response.delivered = result.count;
-          break;
-        default:
+          response.total.count = result.count;
+          response.total.weight = result.totalWeight;
           break;
       }
     });
