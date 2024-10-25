@@ -9,7 +9,6 @@ const config_model_1 = __importDefault(require("../models/config.model"));
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
-const mailtrap_1 = require("../utils/mailtrap");
 const getShipments = async (filters, paginationOptions, user) => {
     let query = {};
     if (filters.searchParam) {
@@ -126,18 +125,12 @@ const updateShipment = async (_id, body, user) => {
     console.log(customerUser);
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
-        if (body.status !== shipment[0].status) {
-            await (0, mailtrap_1.sendEmail)('mohammedzeo.tech@gmail.com', customerUser[0].firstName, shipment[0].esn, body.status);
-        }
         return res;
     }
     if (!(0, helpers_1.checkAdminResponsibility)(adminUser[0]?.address.country, shipment[0].status))
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
-        if (body.status !== shipment[0].status) {
-            await (0, mailtrap_1.sendEmail)('mohammedzeo.tech@gmail.com', customerUser[0].firstName, shipment[0].esn, shipment[0].status);
-        }
         return res;
     }
     catch (error) {
@@ -150,14 +143,6 @@ const updateShipments = async (body, user) => {
     const userCountry = mongoUser[0]?.address.country;
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
         const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
-        if (res.modifiedCount > 0) {
-            shipments.forEach(async (shipment) => {
-                console.log(shipment);
-                const customer = await user_model_1.default.find({ uniqueShippingNumber: shipment?.csn.toUpperCase() });
-                console.log(customer);
-                await (0, mailtrap_1.sendEmail)('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, body.shipmentStatus);
-            });
-        }
         return res;
     }
     for (const shipment of shipments) {
@@ -167,14 +152,6 @@ const updateShipments = async (body, user) => {
     }
     try {
         const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
-        if (res.modifiedCount > 0) {
-            shipments.forEach(async (shipment) => {
-                console.log(shipment);
-                const customer = await user_model_1.default.find({ uniqueShippingNumber: shipment?.csn });
-                console.log(customer);
-                await (0, mailtrap_1.sendEmail)('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, shipment.status);
-            });
-        }
         return res;
     }
     catch (error) {

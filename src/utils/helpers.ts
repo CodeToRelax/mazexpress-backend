@@ -176,9 +176,6 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
 
 export const checkAdminResponsibility = (adminCountry: countriesEnum, status: string) => {
   return countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
-
-  // create object with country keys
-  // check if status exists in this admin country key
 };
 
 export const calculateShippingPriceUtil = (
