@@ -127,10 +127,7 @@ const updateShipment = async (_id, body, user) => {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
         return res;
     }
-    console.log('route', adminUser[0]?.address.country);
-    console.log('route', shipment[0].status);
-    if (!(0, helpers_1.checkAdminResponsibility)(adminUser[0]?.address.country, shipment[0].status)) {
-        console.log('unauthorized');
+    if (!(0, helpers_1.checkAdminResponsibility)(adminUser[0]?.address.country, body.status)) {
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     }
     try {
@@ -142,17 +139,14 @@ const updateShipment = async (_id, body, user) => {
     }
 };
 const updateShipments = async (body, user) => {
-    const shipments = await shipments_model_1.default.find({ _id: { $in: body.shipmentsId } });
     const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
     const userCountry = mongoUser[0]?.address.country;
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
         const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
         return res;
     }
-    for (const shipment of shipments) {
-        if (!(0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status)) {
-            throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
-        }
+    if (!(0, helpers_1.checkAdminResponsibility)(userCountry, body.shipmentStatus)) {
+        throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
     }
     try {
         const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
