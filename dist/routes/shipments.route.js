@@ -156,6 +156,26 @@ router.patch('/updateShipments', jwt_middleware_1.default, async (req, res) => {
         }
     }
 });
+router.patch('/updateShipmentsEsn', jwt_middleware_1.default, async (req, res) => {
+    const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
+    if (!hasValidRules)
+        throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    try {
+        const { error } = shipments_validation_1.updateShipmentsBardCodeValidation.validate(req.body);
+        if (error)
+            return res.status(403).json(error);
+        await shipments_controller_1.ShipmentsController.updateShipments(req.body, req.user);
+        return res.status(200).json({ ...req.body });
+    }
+    catch (error) {
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+        }
+    }
+});
 router.delete('/deleteShipments', jwt_middleware_1.default, async (req, res) => {
     const hasValidRules = await (0, helpers_1.checkUserRules)(req.user?.acl, req);
     if (!hasValidRules)

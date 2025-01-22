@@ -7,6 +7,7 @@ import {
   createShipmentValidation,
   deleteShipmentsValidation,
   updateShipmentValidation,
+  updateShipmentsBardCodeValidation,
   updateShipmentsValidation,
 } from '@/validation/shipments.validation';
 import { Router } from 'express';
@@ -151,6 +152,25 @@ router.patch('/updateShipments', AuthenticateFbJWT, async (req: CustomExpressReq
   try {
     // validate body
     const { error } = updateShipmentsValidation.validate(req.body);
+    if (error) return res.status(403).json(error);
+    await ShipmentsController.updateShipments(req.body, req.user);
+    return res.status(200).json({ ...req.body });
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
+
+router.patch('/updateShipmentsEsn', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  const hasValidRules = await checkUserRules(req.user?.acl, req);
+  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+
+  try {
+    // validate body
+    const { error } = updateShipmentsBardCodeValidation.validate(req.body);
     if (error) return res.status(403).json(error);
     await ShipmentsController.updateShipments(req.body, req.user);
     return res.status(200).json({ ...req.body });

@@ -126,6 +126,11 @@ export interface IUpdateShipments {
   shipmentStatus: string;
 }
 
+export interface IUpdateShipmentsEsn {
+  shipmentsEsn: string[];
+  shipmentStatus: string;
+}
+
 export interface IDeleteShipments {
   shipmentsId: string[];
 }
@@ -188,6 +193,7 @@ const patchEndpoints = [
   '/updateProfile',
   '/updateShipment',
   '/updateShipments',
+  '/updateShipmentsEsn',
 ] as const;
 
 export interface IUserACL {

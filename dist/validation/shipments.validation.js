@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteShipmentsValidation = exports.updateShipmentsValidation = exports.updateShipmentValidation = exports.createShipmentValidation = void 0;
+exports.deleteShipmentsValidation = exports.updateShipmentsBardCodeValidation = exports.updateShipmentsValidation = exports.updateShipmentValidation = exports.createShipmentValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.createShipmentValidation = joi_1.default.object({
     isn: joi_1.default.string().lowercase(),
@@ -45,6 +45,14 @@ exports.updateShipmentValidation = joi_1.default.object({
 });
 exports.updateShipmentsValidation = joi_1.default.object({
     shipmentsId: joi_1.default.array().items(joi_1.default.string()).required(),
+    shipmentStatus: joi_1.default
+        .string()
+        .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+        .insensitive()
+        .required(),
+});
+exports.updateShipmentsBardCodeValidation = joi_1.default.object({
+    shipmentsEsn: joi_1.default.array().items(joi_1.default.string()).required(),
     shipmentStatus: joi_1.default
         .string()
         .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')

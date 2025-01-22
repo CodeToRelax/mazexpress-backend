@@ -50,5 +50,6 @@ const patchEndpoints = [
     '/updateProfile',
     '/updateShipment',
     '/updateShipments',
+    '/updateShipmentsEsn',
 ];
 //# sourceMappingURL=types.js.map

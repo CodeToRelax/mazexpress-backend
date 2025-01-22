@@ -50,6 +50,15 @@ export const updateShipmentsValidation = joi.object({
     .required(),
 });
 
+export const updateShipmentsBardCodeValidation = joi.object({
+  shipmentsEsn: joi.array().items(joi.string()).required(),
+  shipmentStatus: joi
+    .string()
+    .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+    .insensitive()
+    .required(),
+});
+
 export const deleteShipmentsValidation = joi.object({
   shipmentsId: joi.array().items(joi.string()).required(),
 });

@@ -147,7 +147,7 @@ const generateAcl = (customerType) => {
             warehouse: ['/updateWarehouse'],
             auth: [],
             user: ['/toggleUser', '/updateUser', '/updateProfile'],
-            shipments: ['/updateShipment', '/updateShipments'],
+            shipments: ['/updateShipment', '/updateShipments', '/updateShipmentsEsn'],
         },
         UPDATE: {
             warehouse: [],

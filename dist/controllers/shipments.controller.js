@@ -156,6 +156,24 @@ const updateShipments = async (body, user) => {
         throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
     }
 };
+const updateShipmentsEsn = async (body, user) => {
+    const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
+    const userCountry = mongoUser[0]?.address.country;
+    if (user?.mongoId === '6692c0d7888a7f31998c180e') {
+        const res = await shipments_model_1.default.updateMany({ esn: { $in: body.shipmentsEsn } }, { status: body.shipmentStatus });
+        return res;
+    }
+    if (!(0, helpers_1.checkAdminResponsibility)(userCountry, body.shipmentStatus)) {
+        throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+    }
+    try {
+        const res = await shipments_model_1.default.updateMany({ esn: { $in: body.shipmentsEsn } }, { status: body.shipmentStatus });
+        return res;
+    }
+    catch (error) {
+        throw new error_middleware_1.CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
+    }
+};
 const deleteShipment = async (body, user) => {
     const shipments = await shipments_model_1.default.find({ _id: { $in: body.shipmentsId } });
     const mongoUser = await user_model_1.default.find({ _id: user?.mongoId });
@@ -196,6 +214,7 @@ exports.ShipmentsController = {
     createShipment,
     updateShipment,
     updateShipments,
+    updateShipmentsEsn,
     deleteShipment,
     getShipmentsUnpaginated,
     calculateShippingPrice,

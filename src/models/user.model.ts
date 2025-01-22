@@ -2,6 +2,7 @@ import { Cities, Countries, IUser } from '@/utils/types';
 import mongoose from 'mongoose';
 import validator from 'validator';
 import paginate from 'mongoose-paginate-v2';
+import { required } from 'joi';
 
 // add DB error handling
 export const UserSchema = new mongoose.Schema(
@@ -39,6 +40,7 @@ export const UserSchema = new mongoose.Schema(
       specificDescription: {
         type: String,
         lowercase: true,
+        required: false,
       },
       city: {
         type: String,

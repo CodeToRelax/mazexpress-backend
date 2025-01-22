@@ -10,7 +10,14 @@ import {
   sanitizeSearchParam,
 } from '@/utils/helpers';
 // import { sendEmail } from '@/utils/mailtrap';
-import { IDeleteShipments, IShipments, IShipmentsFilters, IUpdateShipments, ShipmentPayload } from '@/utils/types';
+import {
+  IDeleteShipments,
+  IShipments,
+  IShipmentsFilters,
+  IUpdateShipments,
+  IUpdateShipmentsEsn,
+  ShipmentPayload,
+} from '@/utils/types';
 import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
 
@@ -215,6 +222,49 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
   }
 };
 
+const updateShipmentsEsn = async (body: IUpdateShipmentsEsn, user?: DecodedIdToken) => {
+  // admin
+  const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  const userCountry = mongoUser[0]?.address.country;
+
+  if (user?.mongoId === '6692c0d7888a7f31998c180e') {
+    const res = await ShipmentsCollection.updateMany(
+      { esn: { $in: body.shipmentsEsn } },
+      { status: body.shipmentStatus }
+    );
+    // if (res.modifiedCount > 0) {
+    //   shipments.forEach(async (shipment) => {
+    //     console.log(shipment);
+    //     const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn.toUpperCase() });
+    //     console.log(customer);
+    //     await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, body.shipmentStatus);
+    //   });
+    // }
+    return res;
+  }
+
+  if (!checkAdminResponsibility(userCountry as countriesEnum, body.shipmentStatus)) {
+    throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+  }
+  try {
+    const res = await ShipmentsCollection.updateMany(
+      { esn: { $in: body.shipmentsEsn } },
+      { status: body.shipmentStatus }
+    );
+    // if (res.modifiedCount > 0) {
+    //   shipments.forEach(async (shipment) => {
+    //     console.log(shipment);
+    //     const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn });
+    //     console.log(customer);
+    //     await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, shipment.status);
+    //   });
+    // }
+    return res;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
+  }
+};
+
 const deleteShipment = async (body: IDeleteShipments, user?: DecodedIdToken) => {
   const shipments = await ShipmentsCollection.find({ _id: { $in: body.shipmentsId } });
   const mongoUser = await UserCollection.find({ _id: user?.mongoId });
@@ -263,6 +313,7 @@ export const ShipmentsController = {
   createShipment,
   updateShipment,
   updateShipments,
+  updateShipmentsEsn,
   deleteShipment,
   getShipmentsUnpaginated,
   calculateShippingPrice,

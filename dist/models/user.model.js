@@ -36,6 +36,7 @@ exports.UserSchema = new mongoose_1.default.Schema({
         specificDescription: {
             type: String,
             lowercase: true,
+            required: false,
         },
         city: {
             type: String,
