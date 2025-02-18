@@ -232,6 +232,8 @@ const updateShipmentsEsn = async (body: IUpdateShipmentsEsn, user?: DecodedIdTok
       { esn: { $in: body.shipmentsEsn } },
       { status: body.shipmentStatus }
     );
+
+    console.log(res);
     // if (res.modifiedCount > 0) {
     //   shipments.forEach(async (shipment) => {
     //     console.log(shipment);

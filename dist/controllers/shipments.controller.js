@@ -161,6 +161,7 @@ const updateShipmentsEsn = async (body, user) => {
     const userCountry = mongoUser[0]?.address.country;
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
         const res = await shipments_model_1.default.updateMany({ esn: { $in: body.shipmentsEsn } }, { status: body.shipmentStatus });
+        console.log(res);
         return res;
     }
     if (!(0, helpers_1.checkAdminResponsibility)(userCountry, body.shipmentStatus)) {

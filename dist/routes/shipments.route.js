@@ -164,7 +164,7 @@ router.patch('/updateShipmentsEsn', jwt_middleware_1.default, async (req, res) =
         const { error } = shipments_validation_1.updateShipmentsBardCodeValidation.validate(req.body);
         if (error)
             return res.status(403).json(error);
-        await shipments_controller_1.ShipmentsController.updateShipments(req.body, req.user);
+        await shipments_controller_1.ShipmentsController.updateShipmentsEsn(req.body, req.user);
         return res.status(200).json({ ...req.body });
     }
     catch (error) {
