@@ -1,6 +1,16 @@
 import validator from 'validator';
-import { IUserACL, ShipmentPayload, UserTypes, appServices } from './types';
+import { Countries, IUser, IUserACL, ShipmentPayload, ShipmentStatus, UserTypes, appServices } from './types';
 import { Request } from 'express';
+import { CustomErrorHandler } from '@/middlewares/error.middleware';
+
+// *validators
+
+export const validateLibyanNumber = (rawPhone: string): boolean => {
+  const phone = rawPhone.trim().replace(/[\s\-]/g, '');
+  // Match +21891xxxxxxx or 091xxxxxxx
+  const libyanRegex = /^(?:\+218|0)?(91|92|94|95)\d{6}$/;
+  return libyanRegex.test(phone);
+};
 
 export enum countriesEnum {
   LIBYA = 'libya',
@@ -12,10 +22,23 @@ const countriesPerStatus = {
   [countriesEnum.LIBYA]: ['shipped to destination', 'ready for pick up', 'delivered'],
 };
 
-export const validateLibyanNumber = (phoneNumber: string) => {
-  const allowedCarriers = ['91', '92', '94', '95'];
-  const firstTwoNumbers = phoneNumber.slice(0, 2);
-  return allowedCarriers.includes(firstTwoNumbers) && phoneNumber.length === 9 ? true : false;
+export const getAdminStatusesForCountry = (country: Countries): string[] => {
+  return countriesPerStatus[country] || [];
+};
+
+export const validateAdminCanDoByCountry = (adminUser: IUser, newStatus: ShipmentStatus) => {
+  const country = adminUser?.address.country as Countries;
+  const allowedStatuses = getAdminStatusesForCountry(country);
+  // normalize your status to lowercase to match your lookup array
+  const normalizedStatus = newStatus.toLocaleLowerCase();
+
+  if (!allowedStatuses.includes(normalizedStatus)) {
+    throw new CustomErrorHandler(
+      403,
+      'common.unauthorizedRole',
+      `User from ${country} cannot set status "${newStatus}"`
+    );
+  }
 };
 
 export const validateUserBirthdate = (value: Date) => {
@@ -174,8 +197,7 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
   };
 };
 
-export const checkAdminResponsibility = (adminCountry: countriesEnum, status: string) => {
-  console.log('main function', adminCountry, status);
+export const checkAdminResponsibility = (adminCountry: Countries, status: string) => {
   const res = countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
   return res;
 };

@@ -1,13 +1,20 @@
+//*OK*
+
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import WarehouseCollection from '@/models/warehouse.model';
-import { IWarehouse } from '@/utils/types';
+import { IWarehouse, StatusCode } from '@/utils/types';
 
 const getWarehouses = async () => {
   try {
     const warehouses = await WarehouseCollection.find({});
     return warehouses;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.getWarehouseError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_BAD_REQUEST,
+      'common.getWarehouseError',
+      'errorMessageTemp',
+      error
+    );
   }
 };
 
@@ -17,7 +24,12 @@ const createWarehouse = async (body: IWarehouse) => {
     const newWarehouse = await warehouseInstance.save();
     return newWarehouse;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.createWarehouseError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_BAD_REQUEST,
+      'common.createWarehouseError',
+      'errorMessageTemp',
+      error
+    );
   }
 };
 
@@ -26,7 +38,12 @@ const updateWarehouse = async (_id: string, body: IWarehouse) => {
     const res = await WarehouseCollection.findOneAndUpdate({ _id }, { ...body });
     return res;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.warehouseUpdateError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_BAD_REQUEST,
+      'common.warehouseUpdateError',
+      'errorMessageTemp',
+      error
+    );
   }
 };
 
@@ -35,7 +52,12 @@ const deleteWarehouse = async (_id: string) => {
     const res = await WarehouseCollection.findByIdAndDelete(_id);
     return res;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.warehouseUpdateError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_BAD_REQUEST,
+      'common.warehouseUpdateError',
+      'errorMessageTemp',
+      error
+    );
   }
 };
 

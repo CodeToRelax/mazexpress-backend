@@ -1,48 +1,56 @@
-import { Countries, IUser, IUserACL, UserTypes } from '@/utils/types';
+import { IUser, IUserACL, StatusCode } from '@/utils/types';
 import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user.model';
 import { generateAcl, generateRandomUsername, generateShippingNumber } from '@/utils/helpers';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
-const createUser = async (body: IUser, customerType: UserTypes) => {
+// create user
+const createUser = async (body: IUser & { password: string }) => {
+  let fbUser = null;
   try {
-    const fbUser = await FirebaseController.createFirebaseUser({
+    // create firebase user
+    fbUser = await FirebaseController.createFirebaseUser({
       email: body.email,
       password: body.password!,
     });
-    delete body['password'];
+    // setup mongo user body
     const mongoUserBody = new UserCollection({
       ...body,
-      address: {
-        ...body.address,
-        country: customerType === UserTypes.CUSTOMER ? Countries.LIBYA : body.address.country,
-      },
       username: generateRandomUsername(),
-      userType: customerType,
-      uniqueShippingNumber: generateShippingNumber(customerType, body.address.city),
-      acl: generateAcl(customerType),
+      userType: body.userType,
+      uniqueShippingNumber: generateShippingNumber(body.userType, body.address.city),
+      acl: generateAcl(body.userType),
       firebaseId: fbUser.uid,
       disabled: fbUser.disabled,
     });
+    // create mongo user
     const mongoUser = await mongoUserBody.save();
+
+    // setup custom claims to use in jwt
     await FirebaseController.addFirebaseCustomClaims({
       uid: fbUser.uid,
-      customClaims: { mongoId: mongoUser._id },
+      customClaims: { mongoId: mongoUser._id, role: body.userType },
     });
     return mongoUser;
   } catch (error) {
+    if (fbUser) {
+      try {
+        await FirebaseController.deleteFirebaseUser(fbUser.uid);
+        console.warn(`Rolled back Firebase user: ${fbUser.uid}`);
+      } catch (firebaseDeletionError) {
+        console.error('Failed to rollback Firebase user:');
+        console.error(firebaseDeletionError);
+      }
+    }
     if (error instanceof CustomErrorHandler) {
       throw error;
     } else {
-      console.log(error);
-      // mongo error here
       console.error('MongoDB error occurred:');
+      console.log(error);
       throw error;
     }
   }
 };
-
-// change password // firebase
 
 // update user acl // mongo
 const updateUserAcl = async (_id: string, body: IUserACL) => {
@@ -50,12 +58,16 @@ const updateUserAcl = async (_id: string, body: IUserACL) => {
     const res = await UserCollection.findOneAndUpdate({ _id }, { acl: body });
     return res;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.userUpdateError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_UNAUTHORIZED,
+      'common.userUpdateError',
+      'Unable to update user access control list',
+      error
+    );
   }
 };
 
 export const AuthController = {
   createUser,
   updateUserAcl,
-  // adminResetUserPassword,
 };

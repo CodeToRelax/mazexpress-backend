@@ -12,33 +12,30 @@ const getUser = async (_id) => {
     const user = user_model_1.default.findById({ _id });
     return user;
 };
-const getAllUsersUnpaginated = async () => {
-    const users = await user_model_1.default.find({});
-    return users;
-};
-const getAllUsers = async (paginationOtpions, filters) => {
+const getAllUsers = async (paginationOptions, filters) => {
+    let query = {};
     if (filters.searchParam) {
-        let query = {};
-        if (filters.searchParam) {
-            const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
-            query = {
-                $or: [
-                    { email: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    { firstName: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    { lastName: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
-                    { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
-                ],
-            };
-        }
-        else {
-            query = filters;
-        }
-        const users = await user_model_1.default.paginate(query, paginationOtpions);
-        return users;
+        const sanitizedSearchParam = (0, helpers_1.sanitizeSearchParam)(filters.searchParam);
+        query.$or = [
+            { email: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { firstName: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { lastName: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+            { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+        ];
     }
-    const users = await user_model_1.default.paginate(filters, paginationOtpions);
-    return users;
+    else {
+        query = { ...filters };
+    }
+    const shouldPaginate = paginationOptions.pagination !== false;
+    if (shouldPaginate) {
+        return await user_model_1.default.paginate(query, paginationOptions);
+    }
+    else {
+        return await user_model_1.default.find(query)
+            .sort(paginationOptions.sort || 'asc')
+            .lean();
+    }
 };
 const updateUser = async (filter, body) => {
     try {
@@ -88,6 +85,5 @@ exports.UserController = {
     updateUser,
     deleteUser,
     toggleUser,
-    getAllUsersUnpaginated,
 };
 //# sourceMappingURL=user.controller.js.map

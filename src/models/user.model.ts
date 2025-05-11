@@ -1,12 +1,17 @@
-import { Cities, Countries, IUser } from '@/utils/types';
+import { Cities, Countries, Gender, IUser, UserTypes } from '@/utils/types';
 import mongoose from 'mongoose';
 import validator from 'validator';
 import paginate from 'mongoose-paginate-v2';
-import { required } from 'joi';
+import { validateLibyanNumber } from '@/utils/helpers';
 
-// add DB error handling
 export const UserSchema = new mongoose.Schema(
   {
+    firebaseId: { type: String, required: true },
+    disabled: { type: Boolean, required: true },
+    acl: {
+      type: Object,
+      required: true,
+    },
     username: {
       type: String,
       required: true,
@@ -22,12 +27,6 @@ export const UserSchema = new mongoose.Schema(
       required: true,
       lowercase: true,
     },
-    // password: {
-    //   type: String,
-    //   required: true,
-    //   lowercase: true,
-    //   minlength: 8,
-    // },
     birthdate: {
       type: String,
       required: true,
@@ -47,49 +46,50 @@ export const UserSchema = new mongoose.Schema(
         required: true,
         lowercase: true,
         enum: Cities,
+        default: Cities.BENGHAZI,
       },
       country: {
         type: String,
         lowercase: true,
         enum: Countries,
+        default: Countries.LIBYA,
       },
     },
     gender: {
       type: String,
       lowercase: true,
       required: true,
-      enum: ['male', 'female'],
+      enum: Gender,
+      default: Gender.MALE,
     },
     email: {
       type: String,
       required: true,
       lowercase: true,
-      validate: [validator.isEmail, 'invalid email'],
+      validate: [validator.isEmail, 'Invalid email address used'],
       unique: true,
     },
     phoneNumber: {
       type: String,
       required: true,
       lowercase: true,
-    },
-    privacyPolicy: {
-      usageAgreement: { type: Boolean, required: true },
+      validate: [validateLibyanNumber, 'Invalid phone number used.'],
     },
     userType: {
       type: String,
       required: true,
       lowercase: true,
+      enum: UserTypes,
+      default: UserTypes.CUSTOMER,
     },
+    // this is the user unique shipping number. Something like TIP-3435 for aramex Shop and Ship service
     uniqueShippingNumber: {
       type: String,
       required: true,
     },
-    acl: {
-      type: Object,
-      required: true,
+    privacyPolicy: {
+      usageAgreement: { type: Boolean, required: true },
     },
-    firebaseId: { type: String, required: true },
-    disabled: { type: Boolean, required: true },
   },
   {
     timestamps: true,
@@ -97,9 +97,6 @@ export const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.plugin(paginate);
-
 interface UserDocument extends mongoose.Document, IUser {}
-
 const UserCollection = mongoose.model<UserDocument, mongoose.PaginateModel<UserDocument>>('User', UserSchema, 'user');
-
 export default UserCollection;

@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteShipmentsValidation = exports.updateShipmentsBardCodeValidation = exports.updateShipmentsValidation = exports.updateShipmentValidation = exports.createShipmentValidation = void 0;
+exports.deleteShipmentsValidation = exports.updateShipmentsBarCodeValidation = exports.updateShipmentsValidation = exports.updateShipmentValidation = exports.createShipmentValidation = void 0;
+const types_1 = require("../utils/types");
 const joi_1 = __importDefault(require("joi"));
 exports.createShipmentValidation = joi_1.default.object({
     isn: joi_1.default.string().lowercase(),
@@ -14,13 +15,19 @@ exports.createShipmentValidation = joi_1.default.object({
         width: joi_1.default.number(),
         length: joi_1.default.number(),
     }),
-    shipmentDestination: joi_1.default.string().valid('benghazi', 'tripoli', 'musrata').required(),
-    shippingMethod: joi_1.default.string().valid('air', 'sea').required(),
+    shipmentDestination: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.Cities))
+        .required(),
+    shippingMethod: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.ShippingMethod))
+        .required(),
     extraCosts: joi_1.default.number(),
     note: joi_1.default.string(),
     status: joi_1.default
         .string()
-        .valid('received at warehouse', 'shipped to destination', 'ready for pick up', 'delivered')
+        .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
         .required(),
 });
@@ -33,29 +40,35 @@ exports.updateShipmentValidation = joi_1.default.object({
         width: joi_1.default.number().required(),
         length: joi_1.default.number().required(),
     }),
-    shipmentDestination: joi_1.default.string().valid('benghazi', 'tripoli', 'musrata').required(),
-    shippingMethod: joi_1.default.string().valid('air', 'sea').required(),
+    shipmentDestination: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.Cities))
+        .required(),
+    shippingMethod: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.ShippingMethod))
+        .required(),
     extraCosts: joi_1.default.number(),
     note: joi_1.default.string(),
     status: joi_1.default
         .string()
-        .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+        .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
         .required(),
 });
 exports.updateShipmentsValidation = joi_1.default.object({
     shipmentsId: joi_1.default.array().items(joi_1.default.string()).required(),
-    shipmentStatus: joi_1.default
+    status: joi_1.default
         .string()
-        .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+        .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
         .required(),
 });
-exports.updateShipmentsBardCodeValidation = joi_1.default.object({
+exports.updateShipmentsBarCodeValidation = joi_1.default.object({
     shipmentsEsn: joi_1.default.array().items(joi_1.default.string()).required(),
-    shipmentStatus: joi_1.default
+    status: joi_1.default
         .string()
-        .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+        .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
         .required(),
 });

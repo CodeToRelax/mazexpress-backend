@@ -1,8 +1,11 @@
+// *OK*
+
 import { WarehouseController } from '@/controllers/warehouse.controller';
+import { CheckUserRules } from '@/middlewares/checkUserRules.middleware';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
-import { checkUserRules } from '@/utils/helpers';
-import { CustomExpressRequest } from '@/utils/types';
+import { ValidateRequest } from '@/middlewares/validateRequest.middleware';
+import { CustomExpressRequest, StatusCode } from '@/utils/types';
 import { createWarehouseValidation } from '@/validation/warehouse.validation';
 import { Router } from 'express';
 
@@ -10,74 +13,81 @@ const router = Router({
   caseSensitive: true,
 });
 
-// (anyone)
-router.get('/getWarehouses', AuthenticateFbJWT, async (req, res) => {
+router.get('/getWarehouses', AuthenticateFbJWT, async (_, res) => {
   try {
     const wareHouses = await WarehouseController.getWarehouses();
-    return res.status(200).json(wareHouses);
+    return res.status(StatusCode.SUCCESS_OK).json(wareHouses);
   } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-    }
+    return error instanceof CustomErrorHandler
+      ? error
+      : new CustomErrorHandler(
+          StatusCode.SERVER_ERROR_INTERNAL,
+          'internalServerError',
+          'Internal server error occured please reach to support',
+          error
+        );
   }
 });
 
-// (admin's)
-router.post('/createWarehouse', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  const hasValidRules = await checkUserRules(req.user?.acl, req);
-  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-
-  try {
-    // validate body
-    const { error } = createWarehouseValidation.validate(req.body);
-    if (error) return res.status(403).json(error);
-    const warehouse = await WarehouseController.createWarehouse(req.body);
-    return res.status(200).json(warehouse);
-  } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+router.post(
+  '/createWarehouse',
+  AuthenticateFbJWT,
+  CheckUserRules,
+  ValidateRequest(createWarehouseValidation),
+  async (req: CustomExpressRequest, res) => {
+    try {
+      const warehouse = await WarehouseController.createWarehouse(req.body);
+      return res.status(StatusCode.SUCCESS_OK).json(warehouse);
+    } catch (error) {
+      return error instanceof CustomErrorHandler
+        ? error
+        : new CustomErrorHandler(
+            StatusCode.SERVER_ERROR_INTERNAL,
+            'internalServerError',
+            'Internal server error occured please reach to support',
+            error
+          );
     }
   }
-});
+);
 
-// (admin's)
-router.patch('/updateWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  const hasValidRules = await checkUserRules(req.user?.acl, req);
-  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-  try {
-    // validate body
-    const { error } = createWarehouseValidation.validate(req.body);
-    if (error) return res.status(403).json(error);
-    await WarehouseController.updateWarehouse(req.params.id, req.body);
-    return res.status(200).json({ ...req.body });
-  } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+router.patch(
+  '/updateWarehouse/:id',
+  AuthenticateFbJWT,
+  CheckUserRules,
+  ValidateRequest(createWarehouseValidation),
+  async (req: CustomExpressRequest, res) => {
+    try {
+      await WarehouseController.updateWarehouse(req.params.id, req.body);
+      return res.status(StatusCode.SUCCESS_OK).json({ ...req.body });
+    } catch (error) {
+      return error instanceof CustomErrorHandler
+        ? error
+        : new CustomErrorHandler(
+            StatusCode.SERVER_ERROR_INTERNAL,
+            'internalServerError',
+            'Internal server error occured please reach to support',
+            error
+          );
     }
   }
-});
+);
 
-// (admin's)
-router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  const hasValidRules = await checkUserRules(req.user?.acl, req);
-  if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-  if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-
+router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
+  if (!req.params.id)
+    throw new CustomErrorHandler(StatusCode.CLIENT_ERROR_FORBIDDEN, 'common.errorValidation', 'common.missingInfo');
   try {
     await WarehouseController.deleteWarehouse(req.params.id);
-    return res.status(200).json('success');
+    return res.status(StatusCode.SUCCESS_OK).json('success');
   } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-    }
+    return error instanceof CustomErrorHandler
+      ? error
+      : new CustomErrorHandler(
+          StatusCode.SERVER_ERROR_INTERNAL,
+          'internalServerError',
+          'Internal server error occured please reach to support',
+          error
+        );
   }
 });
 

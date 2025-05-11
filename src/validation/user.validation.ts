@@ -1,3 +1,5 @@
+// *OK*
+
 import joi from 'joi';
 
 export const UpdateProfileValidation = joi.object({

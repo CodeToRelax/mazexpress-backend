@@ -3,9 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateShippingPriceUtil = exports.checkAdminResponsibility = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateLibyanNumber = exports.countriesEnum = void 0;
+exports.calculateShippingPriceUtil = exports.checkAdminResponsibility = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateAdminCanDoByCountry = exports.getAdminStatusesForCountry = exports.countriesEnum = exports.validateLibyanNumber = void 0;
 const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
+const error_middleware_1 = require("../middlewares/error.middleware");
+const validateLibyanNumber = (rawPhone) => {
+    const phone = rawPhone.trim().replace(/[\s\-]/g, '');
+    const libyanRegex = /^(?:\+218|0)?(91|92|94|95)\d{6}$/;
+    return libyanRegex.test(phone);
+};
+exports.validateLibyanNumber = validateLibyanNumber;
 var countriesEnum;
 (function (countriesEnum) {
     countriesEnum["LIBYA"] = "libya";
@@ -15,12 +22,19 @@ const countriesPerStatus = {
     [countriesEnum.TURKEY]: ['received at warehouse', 'shipped to destination'],
     [countriesEnum.LIBYA]: ['shipped to destination', 'ready for pick up', 'delivered'],
 };
-const validateLibyanNumber = (phoneNumber) => {
-    const allowedCarriers = ['91', '92', '94', '95'];
-    const firstTwoNumbers = phoneNumber.slice(0, 2);
-    return allowedCarriers.includes(firstTwoNumbers) && phoneNumber.length === 9 ? true : false;
+const getAdminStatusesForCountry = (country) => {
+    return countriesPerStatus[country] || [];
 };
-exports.validateLibyanNumber = validateLibyanNumber;
+exports.getAdminStatusesForCountry = getAdminStatusesForCountry;
+const validateAdminCanDoByCountry = (adminUser, newStatus) => {
+    const country = adminUser?.address.country;
+    const allowedStatuses = (0, exports.getAdminStatusesForCountry)(country);
+    const normalizedStatus = newStatus.toLocaleLowerCase();
+    if (!allowedStatuses.includes(normalizedStatus)) {
+        throw new error_middleware_1.CustomErrorHandler(403, 'common.unauthorizedRole', `User from ${country} cannot set status "${newStatus}"`);
+    }
+};
+exports.validateAdminCanDoByCountry = validateAdminCanDoByCountry;
 const validateUserBirthdate = (value) => {
     if (value > new Date())
         return false;
@@ -159,7 +173,6 @@ const generateAcl = (customerType) => {
 };
 exports.generateAcl = generateAcl;
 const checkAdminResponsibility = (adminCountry, status) => {
-    console.log('main function', adminCountry, status);
     const res = countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
     return res;
 };

@@ -1,3 +1,6 @@
+// *OK*
+
+import { Cities, ShipmentStatus, ShippingMethod } from '@/utils/types';
 import joi from 'joi';
 
 export const createShipmentValidation = joi.object({
@@ -9,13 +12,19 @@ export const createShipmentValidation = joi.object({
     width: joi.number(),
     length: joi.number(),
   }),
-  shipmentDestination: joi.string().valid('benghazi', 'tripoli', 'musrata').required(),
-  shippingMethod: joi.string().valid('air', 'sea').required(),
+  shipmentDestination: joi
+    .string()
+    .valid(...Object.values(Cities))
+    .required(),
+  shippingMethod: joi
+    .string()
+    .valid(...Object.values(ShippingMethod))
+    .required(),
   extraCosts: joi.number(),
   note: joi.string(),
   status: joi
     .string()
-    .valid('received at warehouse', 'shipped to destination', 'ready for pick up', 'delivered')
+    .valid(...Object.values(ShipmentStatus))
     .insensitive()
     .required(),
 });
@@ -29,32 +38,37 @@ export const updateShipmentValidation = joi.object({
     width: joi.number().required(),
     length: joi.number().required(),
   }),
-  shipmentDestination: joi.string().valid('benghazi', 'tripoli', 'musrata').required(),
-  shippingMethod: joi.string().valid('air', 'sea').required(),
+  shipmentDestination: joi
+    .string()
+    .valid(...Object.values(Cities))
+    .required(),
+  shippingMethod: joi
+    .string()
+    .valid(...Object.values(ShippingMethod))
+    .required(),
   extraCosts: joi.number(),
   note: joi.string(),
   status: joi
     .string()
-    .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+    .valid(...Object.values(ShipmentStatus))
     .insensitive()
-
     .required(),
 });
 
 export const updateShipmentsValidation = joi.object({
   shipmentsId: joi.array().items(joi.string()).required(),
-  shipmentStatus: joi
+  status: joi
     .string()
-    .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+    .valid(...Object.values(ShipmentStatus))
     .insensitive()
     .required(),
 });
 
-export const updateShipmentsBardCodeValidation = joi.object({
+export const updateShipmentsBarCodeValidation = joi.object({
   shipmentsEsn: joi.array().items(joi.string()).required(),
-  shipmentStatus: joi
+  status: joi
     .string()
-    .valid('Received at warehouse', 'Shipped to destination', 'Ready for pick up', 'Delivered')
+    .valid(...Object.values(ShipmentStatus))
     .insensitive()
     .required(),
 });

@@ -1,8 +1,11 @@
+// *OK*
+
 import { ConfigController } from '@/controllers/config.controller';
+import { CheckUserRules } from '@/middlewares/checkUserRules.middleware';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
-import { checkUserRules } from '@/utils/helpers';
-import { CustomExpressRequest } from '@/utils/types';
+import { ValidateRequest } from '@/middlewares/validateRequest.middleware';
+import { CustomExpressRequest, StatusCode } from '@/utils/types';
 import { UpdateshippingConfigValidation } from '@/validation/config.validation';
 import { Router } from 'express';
 
@@ -10,40 +13,44 @@ const router = Router({
   caseSensitive: true,
 });
 
-// --- api methods config service--- //
 // (admin's)
-router.get('/getShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+router.get('/getShippingConfig', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
   try {
-    const hasValidRules = await checkUserRules(req.user?.acl, req);
-    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     const shippingConfig = await ConfigController.getShippingConfig();
-    return res.status(200).json(shippingConfig);
+    return res.status(StatusCode.SUCCESS_OK).json(shippingConfig);
   } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-    }
+    return error instanceof CustomErrorHandler
+      ? error
+      : new CustomErrorHandler(
+          StatusCode.SERVER_ERROR_INTERNAL,
+          'internalServerError',
+          'Internal server error occured please reach to support',
+          error
+        );
   }
 });
 
 // (admin's)
-router.post('/updateShippingConfig', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-  try {
-    const hasValidRules = await checkUserRules(req.user?.acl, req);
-    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-    // validate body
-    const { error } = UpdateshippingConfigValidation.validate(req.body);
-    if (error) return res.status(403).json(error);
-    await ConfigController.updateShippingConfig(req.body);
-    return res.status(200).json({ ...req.body });
-  } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+router.post(
+  '/updateShippingConfig',
+  AuthenticateFbJWT,
+  CheckUserRules,
+  ValidateRequest(UpdateshippingConfigValidation),
+  async (req: CustomExpressRequest, res) => {
+    try {
+      await ConfigController.updateShippingConfig(req.body);
+      return res.status(StatusCode.SUCCESS_OK).json({ ...req.body });
+    } catch (error) {
+      return error instanceof CustomErrorHandler
+        ? error
+        : new CustomErrorHandler(
+            StatusCode.SERVER_ERROR_INTERNAL,
+            'internalServerError',
+            'Internal server error occured please reach to support',
+            error
+          );
     }
   }
-});
+);
 
 export default router;

@@ -1,3 +1,5 @@
+// *OK*
+
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import { IUserStatus } from '@/utils/types';
 import { FirebaseError } from 'firebase-admin';

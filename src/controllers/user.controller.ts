@@ -15,37 +15,32 @@ const getUser = async (_id: string) => {
   return user;
 };
 
-// filter and pagination are needed
-const getAllUsersUnpaginated = async () => {
-  const users = await UserCollection.find({});
-  return users;
-};
+const getAllUsers = async (paginationOptions: PaginateOptions, filters: IGetAllUsersFilters) => {
+  let query: Record<string, unknown> = {};
 
-// filter and pagination are needed
-const getAllUsers = async (paginationOtpions: PaginateOptions, filters: IGetAllUsersFilters) => {
+  // Handle searchParam filtering
   if (filters.searchParam) {
-    let query = {};
-    if (filters.searchParam) {
-      const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
-      query = {
-        $or: [
-          { email: { $regex: sanitizedSearchParam, $options: 'i' } },
-          { firstName: { $regex: sanitizedSearchParam, $options: 'i' } },
-          { lastName: { $regex: sanitizedSearchParam, $options: 'i' } },
-          { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
-          { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
-        ],
-      };
-    } else {
-      query = filters;
-    }
-
-    const users = await UserCollection.paginate(query, paginationOtpions);
-    return users;
+    const sanitizedSearchParam = sanitizeSearchParam(filters.searchParam);
+    query.$or = [
+      { email: { $regex: sanitizedSearchParam, $options: 'i' } },
+      { firstName: { $regex: sanitizedSearchParam, $options: 'i' } },
+      { lastName: { $regex: sanitizedSearchParam, $options: 'i' } },
+      { uniqueShippingNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+      { phoneNumber: { $regex: sanitizedSearchParam, $options: 'i' } },
+    ];
+  } else {
+    query = { ...filters };
   }
 
-  const users = await UserCollection.paginate(filters, paginationOtpions);
-  return users;
+  // Use paginate value from filters (default to true)
+  const shouldPaginate = paginationOptions.pagination !== false;
+  if (shouldPaginate) {
+    return await UserCollection.paginate(query, paginationOptions);
+  } else {
+    return await UserCollection.find(query)
+      .sort((paginationOptions.sort as string) || 'asc')
+      .lean();
+  }
 };
 
 const updateUser = async (
@@ -100,5 +95,4 @@ export const UserController = {
   updateUser,
   deleteUser,
   toggleUser,
-  getAllUsersUnpaginated,
 };

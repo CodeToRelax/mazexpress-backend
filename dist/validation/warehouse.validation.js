@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createWarehouseValidation = void 0;
+const types_1 = require("../utils/types");
 const joi_1 = __importDefault(require("joi"));
 exports.createWarehouseValidation = joi_1.default.object({
     name: joi_1.default.string().lowercase().min(3).required(),
@@ -13,8 +14,14 @@ exports.createWarehouseValidation = joi_1.default.object({
         street: joi_1.default.string(),
         neighborhood: joi_1.default.string(),
         district: joi_1.default.string(),
-        city: joi_1.default.string().valid('benghazi', 'tripoli', 'musrata', 'istanbul').required(),
-        country: joi_1.default.string().valid('libya', 'turkey').required(),
+        city: joi_1.default
+            .string()
+            .valid(...Object.values(types_1.Cities))
+            .required(),
+        country: joi_1.default
+            .string()
+            .valid(...Object.values(types_1.Countries))
+            .required(),
         googleMapsUrl: joi_1.default.string(),
     }),
     phoneNumber: joi_1.default.string().required(),
