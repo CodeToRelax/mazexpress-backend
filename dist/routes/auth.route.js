@@ -37,7 +37,7 @@ router.get('/acl/:id', jwt_middleware_1.default, checkUserRules_middleware_1.Che
             : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
     }
 });
-router.patch('/acl', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(auth_validation_1.createUserValidation), async (req, res) => {
+router.patch('/acl', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(auth_validation_1.updateAclValidation), async (req, res) => {
     try {
         const user = await auth_controller_1.AuthController.updateUserAcl(req.body.userId, req.body.rules);
         return res.status(200).json(user?.acl);

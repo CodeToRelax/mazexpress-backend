@@ -52,6 +52,7 @@ exports.updateAclValidation = joi_1.default.object({
         POST: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
         PATCH: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
         GET: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
+        UPDATE: joi_1.default.object().pattern(joi_1.default.string(), joi_1.default.any()),
     })
         .required(),
 });

@@ -7,7 +7,7 @@ import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
 import { ValidateRequest } from '@/middlewares/validateRequest.middleware';
 import { CustomExpressRequest, StatusCode } from '@/utils/types';
-import { createUserValidation } from '@/validation/auth.validation';
+import { createUserValidation, updateAclValidation } from '@/validation/auth.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -31,7 +31,7 @@ router.post('/signUp', ValidateRequest(createUserValidation), async (req, res) =
   }
 });
 
-// update user acl (Mohamed-Ali-Zeo only)
+// get user acl (Mohamed-Ali-Zeo only)
 router.get('/acl/:id', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
   try {
     const user = await UserController.getUser(req.params.id);
@@ -53,7 +53,7 @@ router.patch(
   '/acl',
   AuthenticateFbJWT,
   CheckUserRules,
-  ValidateRequest(createUserValidation),
+  ValidateRequest(updateAclValidation),
   async (req: CustomExpressRequest, res) => {
     try {
       const user = await AuthController.updateUserAcl(req.body.userId, req.body.rules);

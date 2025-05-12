@@ -8,7 +8,7 @@
   "scripts": {
     "build": "rimraf dist && npx tsc && tsc-alias -p tsconfig.json",
     "add-build": "git add dist",
-    "start": "TZ='UTC' nodemon -r tsconfig-paths/register src/index.ts",
+    "dev": "TZ='UTC' nodemon -r tsconfig-paths/register src/index.ts",
     "start:prod": "TZ='UTC' node -r tsconfig-paths/register dist/index.js",
     "test:e2e": "jest",
     "lint": "eslint src/**/*.ts",

@@ -7,8 +7,7 @@ import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
 export const validateLibyanNumber = (rawPhone: string): boolean => {
   const phone = rawPhone.trim().replace(/[\s\-]/g, '');
-  // Match +21891xxxxxxx or 091xxxxxxx
-  const libyanRegex = /^(?:\+218|0)?(91|92|94|95)\d{6}$/;
+  const libyanRegex = /^(?:\+218|0)?(91|92|94|95)\d{7}$/;
   return libyanRegex.test(phone);
 };
 

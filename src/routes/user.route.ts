@@ -164,7 +164,7 @@ router.patch(
   }
 );
 
-// all users using their Id from JWT
+// update profile using their Id from JWT
 router.patch(
   '/updateProfile',
   AuthenticateFbJWT,

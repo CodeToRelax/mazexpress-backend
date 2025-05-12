@@ -9,7 +9,7 @@ const types_1 = require("./types");
 const error_middleware_1 = require("../middlewares/error.middleware");
 const validateLibyanNumber = (rawPhone) => {
     const phone = rawPhone.trim().replace(/[\s\-]/g, '');
-    const libyanRegex = /^(?:\+218|0)?(91|92|94|95)\d{6}$/;
+    const libyanRegex = /^(?:\+218|0)?(91|92|94|95)\d{7}$/;
     return libyanRegex.test(phone);
 };
 exports.validateLibyanNumber = validateLibyanNumber;

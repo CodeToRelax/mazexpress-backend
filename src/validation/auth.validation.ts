@@ -51,6 +51,7 @@ export const updateAclValidation = joi.object({
       POST: joi.object().pattern(joi.string(), joi.any()),
       PATCH: joi.object().pattern(joi.string(), joi.any()),
       GET: joi.object().pattern(joi.string(), joi.any()),
+      UPDATE: joi.object().pattern(joi.string(), joi.any()),
     })
     .required(),
 });
