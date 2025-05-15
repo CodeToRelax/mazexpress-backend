@@ -33,6 +33,7 @@ const createUser = async (body: IUser & { password: string }) => {
     });
     return mongoUser;
   } catch (error) {
+    console.log(error);
     if (fbUser) {
       try {
         await FirebaseController.deleteFirebaseUser(fbUser.uid);
@@ -45,7 +46,6 @@ const createUser = async (body: IUser & { password: string }) => {
     if (error instanceof CustomErrorHandler) {
       throw error;
     } else {
-      console.error('MongoDB error occurred:');
       console.log(error);
       throw error;
     }

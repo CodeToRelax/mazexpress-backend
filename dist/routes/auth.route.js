@@ -21,9 +21,12 @@ router.post('/signUp', (0, validateRequest_middleware_1.ValidateRequest)(auth_va
         return res.status(types_1.StatusCode.SUCCESS_CREATED).json(user);
     }
     catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
+        if (error instanceof error_middleware_1.CustomErrorHandler) {
+            throw error;
+        }
+        else {
+            throw new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
+        }
     }
 });
 router.get('/acl/:id', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, async (req, res) => {

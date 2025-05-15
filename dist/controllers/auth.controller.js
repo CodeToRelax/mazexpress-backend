@@ -33,6 +33,7 @@ const createUser = async (body) => {
         return mongoUser;
     }
     catch (error) {
+        console.log(error);
         if (fbUser) {
             try {
                 await firebase_controller_1.FirebaseController.deleteFirebaseUser(fbUser.uid);
@@ -47,7 +48,6 @@ const createUser = async (body) => {
             throw error;
         }
         else {
-            console.error('MongoDB error occurred:');
             console.log(error);
             throw error;
         }

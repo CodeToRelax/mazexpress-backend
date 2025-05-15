@@ -20,14 +20,16 @@ router.post('/signUp', ValidateRequest(createUserValidation), async (req, res) =
     const user = await AuthController.createUser(req.body);
     return res.status(StatusCode.SUCCESS_CREATED).json(user);
   } catch (error) {
-    return error instanceof CustomErrorHandler
-      ? error
-      : new CustomErrorHandler(
-          StatusCode.SERVER_ERROR_INTERNAL,
-          'internalServerError',
-          'Internal server error occured please reach to support',
-          error
-        );
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(
+        StatusCode.SERVER_ERROR_INTERNAL,
+        'internalServerError',
+        'Internal server error occured please reach to support',
+        error
+      );
+    }
   }
 });
 
