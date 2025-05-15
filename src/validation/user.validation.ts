@@ -14,7 +14,7 @@ export const AdminUpdateUserValidation = joi.object({
   address: joi.object({
     street: joi.string().required(),
     city: joi.string().required(),
-    specificDescription: joi.string().optional(),
+    specificDescription: joi.string().allow('').optional(),
     country: joi.string().optional(),
   }),
   phoneNumber: joi.number().optional(),

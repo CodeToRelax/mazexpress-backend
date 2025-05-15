@@ -16,21 +16,8 @@ const router = Router({
 
 // create user (anyone)
 router.post('/signUp', ValidateRequest(createUserValidation), async (req, res) => {
-  try {
-    const user = await AuthController.createUser(req.body);
-    return res.status(StatusCode.SUCCESS_CREATED).json(user);
-  } catch (error) {
-    if (error instanceof CustomErrorHandler) {
-      throw error;
-    } else {
-      throw new CustomErrorHandler(
-        StatusCode.SERVER_ERROR_INTERNAL,
-        'internalServerError',
-        'Internal server error occured please reach to support',
-        error
-      );
-    }
-  }
+  const user = await AuthController.createUser(req.body);
+  return res.status(StatusCode.SUCCESS_CREATED).json(user);
 });
 
 // get user acl (Mohamed-Ali-Zeo only)
