@@ -18,79 +18,53 @@ const router = Router({
 
 // (admin)
 router.get('/getAllUsers', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
-  try {
-    const { page: _p, limit: _l, sort: _s, paginate, ...rawFilters } = req.query;
+  const { page: _p, limit: _l, sort: _s, paginate, ...rawFilters } = req.query;
 
-    // Extract pagination options with defaults
-    const page = parseInt(_p as string, 10) || 1;
-    const limit = parseInt(_l as string, 10) || 10;
-    const sort = _s || 'asc';
-    const paginationOptions: PaginateOptions = {
-      page,
-      limit,
-      sort,
-      pagination: !!paginate,
-      lean: true, // return plain JS objects
-    };
-    const filters = rawFilters as unknown as IGetAllUsersFilters;
+  // Extract pagination options with defaults
+  const page = parseInt(_p as string, 10) || 1;
+  const limit = parseInt(_l as string, 10) || 10;
+  const sort = _s || 'asc';
+  const paginationOptions: PaginateOptions = {
+    page,
+    limit,
+    sort,
+    pagination: !!paginate,
+    lean: true, // return plain JS objects
+  };
+  const filters = rawFilters as unknown as IGetAllUsersFilters;
 
-    // return paginated response
-    const results = await UserController.getAllUsers(paginationOptions, filters);
-    return res.status(StatusCode.SUCCESS_OK).json(results);
-  } catch (error) {
-    return error instanceof CustomErrorHandler
-      ? error
-      : new CustomErrorHandler(
-          StatusCode.SERVER_ERROR_INTERNAL,
-          'internalServerError',
-          'Internal server error occured please reach to support',
-          error
-        );
-  }
+  // return paginated response
+  const results = await UserController.getAllUsers(paginationOptions, filters);
+  return res.status(StatusCode.SUCCESS_OK).json(results);
 });
 
-// (admin) TODO update this
+// (admin)
 router.get('/getAllUsersUnpaginated', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
-  try {
-    const { page: _p, limit: _l, sort: _s, ...rawFilters } = req.query;
+  const { page: _p, limit: _l, sort: _s, ...rawFilters } = req.query;
 
-    // Extract pagination options with defaults
-    const page = parseInt(_p as string, 10) || 1;
-    const limit = parseInt(_l as string, 10) || 10;
-    const sort = _s || 'asc';
-    const paginationOptions: PaginateOptions = {
-      page,
-      limit,
-      sort,
-      pagination: false,
-      lean: true, // return plain JS objects
-    };
-    const filters = rawFilters as unknown as IGetAllUsersFilters;
+  // Extract pagination options with defaults
+  const page = parseInt(_p as string, 10) || 1;
+  const limit = parseInt(_l as string, 10) || 10;
+  const sort = _s || 'asc';
+  const paginationOptions: PaginateOptions = {
+    page,
+    limit,
+    sort,
+    pagination: false,
+    lean: true, // return plain JS objects
+  };
+  const filters = rawFilters as unknown as IGetAllUsersFilters;
 
-    // return paginated response
-    const results = await UserController.getAllUsers(paginationOptions, filters);
-    return res.status(StatusCode.SUCCESS_OK).json(results);
-  } catch (error) {
-    return error instanceof CustomErrorHandler
-      ? error
-      : new CustomErrorHandler(
-          StatusCode.SERVER_ERROR_INTERNAL,
-          'internalServerError',
-          'Internal server error occured please reach to support',
-          error
-        );
-  }
+  // return paginated response
+  const results = await UserController.getAllUsers(paginationOptions, filters);
+  return res.status(StatusCode.SUCCESS_OK).json(results);
 });
 
 // (admin)
 router.get('/getUser/:id', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
   if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-  try {
-    const results = await UserController.getUser(req.params.id);
-    return res.status(StatusCode.SUCCESS_OK).json(results);
-  } catch (error) {
-    throw new CustomErrorHandler(StatusCode.CLIENT_ERROR_NOT_FOUND, 'common.error', 'Requested used not found.', error);
-  }
+  const results = await UserController.getUser(req.params.id);
+  return res.status(StatusCode.SUCCESS_OK).json(results);
 });
 
 // (admin)
@@ -100,19 +74,8 @@ router.post(
   CheckUserRules,
   ValidateRequest(createUserValidation),
   async (req: CustomExpressRequest, res) => {
-    try {
-      const user = await AuthController.createUser(req.body);
-      return res.status(StatusCode.SUCCESS_CREATED).json(user);
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    const user = await AuthController.createUser(req.body);
+    return res.status(StatusCode.SUCCESS_CREATED).json(user);
   }
 );
 
@@ -123,19 +86,8 @@ router.patch(
   CheckUserRules,
   ValidateRequest(toggleUserValidation),
   async (req: CustomExpressRequest, res) => {
-    try {
-      const results = await UserController.toggleUser(req.body.firebaseId, req.body.status);
-      return res.status(StatusCode.SUCCESS_OK).json(results);
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    const results = await UserController.toggleUser(req.body.firebaseId, req.body.status);
+    return res.status(StatusCode.SUCCESS_OK).json(results);
   }
 );
 
@@ -147,20 +99,9 @@ router.patch(
   ValidateRequest(AdminUpdateUserValidation),
   async (req: CustomExpressRequest, res) => {
     if (!req.params.id) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-    try {
-      const filter = { _id: req.params.id };
-      const results = await UserController.updateUser(filter, req.body);
-      return res.status(StatusCode.SUCCESS_OK).json(results);
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    const filter = { _id: req.params.id };
+    const results = await UserController.updateUser(filter, req.body);
+    return res.status(StatusCode.SUCCESS_OK).json(results);
   }
 );
 
@@ -171,19 +112,8 @@ router.patch(
   CheckUserRules,
   ValidateRequest(UpdateProfileValidation),
   async (req: CustomExpressRequest, res) => {
-    try {
-      const results = await UserController.updateUser({ _id: req.user?.mongoId }, req.body);
-      return res.status(StatusCode.SUCCESS_OK).json(results);
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    const results = await UserController.updateUser({ _id: req.user?.mongoId }, req.body);
+    return res.status(StatusCode.SUCCESS_OK).json(results);
   }
 );
 
@@ -194,19 +124,8 @@ router.delete(
   CheckUserRules,
   ValidateRequest(deleteUserValidation),
   async (req: CustomExpressRequest, res) => {
-    try {
-      const results = await UserController.deleteUser(req.body.mongoId, req.body.firebaseId);
-      return res.status(StatusCode.SUCCESS_OK).json(results);
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    const results = await UserController.deleteUser(req.body.mongoId, req.body.firebaseId);
+    return res.status(StatusCode.SUCCESS_OK).json(results);
   }
 );
 

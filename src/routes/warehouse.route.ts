@@ -14,19 +14,8 @@ const router = Router({
 });
 
 router.get('/getWarehouses', AuthenticateFbJWT, async (_, res) => {
-  try {
-    const wareHouses = await WarehouseController.getWarehouses();
-    return res.status(StatusCode.SUCCESS_OK).json(wareHouses);
-  } catch (error) {
-    return error instanceof CustomErrorHandler
-      ? error
-      : new CustomErrorHandler(
-          StatusCode.SERVER_ERROR_INTERNAL,
-          'internalServerError',
-          'Internal server error occured please reach to support',
-          error
-        );
-  }
+  const wareHouses = await WarehouseController.getWarehouses();
+  return res.status(StatusCode.SUCCESS_OK).json(wareHouses);
 });
 
 router.post(
@@ -35,19 +24,8 @@ router.post(
   CheckUserRules,
   ValidateRequest(createWarehouseValidation),
   async (req: CustomExpressRequest, res) => {
-    try {
-      const warehouse = await WarehouseController.createWarehouse(req.body);
-      return res.status(StatusCode.SUCCESS_OK).json(warehouse);
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    const warehouse = await WarehouseController.createWarehouse(req.body);
+    return res.status(StatusCode.SUCCESS_OK).json(warehouse);
   }
 );
 
@@ -57,38 +35,16 @@ router.patch(
   CheckUserRules,
   ValidateRequest(createWarehouseValidation),
   async (req: CustomExpressRequest, res) => {
-    try {
-      await WarehouseController.updateWarehouse(req.params.id, req.body);
-      return res.status(StatusCode.SUCCESS_OK).json({ ...req.body });
-    } catch (error) {
-      return error instanceof CustomErrorHandler
-        ? error
-        : new CustomErrorHandler(
-            StatusCode.SERVER_ERROR_INTERNAL,
-            'internalServerError',
-            'Internal server error occured please reach to support',
-            error
-          );
-    }
+    await WarehouseController.updateWarehouse(req.params.id, req.body);
+    return res.status(StatusCode.SUCCESS_OK).json({ ...req.body });
   }
 );
 
 router.delete('/deleteWarehouse/:id', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
   if (!req.params.id)
     throw new CustomErrorHandler(StatusCode.CLIENT_ERROR_FORBIDDEN, 'common.errorValidation', 'common.missingInfo');
-  try {
-    await WarehouseController.deleteWarehouse(req.params.id);
-    return res.status(StatusCode.SUCCESS_OK).json('success');
-  } catch (error) {
-    return error instanceof CustomErrorHandler
-      ? error
-      : new CustomErrorHandler(
-          StatusCode.SERVER_ERROR_INTERNAL,
-          'internalServerError',
-          'Internal server error occured please reach to support',
-          error
-        );
-  }
+  await WarehouseController.deleteWarehouse(req.params.id);
+  return res.status(StatusCode.SUCCESS_OK).json('success');
 });
 
 export default router;

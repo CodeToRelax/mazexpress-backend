@@ -17,119 +17,65 @@ const router = (0, express_1.Router)({
     caseSensitive: true,
 });
 router.get('/getAllUsers', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, async (req, res) => {
-    try {
-        const { page: _p, limit: _l, sort: _s, paginate, ...rawFilters } = req.query;
-        const page = parseInt(_p, 10) || 1;
-        const limit = parseInt(_l, 10) || 10;
-        const sort = _s || 'asc';
-        const paginationOptions = {
-            page,
-            limit,
-            sort,
-            pagination: !!paginate,
-            lean: true,
-        };
-        const filters = rawFilters;
-        const results = await user_controller_1.UserController.getAllUsers(paginationOptions, filters);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const { page: _p, limit: _l, sort: _s, paginate, ...rawFilters } = req.query;
+    const page = parseInt(_p, 10) || 1;
+    const limit = parseInt(_l, 10) || 10;
+    const sort = _s || 'asc';
+    const paginationOptions = {
+        page,
+        limit,
+        sort,
+        pagination: !!paginate,
+        lean: true,
+    };
+    const filters = rawFilters;
+    const results = await user_controller_1.UserController.getAllUsers(paginationOptions, filters);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 router.get('/getAllUsersUnpaginated', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, async (req, res) => {
-    try {
-        const { page: _p, limit: _l, sort: _s, ...rawFilters } = req.query;
-        const page = parseInt(_p, 10) || 1;
-        const limit = parseInt(_l, 10) || 10;
-        const sort = _s || 'asc';
-        const paginationOptions = {
-            page,
-            limit,
-            sort,
-            pagination: false,
-            lean: true,
-        };
-        const filters = rawFilters;
-        const results = await user_controller_1.UserController.getAllUsers(paginationOptions, filters);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const { page: _p, limit: _l, sort: _s, ...rawFilters } = req.query;
+    const page = parseInt(_p, 10) || 1;
+    const limit = parseInt(_l, 10) || 10;
+    const sort = _s || 'asc';
+    const paginationOptions = {
+        page,
+        limit,
+        sort,
+        pagination: false,
+        lean: true,
+    };
+    const filters = rawFilters;
+    const results = await user_controller_1.UserController.getAllUsers(paginationOptions, filters);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 router.get('/getUser/:id', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, async (req, res) => {
     if (!req.params.id)
         throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-    try {
-        const results = await user_controller_1.UserController.getUser(req.params.id);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        throw new error_middleware_1.CustomErrorHandler(types_1.StatusCode.CLIENT_ERROR_NOT_FOUND, 'common.error', 'Requested used not found.', error);
-    }
+    const results = await user_controller_1.UserController.getUser(req.params.id);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 router.post('/createUser', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(auth_validation_1.createUserValidation), async (req, res) => {
-    try {
-        const user = await auth_controller_1.AuthController.createUser(req.body);
-        return res.status(types_1.StatusCode.SUCCESS_CREATED).json(user);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const user = await auth_controller_1.AuthController.createUser(req.body);
+    return res.status(types_1.StatusCode.SUCCESS_CREATED).json(user);
 });
 router.patch('/toggleUser', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(auth_validation_1.toggleUserValidation), async (req, res) => {
-    try {
-        const results = await user_controller_1.UserController.toggleUser(req.body.firebaseId, req.body.status);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const results = await user_controller_1.UserController.toggleUser(req.body.firebaseId, req.body.status);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 router.patch('/updateUser/:id', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(user_validation_1.AdminUpdateUserValidation), async (req, res) => {
     if (!req.params.id)
         throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-    try {
-        const filter = { _id: req.params.id };
-        const results = await user_controller_1.UserController.updateUser(filter, req.body);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const filter = { _id: req.params.id };
+    const results = await user_controller_1.UserController.updateUser(filter, req.body);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 router.patch('/updateProfile', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(user_validation_1.UpdateProfileValidation), async (req, res) => {
-    try {
-        const results = await user_controller_1.UserController.updateUser({ _id: req.user?.mongoId }, req.body);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const results = await user_controller_1.UserController.updateUser({ _id: req.user?.mongoId }, req.body);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 router.delete('/deleteUser', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(user_validation_1.deleteUserValidation), async (req, res) => {
-    try {
-        const results = await user_controller_1.UserController.deleteUser(req.body.mongoId, req.body.firebaseId);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const results = await user_controller_1.UserController.deleteUser(req.body.mongoId, req.body.firebaseId);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
 exports.default = router;
 //# sourceMappingURL=user.route.js.map

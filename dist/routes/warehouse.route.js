@@ -15,50 +15,22 @@ const router = (0, express_1.Router)({
     caseSensitive: true,
 });
 router.get('/getWarehouses', jwt_middleware_1.default, async (_, res) => {
-    try {
-        const wareHouses = await warehouse_controller_1.WarehouseController.getWarehouses();
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(wareHouses);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const wareHouses = await warehouse_controller_1.WarehouseController.getWarehouses();
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(wareHouses);
 });
 router.post('/createWarehouse', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(warehouse_validation_1.createWarehouseValidation), async (req, res) => {
-    try {
-        const warehouse = await warehouse_controller_1.WarehouseController.createWarehouse(req.body);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json(warehouse);
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    const warehouse = await warehouse_controller_1.WarehouseController.createWarehouse(req.body);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json(warehouse);
 });
 router.patch('/updateWarehouse/:id', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(warehouse_validation_1.createWarehouseValidation), async (req, res) => {
-    try {
-        await warehouse_controller_1.WarehouseController.updateWarehouse(req.params.id, req.body);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json({ ...req.body });
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    await warehouse_controller_1.WarehouseController.updateWarehouse(req.params.id, req.body);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json({ ...req.body });
 });
 router.delete('/deleteWarehouse/:id', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, async (req, res) => {
     if (!req.params.id)
         throw new error_middleware_1.CustomErrorHandler(types_1.StatusCode.CLIENT_ERROR_FORBIDDEN, 'common.errorValidation', 'common.missingInfo');
-    try {
-        await warehouse_controller_1.WarehouseController.deleteWarehouse(req.params.id);
-        return res.status(types_1.StatusCode.SUCCESS_OK).json('success');
-    }
-    catch (error) {
-        return error instanceof error_middleware_1.CustomErrorHandler
-            ? error
-            : new error_middleware_1.CustomErrorHandler(types_1.StatusCode.SERVER_ERROR_INTERNAL, 'internalServerError', 'Internal server error occured please reach to support', error);
-    }
+    await warehouse_controller_1.WarehouseController.deleteWarehouse(req.params.id);
+    return res.status(types_1.StatusCode.SUCCESS_OK).json('success');
 });
 exports.default = router;
 //# sourceMappingURL=warehouse.route.js.map
