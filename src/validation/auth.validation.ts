@@ -9,7 +9,7 @@ export const createUserValidation = joi.object({
   password: joi.string().min(3).required(),
   birthdate: joi.string().allow('').lowercase(),
   address: joi.object({
-    street: joi.string().required(),
+    street: joi.string().optional(),
     city: joi
       .string()
       .valid(...Object.values(Cities))

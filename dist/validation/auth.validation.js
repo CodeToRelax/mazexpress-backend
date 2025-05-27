@@ -12,7 +12,7 @@ exports.createUserValidation = joi_1.default.object({
     password: joi_1.default.string().min(3).required(),
     birthdate: joi_1.default.string().allow('').lowercase(),
     address: joi_1.default.object({
-        street: joi_1.default.string().required(),
+        street: joi_1.default.string().optional(),
         city: joi_1.default
             .string()
             .valid(...Object.values(types_1.Cities))
