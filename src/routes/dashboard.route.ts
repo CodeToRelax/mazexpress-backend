@@ -1,72 +1,72 @@
-// import { DashboardController } from '@/controllers/dashboard.controller';
-// import { CustomErrorHandler } from '@/middlewares/error.middleware';
-// import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
-// import { checkUserRules } from '@/utils/helpers';
-// import { CustomExpressRequest } from '@/utils/types';
-// import { Router } from 'express';
+import { DashboardController } from '@/controllers/dashboard.controller';
+import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
+import { checkUserRules } from '@/utils/helpers';
+import { CustomExpressRequest } from '@/utils/types';
+import { Router } from 'express';
 
-// const router = Router({
-//   caseSensitive: true,
-// });
+const router = Router({
+  caseSensitive: true,
+});
 
-// // (admin's)
-// router.get('/getShipmentsStatusCount', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-//   try {
-//     const hasValidRules = await checkUserRules(req.user?.acl, req);
-//     if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-//     const shippingConfig = await DashboardController.getShipmentCountByStatus();
-//     return res.status(200).json(shippingConfig);
-//   } catch (error) {
-//     if (error instanceof CustomErrorHandler) {
-//       throw error;
-//     } else {
-//       throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-//     }
-//   }
-// });
+// (admin's)
+router.get('/getShipmentsStatusCount', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  try {
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+    const shippingConfig = await DashboardController.getShipmentCountByStatus();
+    return res.status(200).json(shippingConfig);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
 
-// // (admin's)
-// router.get('/getUserAndShipmentCountPerYear', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-//   try {
-//     const hasValidRules = await checkUserRules(req.user?.acl, req);
-//     if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+// (admin's)
+router.get('/getUserAndShipmentCountPerYear', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  try {
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
-//     if (!req.query.year) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+    if (!req.query.year) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
 
-//     const results = await DashboardController.getUserAndShipmentCountPerYear(req.query.year as string);
-//     return res.status(200).json(results);
-//   } catch (error) {
-//     if (error instanceof CustomErrorHandler) {
-//       throw error;
-//     } else {
-//       throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-//     }
-//   }
-// });
+    const results = await DashboardController.getUserAndShipmentCountPerYear(req.query.year as string);
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
 
-// router.get('/getOrdersPerDay', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-//   try {
-//     const hasValidRules = await checkUserRules(req.user?.acl, req);
-//     if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
+router.get('/getOrdersPerDay', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
+  try {
+    const hasValidRules = await checkUserRules(req.user?.acl, req);
+    if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
 
-//     const filterDay = req.query.date as string;
+    const filterDay = req.query.date as string;
 
-//     if (!filterDay) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+    if (!filterDay) throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
 
-//     const [dd, mm, yyyy] = filterDay.split('/');
-//     if (!dd || !mm || !yyyy) {
-//       throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
-//     }
+    const [dd, mm, yyyy] = filterDay.split('/');
+    if (!dd || !mm || !yyyy) {
+      throw new CustomErrorHandler(403, 'common.errorValidation', 'common.missingInfo');
+    }
 
-//     const results = await DashboardController.getOrdersPerDay(filterDay);
-//     return res.status(200).json(results);
-//   } catch (error) {
-//     if (error instanceof CustomErrorHandler) {
-//       throw error;
-//     } else {
-//       throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-//     }
-//   }
-// });
+    const results = await DashboardController.getOrdersPerDay(filterDay);
+    return res.status(200).json(results);
+  } catch (error) {
+    if (error instanceof CustomErrorHandler) {
+      throw error;
+    } else {
+      throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
+    }
+  }
+});
 
-// export default router;
+export default router;

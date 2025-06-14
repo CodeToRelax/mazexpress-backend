@@ -45,6 +45,11 @@ exports.WarehouseSchema = new mongoose_1.default.Schema({
             type: String,
             required: true,
         },
+        zipCode: {
+            type: String,
+            lowercase: true,
+            required: true,
+        },
     },
     phoneNumber: {
         type: String,

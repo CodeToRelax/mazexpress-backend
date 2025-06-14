@@ -23,6 +23,7 @@ exports.createWarehouseValidation = joi_1.default.object({
             .valid(...Object.values(types_1.Countries))
             .required(),
         googleMapsUrl: joi_1.default.string(),
+        zipCode: joi_1.default.string(),
     }),
     phoneNumber: joi_1.default.string().required(),
     email: joi_1.default.string().email().allow('').lowercase(),

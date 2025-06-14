@@ -102,6 +102,7 @@ export interface IWarehouseAddress {
   city: string;
   countr: string;
   googleMapsUrl: string;
+  zipCode: string;
 }
 
 export interface IWarehouse {

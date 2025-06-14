@@ -20,6 +20,7 @@ export const createWarehouseValidation = joi.object({
       .valid(...Object.values(Countries))
       .required(),
     googleMapsUrl: joi.string(),
+    zipCode: joi.string(),
   }),
   phoneNumber: joi.string().required(),
   email: joi.string().email().allow('').lowercase(),

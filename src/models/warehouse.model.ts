@@ -42,6 +42,11 @@ export const WarehouseSchema = new mongoose.Schema<IWarehouse>({
       type: String,
       required: true,
     },
+    zipCode: {
+      type: String,
+      lowercase: true,
+      required: true,
+    },
   },
   phoneNumber: {
     type: String,
