@@ -17,10 +17,12 @@ const router = (0, express_1.Router)({
     caseSensitive: true,
 });
 router.get('/getAllUsers', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, async (req, res) => {
-    const { page: _p, limit: _l, sort: _s, paginate, ...rawFilters } = req.query;
+    const { page: _p, limit: _l, sort: _s, sortBy, paginate, ...rawFilters } = req.query;
     const page = parseInt(_p, 10) || 1;
     const limit = parseInt(_l, 10) || 10;
-    const sort = _s || 'asc';
+    const sortOrder = _s?.toLowerCase() === 'desc' ? -1 : 1;
+    const sortField = sortBy || 'createdAt';
+    const sort = { [sortField]: sortOrder };
     const paginationOptions = {
         page,
         limit,

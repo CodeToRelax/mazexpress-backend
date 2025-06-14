@@ -18,18 +18,21 @@ const router = Router({
 });
 
 router.get('/getShipments', AuthenticateFbJWT, CheckUserRules, async (req: CustomExpressRequest, res) => {
-  const { page: _p, limit: _l, sort: _s, paginate, ...rawFilters } = req.query;
+  const { page: _p, limit: _l, sort: _s, sortBy, paginate, ...rawFilters } = req.query;
 
-  // Extract pagination options with defaults
   const page = parseInt(_p as string, 10) || 1;
   const limit = parseInt(_l as string, 10) || 10;
-  const sort = _s || 'asc';
+  const sortOrder: 1 | -1 = (_s as string)?.toLowerCase() === 'desc' ? -1 : 1;
+
+  const sortField = (sortBy as string) || 'createdAt';
+  const sort: Record<string, 1 | -1> = { [sortField]: sortOrder };
+
   const paginationOptions: PaginateOptions = {
     page,
     limit,
     sort,
     pagination: !!paginate,
-    lean: true, // return plain JS objects
+    lean: true,
   };
   const filters = rawFilters as unknown as IShipmentsFilters;
   const results = await ShipmentsController.getShipments(paginationOptions, filters, req.user);
@@ -123,7 +126,7 @@ router.post('/calculateShippingPrice', async (req, res) => {
   return res.status(StatusCode.SUCCESS_OK).json(results);
 });
 
-// rework here
+// rework here after wallet
 
 // (admin)
 // router.get('/getInvoiceShipments/:id', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
@@ -148,6 +151,7 @@ router.post('/calculateShippingPrice', async (req, res) => {
 //   }
 // });
 
+// update shipment status with barcode reader
 // router.patch('/updateShipmentsEsn', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
 //   const hasValidRules = await checkUserRules(req.user?.acl, req);
 //   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
