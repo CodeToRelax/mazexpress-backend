@@ -52,7 +52,6 @@
     "nodemon": "^3.0.3",
     "pre-commit": "^1.2.2",
     "prettier": "^3.2.4",
-    "rimraf": "^6.0.1",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",
