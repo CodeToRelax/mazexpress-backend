@@ -15,6 +15,7 @@ import {
   IShipments,
   IShipmentsFilters,
   IUpdateShipments,
+  IUpdateShipmentsEsn,
   ShipmentPayload,
   StatusCode,
   UserTypes,
@@ -266,50 +267,50 @@ const calculateShippingPrice = async (body: ShipmentPayload) => {
 
 // needs checking
 
-// const updateShipmentsEsn = async (body: IUpdateShipmentsEsn, user?: DecodedIdToken) => {
-//   // admin
-//   const mongoUser = await UserCollection.find({ _id: user?.mongoId });
-//   const userCountry = mongoUser[0]?.address.country;
+const updateShipmentsEsn = async (body: IUpdateShipmentsEsn, user?: DecodedIdToken) => {
+  // admin
+  const mongoUser = await UserCollection.find({ _id: user?.mongoId });
+  const userCountry = mongoUser[0]?.address.country;
 
-//   if (user?.mongoId === '6692c0d7888a7f31998c180e') {
-//     const res = await ShipmentsCollection.updateMany(
-//       { esn: { $in: body.shipmentsEsn } },
-//       { status: body.shipmentStatus }
-//     );
+  if (user?.mongoId === '6692c0d7888a7f31998c180e') {
+    const res = await ShipmentsCollection.updateMany(
+      { esn: { $in: body.shipmentsEsn } },
+      { status: body.shipmentStatus }
+    );
+    // sending email
+    // if (res.modifiedCount > 0) {
+    //   shipments.forEach(async (shipment) => {
+    //     console.log(shipment);
+    //     const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn.toUpperCase() });
+    //     console.log(customer);
+    //     await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, body.shipmentStatus);
+    //   });
+    // }
+    return res;
+  }
 
-//     console.log(res);
-//     // if (res.modifiedCount > 0) {
-//     //   shipments.forEach(async (shipment) => {
-//     //     console.log(shipment);
-//     //     const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn.toUpperCase() });
-//     //     console.log(customer);
-//     //     await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, body.shipmentStatus);
-//     //   });
-//     // }
-//     return res;
-//   }
-
-//   if (!checkAdminResponsibility(userCountry as countriesEnum, body.shipmentStatus)) {
-//     throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
-//   }
-//   try {
-//     const res = await ShipmentsCollection.updateMany(
-//       { esn: { $in: body.shipmentsEsn } },
-//       { status: body.shipmentStatus }
-//     );
-//     // if (res.modifiedCount > 0) {
-//     //   shipments.forEach(async (shipment) => {
-//     //     console.log(shipment);
-//     //     const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn });
-//     //     console.log(customer);
-//     //     await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, shipment.status);
-//     //   });
-//     // }
-//     return res;
-//   } catch (error) {
-//     throw new CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
-//   }
-// };
+  if (!checkAdminResponsibility(userCountry, body.shipmentStatus)) {
+    throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+  }
+  try {
+    const res = await ShipmentsCollection.updateMany(
+      { esn: { $in: body.shipmentsEsn } },
+      { status: body.shipmentStatus }
+    );
+    // send email
+    // if (res.modifiedCount > 0) {
+    //   shipments.forEach(async (shipment) => {
+    //     console.log(shipment);
+    //     const customer = await UserCollection.find({ uniqueShippingNumber: shipment?.csn });
+    //     console.log(customer);
+    //     await sendEmail('mohammedzeo.tech@gmail.com', customer[0].firstName, shipment.esn, shipment.status);
+    //   });
+    // }
+    return res;
+  } catch (error) {
+    throw new CustomErrorHandler(400, 'common.shipmentUpdateError', 'errorMessageTemp', error);
+  }
+};
 
 export const ShipmentsController = {
   getShipments,
@@ -317,7 +318,7 @@ export const ShipmentsController = {
   createShipment,
   updateShipment,
   updateShipments,
-  // updateShipmentsEsn,
+  updateShipmentsEsn,
   deleteShipment,
   calculateShippingPrice,
 };

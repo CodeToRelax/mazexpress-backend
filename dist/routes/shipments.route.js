@@ -80,5 +80,9 @@ router.post('/calculateShippingPrice', async (req, res) => {
     const results = await shipments_controller_1.ShipmentsController.calculateShippingPrice(req.body);
     return res.status(types_1.StatusCode.SUCCESS_OK).json(results);
 });
+router.patch('/updateShipmentsEsn', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(shipments_validation_1.updateShipmentsBarCodeValidation), async (req, res) => {
+    await shipments_controller_1.ShipmentsController.updateShipmentsEsn(req.body, req.user);
+    return res.status(200).json({ ...req.body });
+});
 exports.default = router;
 //# sourceMappingURL=shipments.route.js.map

@@ -8,6 +8,7 @@ import {
   createShipmentValidation,
   deleteShipmentsValidation,
   updateShipmentValidation,
+  updateShipmentsBarCodeValidation,
   updateShipmentsValidation,
 } from '@/validation/shipments.validation';
 import { Router } from 'express';
@@ -126,6 +127,17 @@ router.post('/calculateShippingPrice', async (req, res) => {
   return res.status(StatusCode.SUCCESS_OK).json(results);
 });
 
+router.patch(
+  '/updateShipmentsEsn',
+  AuthenticateFbJWT,
+  CheckUserRules,
+  ValidateRequest(updateShipmentsBarCodeValidation),
+  async (req: CustomExpressRequest, res) => {
+    await ShipmentsController.updateShipmentsEsn(req.body, req.user);
+    return res.status(200).json({ ...req.body });
+  }
+);
+
 // rework here after wallet
 
 // (admin)
@@ -152,23 +164,5 @@ router.post('/calculateShippingPrice', async (req, res) => {
 // });
 
 // update shipment status with barcode reader
-// router.patch('/updateShipmentsEsn', AuthenticateFbJWT, async (req: CustomExpressRequest, res) => {
-//   const hasValidRules = await checkUserRules(req.user?.acl, req);
-//   if (!hasValidRules) throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
-
-//   try {
-//     // validate body
-//     const { error } = updateShipmentsBarCodeValidation.validate(req.body);
-//     if (error) return res.status(403).json(error);
-//     await ShipmentsController.updateShipmentsEsn(req.body, req.user);
-//     return res.status(200).json({ ...req.body });
-//   } catch (error) {
-//     if (error instanceof CustomErrorHandler) {
-//       throw error;
-//     } else {
-//       throw new CustomErrorHandler(500, 'internalServerError', 'internal server error', error);
-//     }
-//   }
-// });
 
 export default router;
