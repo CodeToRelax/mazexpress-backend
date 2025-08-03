@@ -17,7 +17,6 @@ const config_route_1 = __importDefault(require("../routes/config.route"));
 const dashboard_route_1 = __importDefault(require("../routes/dashboard.route"));
 const createExpressServer = () => {
     const App = (0, express_1.default)();
-    console.log('test');
     App.use((0, cors_1.default)());
     App.use(body_parser_1.default.json());
     App.use(body_parser_1.default.urlencoded());

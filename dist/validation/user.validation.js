@@ -8,7 +8,6 @@ const joi_1 = __importDefault(require("joi"));
 exports.UpdateProfileValidation = joi_1.default.object({
     firstName: joi_1.default.string().lowercase().min(3).required(),
     lastName: joi_1.default.string().lowercase().min(3).required(),
-    birthdate: joi_1.default.string().allow('').lowercase(),
 });
 exports.AdminUpdateUserValidation = joi_1.default.object({
     firstName: joi_1.default.string().lowercase().min(3).required(),
@@ -17,7 +16,7 @@ exports.AdminUpdateUserValidation = joi_1.default.object({
     address: joi_1.default.object({
         street: joi_1.default.string().required(),
         city: joi_1.default.string().required(),
-        specificDescription: joi_1.default.string().optional(),
+        specificDescription: joi_1.default.string().allow('').optional(),
         country: joi_1.default.string().optional(),
     }),
     phoneNumber: joi_1.default.number().optional(),

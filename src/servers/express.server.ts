@@ -13,14 +13,12 @@ import DashboardRouter from '@/routes/dashboard.route';
 
 const createExpressServer = () => {
   const App: Application = express();
-  console.log('test');
   // request middlewares
   App.use(cors());
   App.use(bodyParser.json());
   App.use(bodyParser.urlencoded());
   App.use(express.json({ limit: '50mb' }));
   App.use(morgan(':method :url :status :response-time ms - :res[content-length]'));
-
   App.get('/', (req, res) => {
     res.send(
       'Welcome to mazexpress backend architected and developed by monir shembesh 2024. All services are running with no issues!'

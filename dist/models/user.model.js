@@ -8,7 +8,14 @@ const types_1 = require("../utils/types");
 const mongoose_1 = __importDefault(require("mongoose"));
 const validator_1 = __importDefault(require("validator"));
 const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+const helpers_1 = require("../utils/helpers");
 exports.UserSchema = new mongoose_1.default.Schema({
+    firebaseId: { type: String, required: true },
+    disabled: { type: Boolean, required: true },
+    acl: {
+        type: Object,
+        required: true,
+    },
     username: {
         type: String,
         required: true,
@@ -43,49 +50,49 @@ exports.UserSchema = new mongoose_1.default.Schema({
             required: true,
             lowercase: true,
             enum: types_1.Cities,
+            default: types_1.Cities.BENGHAZI,
         },
         country: {
             type: String,
             lowercase: true,
             enum: types_1.Countries,
+            default: types_1.Countries.LIBYA,
         },
     },
     gender: {
         type: String,
         lowercase: true,
         required: true,
-        enum: ['male', 'female'],
+        enum: types_1.Gender,
+        default: types_1.Gender.MALE,
     },
     email: {
         type: String,
         required: true,
         lowercase: true,
-        validate: [validator_1.default.isEmail, 'invalid email'],
+        validate: [validator_1.default.isEmail, 'Invalid email address used'],
         unique: true,
     },
     phoneNumber: {
         type: String,
         required: true,
         lowercase: true,
-    },
-    privacyPolicy: {
-        usageAgreement: { type: Boolean, required: true },
+        validate: [helpers_1.validateLibyanNumber, 'Invalid phone number used.'],
     },
     userType: {
         type: String,
         required: true,
         lowercase: true,
+        enum: types_1.UserTypes,
+        default: types_1.UserTypes.CUSTOMER,
     },
     uniqueShippingNumber: {
         type: String,
         required: true,
     },
-    acl: {
-        type: Object,
-        required: true,
+    privacyPolicy: {
+        usageAgreement: { type: Boolean, required: true },
     },
-    firebaseId: { type: String, required: true },
-    disabled: { type: Boolean, required: true },
 }, {
     timestamps: true,
 });

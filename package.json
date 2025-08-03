@@ -8,8 +8,8 @@
   "scripts": {
     "build": "rimraf dist && npx tsc && tsc-alias -p tsconfig.json",
     "add-build": "git add dist",
-    "start": "TZ='UTC' nodemon -r tsconfig-paths/register src/index.ts",
-    "start:build": "TZ='UTC' node -r tsconfig-paths/register dist/index.js",
+    "dev": "TZ='UTC' nodemon -r tsconfig-paths/register src/index.ts",
+    "start:prod": "TZ='UTC' node -r tsconfig-paths/register dist/index.js",
     "test:e2e": "jest",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix"
@@ -52,7 +52,6 @@
     "nodemon": "^3.0.3",
     "pre-commit": "^1.2.2",
     "prettier": "^3.2.4",
-    "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",

@@ -161,7 +161,7 @@ router.patch('/updateShipmentsEsn', jwt_middleware_1.default, async (req, res) =
     if (!hasValidRules)
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     try {
-        const { error } = shipments_validation_1.updateShipmentsBardCodeValidation.validate(req.body);
+        const { error } = shipments_validation_1.updateShipmentsBarCodeValidation.validate(req.body);
         if (error)
             return res.status(403).json(error);
         await shipments_controller_1.ShipmentsController.updateShipmentsEsn(req.body, req.user);

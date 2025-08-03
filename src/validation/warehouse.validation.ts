@@ -1,3 +1,6 @@
+// *OK*
+
+import { Cities, Countries } from '@/utils/types';
 import joi from 'joi';
 
 export const createWarehouseValidation = joi.object({
@@ -8,9 +11,16 @@ export const createWarehouseValidation = joi.object({
     street: joi.string(),
     neighborhood: joi.string(),
     district: joi.string(),
-    city: joi.string().valid('benghazi', 'tripoli', 'musrata', 'istanbul').required(),
-    country: joi.string().valid('libya', 'turkey').required(),
+    city: joi
+      .string()
+      .valid(...Object.values(Cities))
+      .required(),
+    country: joi
+      .string()
+      .valid(...Object.values(Countries))
+      .required(),
     googleMapsUrl: joi.string(),
+    zipCode: joi.string(),
   }),
   phoneNumber: joi.string().required(),
   email: joi.string().email().allow('').lowercase(),

@@ -1,23 +1,34 @@
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 import ConfigCollection from '@/models/config.model';
-import { ISystemConfig } from '@/utils/types';
+import { ISystemConfig, StatusCode } from '@/utils/types';
+
+const configId = '65db6c55d3a4d41e6ac96432';
 
 const getShippingConfig = async () => {
   try {
-    const res = await ConfigCollection.findById('65db6c55d3a4d41e6ac96432');
+    const res = await ConfigCollection.findById(configId);
     return res;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.configUpdateError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_BAD_REQUEST,
+      'common.configUpdateError',
+      'errorMessageTemp',
+      error
+    );
   }
 };
 
 const updateShippingConfig = async (body: ISystemConfig) => {
   try {
-    console.log(body);
-    const res = await ConfigCollection.findOneAndUpdate({ _id: '65db6c55d3a4d41e6ac96432' }, { ...body });
+    const res = await ConfigCollection.findOneAndUpdate({ _id: configId }, { ...body });
     return res;
   } catch (error) {
-    throw new CustomErrorHandler(400, 'common.configUpdateError', 'errorMessageTemp', error);
+    throw new CustomErrorHandler(
+      StatusCode.CLIENT_ERROR_BAD_REQUEST,
+      'common.configUpdateError',
+      'errorMessageTemp',
+      error
+    );
   }
 };
 

@@ -9,6 +9,7 @@ const config_model_1 = __importDefault(require("../models/config.model"));
 const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
+const types_1 = require("../utils/types");
 const getShipments = async (filters, paginationOptions, user) => {
     let query = {};
     if (filters.searchParam) {
@@ -82,7 +83,7 @@ const getShipmentsUnpaginated = async (filters, user) => {
             });
             return validShipments;
         }
-        if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+        if (mongoUser && mongoUser[0].userType === types_1.UserTypes.CUSTOMER) {
             const finalFilters = { status: filters?.status, csn: mongoUser[0].uniqueShippingNumber };
             validShipments = await shipments_model_1.default.find(finalFilters);
             return validShipments;

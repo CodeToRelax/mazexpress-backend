@@ -1,9 +1,10 @@
+// *OK*
+
 import joi from 'joi';
 
 export const UpdateProfileValidation = joi.object({
   firstName: joi.string().lowercase().min(3).required(),
   lastName: joi.string().lowercase().min(3).required(),
-  birthdate: joi.string().allow('').lowercase(),
 });
 
 export const AdminUpdateUserValidation = joi.object({
@@ -13,7 +14,7 @@ export const AdminUpdateUserValidation = joi.object({
   address: joi.object({
     street: joi.string().required(),
     city: joi.string().required(),
-    specificDescription: joi.string().optional(),
+    specificDescription: joi.string().allow('').optional(),
     country: joi.string().optional(),
   }),
   phoneNumber: joi.number().optional(),

@@ -79,7 +79,10 @@ router.post('/createUser', jwt_middleware_1.default, async (req, res) => {
         const { error } = auth_validation_1.createUserValidation.validate(req.body);
         if (error)
             return res.status(403).json(error);
-        const user = await auth_controller_1.AuthController.createUser(req.body, req.body.userType);
+        const user = await auth_controller_1.AuthController.createUser({
+            ...req.body,
+            password: req.body.password,
+        });
         return res.status(201).json(user);
     }
     catch (error) {
