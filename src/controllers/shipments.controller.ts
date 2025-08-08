@@ -5,7 +5,6 @@ import UserCollection from '@/models/user.model';
 import {
   calculateShippingPriceUtil,
   checkAdminResponsibility,
-  countriesEnum,
   generateExternalTrackingNumber,
   sanitizeSearchParam,
 } from '@/utils/helpers';
@@ -17,6 +16,8 @@ import {
   IUpdateShipments,
   IUpdateShipmentsEsn,
   ShipmentPayload,
+  UserTypes,
+  Countries,
 } from '@/utils/types';
 import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
@@ -79,7 +80,7 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
       sort: sortOptions,
     });
     const adminAccessableShipments = adminResults.docs.filter((shipment) =>
-      checkAdminResponsibility(userCountry as countriesEnum, shipment.status)
+      checkAdminResponsibility(userCountry as Countries, shipment.status)
     );
 
     return {
@@ -108,7 +109,7 @@ const getShipmentsUnpaginated = async (filters?: { status?: string; _id?: string
       });
       return validShipments;
     }
-    if (mongoUser && mongoUser[0].userType === 'CUSTOMER') {
+    if (mongoUser && mongoUser[0].userType === UserTypes.CUSTOMER) {
       const finalFilters = { status: filters?.status, csn: mongoUser[0].uniqueShippingNumber };
       validShipments = await ShipmentsCollection.find(finalFilters);
       return validShipments;
@@ -117,7 +118,7 @@ const getShipmentsUnpaginated = async (filters?: { status?: string; _id?: string
     validShipments = await ShipmentsCollection.find({ status: filters?.status, csn: customer[0].uniqueShippingNumber });
 
     const adminAccessableShipments = validShipments.filter((shipment) =>
-      checkAdminResponsibility(adminCountry as countriesEnum, shipment.status)
+      checkAdminResponsibility(adminCountry as Countries, shipment.status)
     );
 
     return adminAccessableShipments;
@@ -165,7 +166,7 @@ const updateShipment = async (_id: string, body: IShipments, user?: DecodedIdTok
     // }
     return res;
   }
-  if (!checkAdminResponsibility(adminUser[0]?.address.country as countriesEnum, body.status)) {
+  if (!checkAdminResponsibility(adminUser[0]?.address.country as Countries, body.status)) {
     throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   }
   try {
@@ -200,7 +201,7 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
     return res;
   }
 
-  if (!checkAdminResponsibility(userCountry as countriesEnum, body.shipmentStatus)) {
+  if (!checkAdminResponsibility(userCountry as Countries, body.shipmentStatus)) {
     throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
   }
   try {
@@ -245,7 +246,7 @@ const updateShipmentsEsn = async (body: IUpdateShipmentsEsn, user?: DecodedIdTok
     return res;
   }
 
-  if (!checkAdminResponsibility(userCountry as countriesEnum, body.shipmentStatus)) {
+  if (!checkAdminResponsibility(userCountry as Countries, body.shipmentStatus)) {
     throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
   }
   try {
@@ -277,7 +278,7 @@ const deleteShipment = async (body: IDeleteShipments, user?: DecodedIdToken) => 
     return res;
   }
   for (const shipment of shipments) {
-    if (!checkAdminResponsibility(userCountry as countriesEnum, shipment.status)) {
+    if (!checkAdminResponsibility(userCountry as Countries, shipment.status)) {
       throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
     }
   }

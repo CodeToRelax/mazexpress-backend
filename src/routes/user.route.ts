@@ -85,7 +85,10 @@ router.post('/createUser', AuthenticateFbJWT, async (req: CustomExpressRequest, 
     const { error } = createUserValidation.validate(req.body);
     if (error) return res.status(403).json(error);
     // start signup process
-    const user = await AuthController.createUser(req.body, req.body.userType);
+    const user = await AuthController.createUser({
+      ...req.body,
+      password: req.body.password,
+    });
     return res.status(201).json(user);
   } catch (error) {
     if (error instanceof CustomErrorHandler) {

@@ -7,7 +7,7 @@ import {
   createShipmentValidation,
   deleteShipmentsValidation,
   updateShipmentValidation,
-  updateShipmentsBardCodeValidation,
+  updateShipmentsBarCodeValidation,
   updateShipmentsValidation,
 } from '@/validation/shipments.validation';
 import { Router } from 'express';
@@ -170,7 +170,7 @@ router.patch('/updateShipmentsEsn', AuthenticateFbJWT, async (req: CustomExpress
 
   try {
     // validate body
-    const { error } = updateShipmentsBardCodeValidation.validate(req.body);
+    const { error } = updateShipmentsBarCodeValidation.validate(req.body);
     if (error) return res.status(403).json(error);
     await ShipmentsController.updateShipmentsEsn(req.body, req.user);
     return res.status(200).json({ ...req.body });
