@@ -359,9 +359,13 @@ const calculateShippingPrice = async (body: ShipmentPayload) => {
     body.shippingMethod,
     body.weight,
     body.dimensions,
-    config?.shippingCost,
-    config?.libyanExchangeRate
+    config?.libyanExchangeRate, // current lyd compared to usd
+    config?.seaShippingPrice, //sea shipping cost per kg in LYD
+    config?.shippingCost, //air shipping cost per kg in USD
+    config?.shippingFactorSea,
+    config?.shippingFactor
   );
+
   try {
     return finalPrice;
   } catch (error) {

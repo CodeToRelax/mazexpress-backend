@@ -251,7 +251,7 @@ const calculateShippingPrice = async (body) => {
     if (!config?.shippingCost || !config?.libyanExchangeRate) {
         return 'Online Calculation is paused now';
     }
-    const finalPrice = (0, helpers_1.calculateShippingPriceUtil)(body.shippingMethod, body.weight, body.dimensions, config?.shippingCost, config?.libyanExchangeRate);
+    const finalPrice = (0, helpers_1.calculateShippingPriceUtil)(body.shippingMethod, body.weight, body.dimensions, config?.libyanExchangeRate, config?.seaShippingPrice, config?.shippingCost, config?.shippingFactorSea, config?.shippingFactor);
     try {
         return finalPrice;
     }

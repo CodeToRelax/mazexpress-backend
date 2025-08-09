@@ -1,5 +1,14 @@
 import validator from 'validator';
-import { Countries, IUser, IUserACL, ShipmentPayload, ShipmentStatus, UserTypes, appServices } from './types';
+import {
+  Countries,
+  IUser,
+  IUserACL,
+  ShipmentPayload,
+  ShipmentStatus,
+  UserTypes,
+  appServices,
+  ShippingMethod,
+} from './types';
 import { Request } from 'express';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
 
@@ -206,41 +215,99 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
   };
 };
 
+// export const calculateShippingPriceUtil = (
+//   shippingMethod: ShipmentPayload['shippingMethod'],
+//   weight: ShipmentPayload['weight'],
+//   dimensions: ShipmentPayload['dimensions'],
+//   dollarPrice: number,
+//   libyanExchangeRate: number
+// ) => {
+//   const actualWeight = parseFloat(weight ? weight : '0');
+//   let dimensionalWeight;
+
+//   // Calculate dimensional weight
+//   if (dimensions && dimensions.length && dimensions.width && dimensions.height) {
+//     const length = parseFloat(dimensions.length);
+//     const width = parseFloat(dimensions.width);
+//     const height = parseFloat(dimensions.height);
+
+//     if (shippingMethod === 'sea') {
+//       dimensionalWeight = (length * width * height) / 4720;
+//     } else if (shippingMethod === 'air') {
+//       dimensionalWeight = (length * width * height) / 5000;
+//     }
+//   }
+
+//   // Use the greater of actual weight or dimensional weight
+//   const finalWeight = dimensionalWeight && dimensionalWeight > actualWeight ? dimensionalWeight : actualWeight;
+
+//   let price = 0;
+//   const usdPrice = Number(dollarPrice * libyanExchangeRate);
+
+//   // Calculate the price based on shipping method
+//   if (shippingMethod === 'sea') {
+//     price = finalWeight * 2.5; // Price for sea shipping in dinar
+//   } else if (shippingMethod === 'air') {
+//     price = finalWeight * usdPrice; // Price for air shipping in USD
+//   }
+
+//   return price;
+// };
+
+// Helper function for safe number parsing
+const parseAndValidate = (input: string | undefined): number => {
+  const parsed = parseFloat(input || '0');
+  return isNaN(parsed) ? 0 : parsed;
+};
+
 export const calculateShippingPriceUtil = (
   shippingMethod: ShipmentPayload['shippingMethod'],
   weight: ShipmentPayload['weight'],
   dimensions: ShipmentPayload['dimensions'],
-  dollarPrice: number,
-  libyanExchangeRate: number
+  libyanExchangeRate: number,
+  seaShippingPrice: number,
+  airShippingPrice: number,
+  shippingFactorSea: number,
+  shippingFactorAir: number
 ) => {
-  const actualWeight = parseFloat(weight ? weight : '0');
-  let dimensionalWeight;
+  const actualWeight = parseAndValidate(weight);
+  let dimensionalWeight = 0;
 
-  // Calculate dimensional weight
+  // Calculate dimensional weight based on the shipping method
   if (dimensions && dimensions.length && dimensions.width && dimensions.height) {
-    const length = parseFloat(dimensions.length);
-    const width = parseFloat(dimensions.width);
-    const height = parseFloat(dimensions.height);
-
-    if (shippingMethod === 'sea') {
-      dimensionalWeight = (length * width * height) / 4720;
-    } else if (shippingMethod === 'air') {
-      dimensionalWeight = (length * width * height) / 5000;
-    }
+    const length = parseAndValidate(dimensions.length);
+    const width = parseAndValidate(dimensions.width);
+    const height = parseAndValidate(dimensions.height);
+    const divisor = shippingMethod === ShippingMethod.SEA ? shippingFactorSea : shippingFactorAir;
+    dimensionalWeight = (length * width * height) / divisor;
   }
 
-  // Use the greater of actual weight or dimensional weight
-  const finalWeight = dimensionalWeight && dimensionalWeight > actualWeight ? dimensionalWeight : actualWeight;
+  // Use the greater of actual weight or dimensional weight as the base for calculation
+  let finalWeight = Math.max(actualWeight, dimensionalWeight);
 
-  let price = 0;
-  const usdPrice = Number(dollarPrice * libyanExchangeRate);
-
-  // Calculate the price based on shipping method
-  if (shippingMethod === 'sea') {
-    price = finalWeight * 2.5; // Price for sea shipping in dinar
-  } else if (shippingMethod === 'air') {
-    price = finalWeight * usdPrice; // Price for air shipping in USD
+  // Implement the new feature requirement: a minimum weight of 3KG for air shipments
+  if (shippingMethod === ShippingMethod.AIR) {
+    finalWeight = Math.max(finalWeight, 3);
   }
 
-  return price;
+  let finalPrice = 0;
+
+  // Calculate the price based on the shipping method
+  switch (shippingMethod) {
+    case ShippingMethod.SEA:
+      // Assuming a fixed price per kg for sea shipments in LYD
+      finalPrice = finalWeight * seaShippingPrice;
+      break;
+    case ShippingMethod.AIR:
+      // Calculate price in USD first, then convert to LYD using the exchange rate
+      const priceInUSD = finalWeight * airShippingPrice;
+      finalPrice = priceInUSD * libyanExchangeRate;
+      break;
+    default:
+      // Handle other methods or return 0 for unsupported methods
+      finalPrice = 0;
+      break;
+  }
+
+  return finalPrice;
 };

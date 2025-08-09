@@ -183,30 +183,38 @@ const generateAcl = (customerType) => {
     };
 };
 exports.generateAcl = generateAcl;
-const calculateShippingPriceUtil = (shippingMethod, weight, dimensions, dollarPrice, libyanExchangeRate) => {
-    const actualWeight = parseFloat(weight ? weight : '0');
-    let dimensionalWeight;
+const parseAndValidate = (input) => {
+    const parsed = parseFloat(input || '0');
+    return isNaN(parsed) ? 0 : parsed;
+};
+const calculateShippingPriceUtil = (shippingMethod, weight, dimensions, libyanExchangeRate, seaShippingPrice, airShippingPrice, shippingFactorSea, shippingFactorAir) => {
+    const actualWeight = parseAndValidate(weight);
+    let dimensionalWeight = 0;
     if (dimensions && dimensions.length && dimensions.width && dimensions.height) {
-        const length = parseFloat(dimensions.length);
-        const width = parseFloat(dimensions.width);
-        const height = parseFloat(dimensions.height);
-        if (shippingMethod === 'sea') {
-            dimensionalWeight = (length * width * height) / 4720;
-        }
-        else if (shippingMethod === 'air') {
-            dimensionalWeight = (length * width * height) / 5000;
-        }
+        const length = parseAndValidate(dimensions.length);
+        const width = parseAndValidate(dimensions.width);
+        const height = parseAndValidate(dimensions.height);
+        const divisor = shippingMethod === types_1.ShippingMethod.SEA ? shippingFactorSea : shippingFactorAir;
+        dimensionalWeight = (length * width * height) / divisor;
     }
-    const finalWeight = dimensionalWeight && dimensionalWeight > actualWeight ? dimensionalWeight : actualWeight;
-    let price = 0;
-    const usdPrice = Number(dollarPrice * libyanExchangeRate);
-    if (shippingMethod === 'sea') {
-        price = finalWeight * 2.5;
+    let finalWeight = Math.max(actualWeight, dimensionalWeight);
+    if (shippingMethod === types_1.ShippingMethod.AIR) {
+        finalWeight = Math.max(finalWeight, 3);
     }
-    else if (shippingMethod === 'air') {
-        price = finalWeight * usdPrice;
+    let finalPrice = 0;
+    switch (shippingMethod) {
+        case types_1.ShippingMethod.SEA:
+            finalPrice = finalWeight * seaShippingPrice;
+            break;
+        case types_1.ShippingMethod.AIR:
+            const priceInUSD = finalWeight * airShippingPrice;
+            finalPrice = priceInUSD * libyanExchangeRate;
+            break;
+        default:
+            finalPrice = 0;
+            break;
     }
-    return price;
+    return finalPrice;
 };
 exports.calculateShippingPriceUtil = calculateShippingPriceUtil;
 //# sourceMappingURL=helpers.js.map

@@ -197,6 +197,7 @@ export type shipmentDestination = 'benghazi' | 'musrata' | 'tripoli';
 export interface ISystemConfig {
   shippingCost: number;
   shippingFactor: number;
+  shippingFactorSea: number;
   libyanExchangeRate: number;
   seaShippingPrice: number;
 }

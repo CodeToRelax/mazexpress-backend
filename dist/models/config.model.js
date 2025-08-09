@@ -11,6 +11,11 @@ exports.ConfigSchema = new mongoose_1.default.Schema({
         required: true,
         unique: true,
     },
+    shippingFactorSea: {
+        type: Number,
+        required: true,
+        unique: true,
+    },
     shippingFactor: {
         type: Number,
         required: true,
