@@ -26,7 +26,12 @@ export const createShipmentValidation = joi.object({
     .string()
     .valid(...Object.values(ShipmentStatus))
     .insensitive()
-    .required(),
+    .optional(),
+  shipmentStatus: joi
+    .string()
+    .valid(...Object.values(ShipmentStatus))
+    .insensitive()
+    .optional(),
 });
 
 export const updateShipmentValidation = joi.object({
@@ -52,7 +57,12 @@ export const updateShipmentValidation = joi.object({
     .string()
     .valid(...Object.values(ShipmentStatus))
     .insensitive()
-    .required(),
+    .optional(),
+  shipmentStatus: joi
+    .string()
+    .valid(...Object.values(ShipmentStatus))
+    .insensitive()
+    .optional(),
 });
 
 export const updateShipmentsValidation = joi.object({
@@ -61,7 +71,12 @@ export const updateShipmentsValidation = joi.object({
     .string()
     .valid(...Object.values(ShipmentStatus))
     .insensitive()
-    .required(),
+    .optional(),
+  shipmentStatus: joi
+    .string()
+    .valid(...Object.values(ShipmentStatus))
+    .insensitive()
+    .optional(),
 });
 
 export const updateShipmentsBarCodeValidation = joi.object({
@@ -71,6 +86,11 @@ export const updateShipmentsBarCodeValidation = joi.object({
     .valid(...Object.values(ShipmentStatus))
     .insensitive()
     .required(),
+  shipmentStatus: joi
+    .string()
+    .valid(...Object.values(ShipmentStatus))
+    .insensitive()
+    .optional(),
 });
 
 export const deleteShipmentsValidation = joi.object({

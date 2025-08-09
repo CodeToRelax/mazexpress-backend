@@ -29,7 +29,12 @@ exports.createShipmentValidation = joi_1.default.object({
         .string()
         .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
-        .required(),
+        .optional(),
+    shipmentStatus: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.ShipmentStatus))
+        .insensitive()
+        .optional(),
 });
 exports.updateShipmentValidation = joi_1.default.object({
     isn: joi_1.default.string().lowercase(),
@@ -54,7 +59,12 @@ exports.updateShipmentValidation = joi_1.default.object({
         .string()
         .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
-        .required(),
+        .optional(),
+    shipmentStatus: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.ShipmentStatus))
+        .insensitive()
+        .optional(),
 });
 exports.updateShipmentsValidation = joi_1.default.object({
     shipmentsId: joi_1.default.array().items(joi_1.default.string()).required(),
@@ -62,7 +72,12 @@ exports.updateShipmentsValidation = joi_1.default.object({
         .string()
         .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
-        .required(),
+        .optional(),
+    shipmentStatus: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.ShipmentStatus))
+        .insensitive()
+        .optional(),
 });
 exports.updateShipmentsBarCodeValidation = joi_1.default.object({
     shipmentsEsn: joi_1.default.array().items(joi_1.default.string()).required(),
@@ -71,6 +86,11 @@ exports.updateShipmentsBarCodeValidation = joi_1.default.object({
         .valid(...Object.values(types_1.ShipmentStatus))
         .insensitive()
         .required(),
+    shipmentStatus: joi_1.default
+        .string()
+        .valid(...Object.values(types_1.ShipmentStatus))
+        .insensitive()
+        .optional(),
 });
 exports.deleteShipmentsValidation = joi_1.default.object({
     shipmentsId: joi_1.default.array().items(joi_1.default.string()).required(),
