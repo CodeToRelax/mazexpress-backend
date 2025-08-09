@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateShippingPriceUtil = exports.checkAdminResponsibility = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.validateAdminCanDoByCountry = exports.getAdminStatusesForCountry = exports.countriesEnum = exports.validateLibyanNumber = void 0;
+exports.calculateShippingPriceUtil = exports.generateAcl = exports.generateExternalTrackingNumber = exports.generateRandomUsername = exports.generateTrackingCode = exports.generateShippingNumber = exports.checkUserRules = exports.sanitizeSearchParam = exports.validateUserBirthdate = exports.checkAdminResponsibility = exports.validateAdminCanDoByCountry = exports.getAdminStatusesForCountry = exports.countriesEnum = exports.validateLibyanNumber = void 0;
 const validator_1 = __importDefault(require("validator"));
 const types_1 = require("./types");
 const error_middleware_1 = require("../middlewares/error.middleware");
@@ -17,10 +17,14 @@ var countriesEnum;
 (function (countriesEnum) {
     countriesEnum["LIBYA"] = "libya";
     countriesEnum["TURKEY"] = "turkey";
+    countriesEnum["CHINA"] = "china";
+    countriesEnum["UAE"] = "uae";
 })(countriesEnum || (exports.countriesEnum = countriesEnum = {}));
 const countriesPerStatus = {
     [countriesEnum.TURKEY]: ['received at warehouse', 'shipped to destination'],
     [countriesEnum.LIBYA]: ['shipped to destination', 'ready for pick up', 'delivered'],
+    [countriesEnum.CHINA]: ['received at warehouse', 'shipped to destination'],
+    [countriesEnum.UAE]: ['received at warehouse', 'shipped to destination'],
 };
 const getAdminStatusesForCountry = (country) => {
     return countriesPerStatus[country] || [];
@@ -35,6 +39,13 @@ const validateAdminCanDoByCountry = (adminUser, newStatus) => {
     }
 };
 exports.validateAdminCanDoByCountry = validateAdminCanDoByCountry;
+const checkAdminResponsibility = (adminCountry, status) => {
+    if (!adminCountry || !status)
+        return false;
+    const allowedStatuses = countriesPerStatus[adminCountry] || [];
+    return allowedStatuses.includes(status.toLowerCase());
+};
+exports.checkAdminResponsibility = checkAdminResponsibility;
 const validateUserBirthdate = (value) => {
     if (value > new Date())
         return false;
@@ -139,21 +150,21 @@ const generateAcl = (customerType) => {
     return {
         GET: {
             warehouse: ['/getWarehouses'],
-            config: [],
+            config: ['/getShippingConfig'],
             auth: [],
             user: ['/getAllUsers', '/getAllUsersUnpaginated', '/getUser'],
             shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
-            dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear'],
+            dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear', '/getOrdersPerDay'],
         },
         POST: {
-            warehouse: [],
+            warehouse: ['/createWarehouse'],
             auth: [],
-            config: [],
+            config: ['/updateShippingConfig'],
             user: ['/createUser'],
             shipments: ['/createShipment'],
         },
         DELETE: {
-            warehouse: [],
+            warehouse: ['/deleteWarehouse', '/deleteShipments'],
             user: [],
             shipments: [],
         },
@@ -172,11 +183,6 @@ const generateAcl = (customerType) => {
     };
 };
 exports.generateAcl = generateAcl;
-const checkAdminResponsibility = (adminCountry, status) => {
-    const res = countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
-    return res;
-};
-exports.checkAdminResponsibility = checkAdminResponsibility;
 const calculateShippingPriceUtil = (shippingMethod, weight, dimensions, dollarPrice, libyanExchangeRate) => {
     const actualWeight = parseFloat(weight ? weight : '0');
     let dimensionalWeight;

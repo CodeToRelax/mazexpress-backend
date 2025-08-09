@@ -21,6 +21,10 @@ export const ShipmentsSchema = new mongoose.Schema(
       required: true,
       lowercase: true,
     },
+    isDomestic: {
+      type: Boolean,
+      required: false,
+    },
     size: {
       weight: {
         type: Number,

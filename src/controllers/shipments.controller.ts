@@ -18,6 +18,7 @@ import {
   ShipmentPayload,
   UserTypes,
   Countries,
+  ShipmentStatus,
 } from '@/utils/types';
 import { DecodedIdToken } from 'firebase-admin/auth';
 import { PaginateOptions } from 'mongoose';
@@ -27,6 +28,25 @@ interface Query {
   createdAt?: { $gte?: Date; $lte?: Date };
   [key: string]: unknown; // For additional dynamic properties
 }
+
+// Libya-specific restriction: non-domestic shipments in these statuses are hidden/blocked for Libya admins
+const LIBYA_RESTRICTED_STATUSES: ReadonlyArray<ShipmentStatus> = [
+  ShipmentStatus.RECEIVED_AT_WAREHOUSE,
+  ShipmentStatus.SHIPPED_TO_DESTINATION,
+];
+
+const appendLibyaVisibilityToQuery = (base: Query): Query => {
+  return {
+    $and: [base, { $or: [{ isDomestic: true }, { status: { $nin: LIBYA_RESTRICTED_STATUSES } }] }],
+  } as unknown as Query;
+};
+
+const isRestrictedForLibya = (shipment?: IShipments): boolean => {
+  if (!shipment) return false;
+  const nonDomestic = shipment.isDomestic !== true; // treat undefined/null as international (non-domestic)
+  const restricted = LIBYA_RESTRICTED_STATUSES.includes(shipment.status as ShipmentStatus);
+  return nonDomestic && restricted;
+};
 
 // pass in filters
 const getShipments = async (filters: IShipmentsFilters, paginationOptions?: PaginateOptions, user?: DecodedIdToken) => {
@@ -75,6 +95,11 @@ const getShipments = async (filters: IShipmentsFilters, paginationOptions?: Pagi
       return validShipments;
     }
 
+    // Admins: apply Libya-specific visibility rule to the DB query to keep pagination consistent
+    if (userCountry === Countries.LIBYA) {
+      query = appendLibyaVisibilityToQuery(query);
+    }
+
     const adminResults = await ShipmentsCollection.paginate(filters ? query : {}, {
       ...paginationOptions,
       sort: sortOptions,
@@ -115,7 +140,16 @@ const getShipmentsUnpaginated = async (filters?: { status?: string; _id?: string
       return validShipments;
     }
 
-    validShipments = await ShipmentsCollection.find({ status: filters?.status, csn: customer[0].uniqueShippingNumber });
+    let findQuery: Query = {
+      status: filters?.status as ShipmentStatus,
+      csn: customer[0].uniqueShippingNumber,
+    } as unknown as Query;
+    if (adminCountry === Countries.LIBYA) {
+      findQuery = appendLibyaVisibilityToQuery(findQuery);
+    }
+    validShipments = (await ShipmentsCollection.find(
+      findQuery as unknown as Record<string, unknown>
+    )) as unknown as IShipments[];
 
     const adminAccessableShipments = validShipments.filter((shipment) =>
       checkAdminResponsibility(adminCountry as Countries, shipment.status)
@@ -166,7 +200,11 @@ const updateShipment = async (_id: string, body: IShipments, user?: DecodedIdTok
     // }
     return res;
   }
-  if (!checkAdminResponsibility(adminUser[0]?.address.country as Countries, body.status)) {
+  const adminCountry = adminUser[0]?.address.country as Countries;
+  if (adminCountry === Countries.LIBYA && isRestrictedForLibya(shipment[0])) {
+    throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+  }
+  if (!checkAdminResponsibility(adminCountry, body.status)) {
     throw new CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
   }
   try {
@@ -201,6 +239,15 @@ const updateShipments = async (body: IUpdateShipments, user?: DecodedIdToken) =>
     return res;
   }
 
+  // Libya: block updates on non-domestic shipments in restricted statuses
+  if (userCountry === Countries.LIBYA) {
+    const shipments = (await ShipmentsCollection.find({ _id: { $in: body.shipmentsId } })) as unknown as IShipments[];
+    for (const s of shipments) {
+      if (isRestrictedForLibya(s)) {
+        throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+      }
+    }
+  }
   if (!checkAdminResponsibility(userCountry as Countries, body.shipmentStatus)) {
     throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
   }
@@ -246,6 +293,15 @@ const updateShipmentsEsn = async (body: IUpdateShipmentsEsn, user?: DecodedIdTok
     return res;
   }
 
+  // Libya: block updates on non-domestic shipments in restricted statuses
+  if (userCountry === Countries.LIBYA) {
+    const shipments = (await ShipmentsCollection.find({ esn: { $in: body.shipmentsEsn } })) as unknown as IShipments[];
+    for (const s of shipments) {
+      if (isRestrictedForLibya(s)) {
+        throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+      }
+    }
+  }
   if (!checkAdminResponsibility(userCountry as Countries, body.shipmentStatus)) {
     throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
   }
@@ -277,7 +333,10 @@ const deleteShipment = async (body: IDeleteShipments, user?: DecodedIdToken) => 
     const res = await ShipmentsCollection.deleteMany({ _id: { $in: body.shipmentsId } });
     return res;
   }
-  for (const shipment of shipments) {
+  for (const shipment of shipments as unknown as IShipments[]) {
+    if (userCountry === Countries.LIBYA && isRestrictedForLibya(shipment)) {
+      throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+    }
     if (!checkAdminResponsibility(userCountry as Countries, shipment.status)) {
       throw new CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
     }

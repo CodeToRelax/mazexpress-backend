@@ -14,11 +14,15 @@ export const validateLibyanNumber = (rawPhone: string): boolean => {
 export enum countriesEnum {
   LIBYA = 'libya',
   TURKEY = 'turkey',
+  CHINA = 'china',
+  UAE = 'uae',
 }
 
 const countriesPerStatus = {
   [countriesEnum.TURKEY]: ['received at warehouse', 'shipped to destination'],
   [countriesEnum.LIBYA]: ['shipped to destination', 'ready for pick up', 'delivered'],
+  [countriesEnum.CHINA]: ['received at warehouse', 'shipped to destination'],
+  [countriesEnum.UAE]: ['received at warehouse', 'shipped to destination'],
 };
 
 export const getAdminStatusesForCountry = (country: Countries): string[] => {
@@ -38,6 +42,12 @@ export const validateAdminCanDoByCountry = (adminUser: IUser, newStatus: Shipmen
       `User from ${country} cannot set status "${newStatus}"`
     );
   }
+};
+
+export const checkAdminResponsibility = (adminCountry?: Countries, status?: string) => {
+  if (!adminCountry || !status) return false;
+  const allowedStatuses = countriesPerStatus[adminCountry] || [];
+  return allowedStatuses.includes(status.toLowerCase());
 };
 
 export const validateUserBirthdate = (value: Date) => {
@@ -163,21 +173,21 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
   return {
     GET: {
       warehouse: ['/getWarehouses'],
-      config: [],
+      config: ['/getShippingConfig'],
       auth: [],
       user: ['/getAllUsers', '/getAllUsersUnpaginated', '/getUser'],
       shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
-      dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear'],
+      dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear', '/getOrdersPerDay'],
     },
     POST: {
-      warehouse: [],
+      warehouse: ['/createWarehouse'],
       auth: [],
-      config: [],
+      config: ['/updateShippingConfig'],
       user: ['/createUser'],
       shipments: ['/createShipment'],
     },
     DELETE: {
-      warehouse: [],
+      warehouse: ['/deleteWarehouse', '/deleteShipments'],
       user: [],
       shipments: [],
     },
@@ -194,11 +204,6 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
       shipments: [],
     },
   };
-};
-
-export const checkAdminResponsibility = (adminCountry: Countries, status: string) => {
-  const res = countriesPerStatus[adminCountry].includes(status.toLocaleLowerCase());
-  return res;
 };
 
 export const calculateShippingPriceUtil = (

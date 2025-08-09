@@ -11,12 +11,37 @@ var Cities;
     Cities["BENGHAZI"] = "benghazi";
     Cities["TRIPOLI"] = "tripoli";
     Cities["MUSRATA"] = "musrata";
+    Cities["ALBAYDA"] = "al bayda";
+    Cities["ZAWIYA"] = "zawiya";
+    Cities["GHARYAN"] = "gharyan";
+    Cities["TOBRUK"] = "tobruk";
+    Cities["AJDABIYA"] = "ajdabiya";
+    Cities["ZLITEN"] = "zliten";
+    Cities["DERNA"] = "derna";
+    Cities["SIRTE"] = "sirte";
+    Cities["SABHA"] = "sabha";
+    Cities["KHOMS"] = "khoms";
+    Cities["BANI_WALID"] = "bani walid";
+    Cities["SABRATHA"] = "sabratha";
+    Cities["ZUWARA"] = "zuwara";
+    Cities["KUFFRA"] = "kufra";
+    Cities["AL_MARJ"] = "al marj";
+    Cities["TARHUNA"] = "tarhuna";
+    Cities["UBARI"] = "ubari";
+    Cities["GADAMES"] = "gadames";
+    Cities["GHAT"] = "ghat";
+    Cities["NALUT"] = "nalut";
+    Cities["JALU"] = "jalu";
+    Cities["BREGA"] = "brega";
     Cities["ISTANBUL"] = "istanbul";
+    Cities["DUBAI"] = "dubai";
 })(Cities || (exports.Cities = Cities = {}));
 var Countries;
 (function (Countries) {
     Countries["LIBYA"] = "libya";
     Countries["TURKEY"] = "turkey";
+    Countries["CHINA"] = "china";
+    Countries["UAE"] = "uae";
 })(Countries || (exports.Countries = Countries = {}));
 var UserTypes;
 (function (UserTypes) {
@@ -55,6 +80,7 @@ const getEndpoints = [
     '/getInvoiceShipments',
     '/getShipmentsStatusCount',
     '/getUserAndShipmentCountPerYear',
+    '/getOrdersPerDay',
 ];
 const postEndpoints = [
     '/signUp',
@@ -64,7 +90,7 @@ const postEndpoints = [
     '/createShipment',
 ];
 const updateEndpoints = [];
-const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipment'];
+const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipments'];
 const patchEndpoints = [
     '/updateWarehouse',
     '/acl',

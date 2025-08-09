@@ -20,6 +20,10 @@ exports.ShipmentsSchema = new mongoose_1.default.Schema({
         required: true,
         lowercase: true,
     },
+    isDomestic: {
+        type: Boolean,
+        required: false,
+    },
     size: {
         weight: {
             type: Number,

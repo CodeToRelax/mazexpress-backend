@@ -10,12 +10,37 @@ export enum Cities {
   BENGHAZI = 'benghazi',
   TRIPOLI = 'tripoli',
   MUSRATA = 'musrata',
+  ALBAYDA = 'al bayda',
+  ZAWIYA = 'zawiya',
+  GHARYAN = 'gharyan',
+  TOBRUK = 'tobruk',
+  AJDABIYA = 'ajdabiya',
+  ZLITEN = 'zliten',
+  DERNA = 'derna',
+  SIRTE = 'sirte',
+  SABHA = 'sabha',
+  KHOMS = 'khoms',
+  BANI_WALID = 'bani walid',
+  SABRATHA = 'sabratha',
+  ZUWARA = 'zuwara',
+  KUFFRA = 'kufra',
+  AL_MARJ = 'al marj',
+  TARHUNA = 'tarhuna',
+  UBARI = 'ubari',
+  GADAMES = 'gadames',
+  GHAT = 'ghat',
+  NALUT = 'nalut',
+  JALU = 'jalu',
+  BREGA = 'brega',
   ISTANBUL = 'istanbul',
+  DUBAI = 'dubai',
 }
 
 export enum Countries {
   LIBYA = 'libya',
   TURKEY = 'turkey',
+  CHINA = 'china',
+  UAE = 'uae',
 }
 
 export enum UserTypes {
@@ -144,6 +169,7 @@ export interface IShipments {
   note: string;
   status: ShipmentStatus;
   estimatedArrival: Date;
+  isDomestic?: boolean;
 }
 
 export interface IUpdateShipments {
@@ -199,6 +225,7 @@ const getEndpoints = [
   '/getInvoiceShipments',
   '/getShipmentsStatusCount',
   '/getUserAndShipmentCountPerYear',
+  '/getOrdersPerDay',
 ] as const;
 const postEndpoints = [
   '/signUp',
@@ -208,7 +235,7 @@ const postEndpoints = [
   '/createShipment',
 ] as const;
 const updateEndpoints = [] as const;
-const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipment'] as const;
+const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipments'] as const;
 const patchEndpoints = [
   '/updateWarehouse',
   '/acl',

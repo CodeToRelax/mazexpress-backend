@@ -10,6 +10,22 @@ const shipments_model_1 = __importDefault(require("../models/shipments.model"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
 const types_1 = require("../utils/types");
+const LIBYA_RESTRICTED_STATUSES = [
+    types_1.ShipmentStatus.RECEIVED_AT_WAREHOUSE,
+    types_1.ShipmentStatus.SHIPPED_TO_DESTINATION,
+];
+const appendLibyaVisibilityToQuery = (base) => {
+    return {
+        $and: [base, { $or: [{ isDomestic: true }, { status: { $nin: LIBYA_RESTRICTED_STATUSES } }] }],
+    };
+};
+const isRestrictedForLibya = (shipment) => {
+    if (!shipment)
+        return false;
+    const nonDomestic = shipment.isDomestic !== true;
+    const restricted = LIBYA_RESTRICTED_STATUSES.includes(shipment.status);
+    return nonDomestic && restricted;
+};
 const getShipments = async (filters, paginationOptions, user) => {
     let query = {};
     if (filters.searchParam) {
@@ -53,6 +69,9 @@ const getShipments = async (filters, paginationOptions, user) => {
             validShipments = await shipments_model_1.default.paginate(finalFilters, { ...paginationOptions, sort: sortOptions });
             return validShipments;
         }
+        if (userCountry === types_1.Countries.LIBYA) {
+            query = appendLibyaVisibilityToQuery(query);
+        }
         const adminResults = await shipments_model_1.default.paginate(filters ? query : {}, {
             ...paginationOptions,
             sort: sortOptions,
@@ -88,7 +107,14 @@ const getShipmentsUnpaginated = async (filters, user) => {
             validShipments = await shipments_model_1.default.find(finalFilters);
             return validShipments;
         }
-        validShipments = await shipments_model_1.default.find({ status: filters?.status, csn: customer[0].uniqueShippingNumber });
+        let findQuery = {
+            status: filters?.status,
+            csn: customer[0].uniqueShippingNumber,
+        };
+        if (adminCountry === types_1.Countries.LIBYA) {
+            findQuery = appendLibyaVisibilityToQuery(findQuery);
+        }
+        validShipments = (await shipments_model_1.default.find(findQuery));
         const adminAccessableShipments = validShipments.filter((shipment) => (0, helpers_1.checkAdminResponsibility)(adminCountry, shipment.status));
         return adminAccessableShipments;
     }
@@ -128,7 +154,11 @@ const updateShipment = async (_id, body, user) => {
         const res = await shipments_model_1.default.findOneAndUpdate({ _id }, { ...body });
         return res;
     }
-    if (!(0, helpers_1.checkAdminResponsibility)(adminUser[0]?.address.country, body.status)) {
+    const adminCountry = adminUser[0]?.address.country;
+    if (adminCountry === types_1.Countries.LIBYA && isRestrictedForLibya(shipment[0])) {
+        throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+    }
+    if (!(0, helpers_1.checkAdminResponsibility)(adminCountry, body.status)) {
         throw new error_middleware_1.CustomErrorHandler(403, 'unathourised personalle', 'unathourised personalle');
     }
     try {
@@ -145,6 +175,14 @@ const updateShipments = async (body, user) => {
     if (user?.mongoId === '6692c0d7888a7f31998c180e') {
         const res = await shipments_model_1.default.updateMany({ _id: { $in: body.shipmentsId } }, { status: body.shipmentStatus });
         return res;
+    }
+    if (userCountry === types_1.Countries.LIBYA) {
+        const shipments = (await shipments_model_1.default.find({ _id: { $in: body.shipmentsId } }));
+        for (const s of shipments) {
+            if (isRestrictedForLibya(s)) {
+                throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+            }
+        }
     }
     if (!(0, helpers_1.checkAdminResponsibility)(userCountry, body.shipmentStatus)) {
         throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
@@ -164,6 +202,14 @@ const updateShipmentsEsn = async (body, user) => {
         const res = await shipments_model_1.default.updateMany({ esn: { $in: body.shipmentsEsn } }, { status: body.shipmentStatus });
         console.log(res);
         return res;
+    }
+    if (userCountry === types_1.Countries.LIBYA) {
+        const shipments = (await shipments_model_1.default.find({ esn: { $in: body.shipmentsEsn } }));
+        for (const s of shipments) {
+            if (isRestrictedForLibya(s)) {
+                throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+            }
+        }
     }
     if (!(0, helpers_1.checkAdminResponsibility)(userCountry, body.shipmentStatus)) {
         throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
@@ -185,6 +231,9 @@ const deleteShipment = async (body, user) => {
         return res;
     }
     for (const shipment of shipments) {
+        if (userCountry === types_1.Countries.LIBYA && isRestrictedForLibya(shipment)) {
+            throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
+        }
         if (!(0, helpers_1.checkAdminResponsibility)(userCountry, shipment.status)) {
             throw new error_middleware_1.CustomErrorHandler(403, 'unauthorized personnel', 'unauthorized personnel');
         }
