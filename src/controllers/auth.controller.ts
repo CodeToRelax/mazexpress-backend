@@ -3,6 +3,7 @@ import { FirebaseController } from './firebase.controller';
 import UserCollection from '@/models/user.model';
 import { generateAcl, generateRandomUsername, generateShippingNumber } from '@/utils/helpers';
 import { CustomErrorHandler } from '@/middlewares/error.middleware';
+import { WalletController } from './wallet.controller';
 
 // create user
 const createUser = async (body: IUser & { password: string }) => {
@@ -25,6 +26,14 @@ const createUser = async (body: IUser & { password: string }) => {
     });
     // create mongo user
     const mongoUser = await mongoUserBody.save();
+
+    // create wallet for user
+    try {
+      await WalletController.createWallet(mongoUser._id.toString(), 'LYD');
+    } catch (walletError) {
+      console.warn('Failed to create wallet for user:', walletError);
+      // Continue with user creation even if wallet creation fails
+    }
 
     // setup custom claims to use in jwt
     await FirebaseController.addFirebaseCustomClaims({

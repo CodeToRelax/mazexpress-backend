@@ -120,6 +120,7 @@ const generateAcl = (customerType) => {
                 user: ['/getUser'],
                 shipments: ['/getShipments', '/getShipment'],
                 dashboard: [],
+                wallet: ['/balance', '/details', '/transactions', '/transaction'],
             },
             POST: {
                 warehouse: [],
@@ -127,23 +128,27 @@ const generateAcl = (customerType) => {
                 config: [],
                 user: [],
                 shipments: [],
+                wallet: [],
             },
             DELETE: {
                 warehouse: [],
                 user: [],
                 shipments: [],
+                wallet: [],
             },
             PATCH: {
                 warehouse: [],
                 auth: [],
                 user: ['/updateProfile'],
                 shipments: [],
+                wallet: [],
             },
             UPDATE: {
                 warehouse: [],
                 auth: [],
                 user: [],
                 shipments: [],
+                wallet: [],
             },
         };
     }
@@ -155,6 +160,7 @@ const generateAcl = (customerType) => {
             user: ['/getAllUsers', '/getAllUsersUnpaginated', '/getUser'],
             shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
             dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear', '/getOrdersPerDay'],
+            wallet: ['/balance', '/details', '/transactions', '/transaction', '/admin/all', '/admin/user'],
         },
         POST: {
             warehouse: ['/createWarehouse'],
@@ -162,23 +168,27 @@ const generateAcl = (customerType) => {
             config: ['/updateShippingConfig'],
             user: ['/createUser'],
             shipments: ['/createShipment'],
+            wallet: ['/admin/topup', '/admin/create'],
         },
         DELETE: {
             warehouse: ['/deleteWarehouse', '/deleteShipments'],
             user: [],
             shipments: [],
+            wallet: [],
         },
         PATCH: {
             warehouse: ['/updateWarehouse'],
             auth: [],
             user: ['/toggleUser', '/updateUser', '/updateProfile'],
             shipments: ['/updateShipment', '/updateShipments', '/updateShipmentsEsn'],
+            wallet: ['/admin/deactivate', '/admin/reactivate', '/admin/currency'],
         },
         UPDATE: {
             warehouse: [],
             auth: [],
             user: [],
             shipments: [],
+            wallet: [],
         },
     };
 };

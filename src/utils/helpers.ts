@@ -152,6 +152,7 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
         user: ['/getUser'],
         shipments: ['/getShipments', '/getShipment'],
         dashboard: [],
+        wallet: ['/balance', '/details', '/transactions', '/transaction'],
       },
       POST: {
         warehouse: [],
@@ -159,23 +160,27 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
         config: [],
         user: [],
         shipments: [],
+        wallet: [],
       },
       DELETE: {
         warehouse: [],
         user: [],
         shipments: [],
+        wallet: [],
       },
       PATCH: {
         warehouse: [],
         auth: [],
         user: ['/updateProfile'],
         shipments: [],
+        wallet: [],
       },
       UPDATE: {
         warehouse: [],
         auth: [],
         user: [],
         shipments: [],
+        wallet: [],
       },
     };
   }
@@ -187,6 +192,7 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
       user: ['/getAllUsers', '/getAllUsersUnpaginated', '/getUser'],
       shipments: ['/getShipments', '/getShipmentsUnpaginated', '/getShipment', '/getInvoiceShipments'],
       dashboard: ['/getShipmentsStatusCount', '/getUserAndShipmentCountPerYear', '/getOrdersPerDay'],
+      wallet: ['/balance', '/details', '/transactions', '/transaction', '/admin/all', '/admin/user'],
     },
     POST: {
       warehouse: ['/createWarehouse'],
@@ -194,23 +200,27 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
       config: ['/updateShippingConfig'],
       user: ['/createUser'],
       shipments: ['/createShipment'],
+      wallet: ['/admin/topup', '/admin/create'],
     },
     DELETE: {
       warehouse: ['/deleteWarehouse', '/deleteShipments'],
       user: [],
       shipments: [],
+      wallet: [],
     },
     PATCH: {
       warehouse: ['/updateWarehouse'],
       auth: [],
       user: ['/toggleUser', '/updateUser', '/updateProfile'],
       shipments: ['/updateShipment', '/updateShipments', '/updateShipmentsEsn'],
+      wallet: ['/admin/deactivate', '/admin/reactivate', '/admin/currency'],
     },
     UPDATE: {
       warehouse: [],
       auth: [],
       user: [],
       shipments: [],
+      wallet: [],
     },
   };
 };

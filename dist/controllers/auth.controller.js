@@ -9,6 +9,7 @@ const firebase_controller_1 = require("./firebase.controller");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const helpers_1 = require("../utils/helpers");
 const error_middleware_1 = require("../middlewares/error.middleware");
+const wallet_controller_1 = require("./wallet.controller");
 const createUser = async (body) => {
     let fbUser = null;
     try {
@@ -26,6 +27,12 @@ const createUser = async (body) => {
             disabled: fbUser.disabled,
         });
         const mongoUser = await mongoUserBody.save();
+        try {
+            await wallet_controller_1.WalletController.createWallet(mongoUser._id.toString(), 'LYD');
+        }
+        catch (walletError) {
+            console.warn('Failed to create wallet for user:', walletError);
+        }
         await firebase_controller_1.FirebaseController.addFirebaseCustomClaims({
             uid: fbUser.uid,
             customClaims: { mongoId: mongoUser._id, role: body.userType },

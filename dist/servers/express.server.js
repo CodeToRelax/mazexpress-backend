@@ -15,6 +15,7 @@ const warehouse_route_1 = __importDefault(require("../routes/warehouse.route"));
 const shipments_route_1 = __importDefault(require("../routes/shipments.route"));
 const config_route_1 = __importDefault(require("../routes/config.route"));
 const dashboard_route_1 = __importDefault(require("../routes/dashboard.route"));
+const wallet_route_1 = __importDefault(require("../routes/wallet.route"));
 const createExpressServer = () => {
     const App = (0, express_1.default)();
     App.use((0, cors_1.default)());
@@ -31,6 +32,7 @@ const createExpressServer = () => {
     App.use('/shipments', shipments_route_1.default);
     App.use('/config', config_route_1.default);
     App.use('/dashboard', dashboard_route_1.default);
+    App.use('/wallet', wallet_route_1.default);
     App.use(error_middleware_1.ErrorMiddleware);
     return App;
 };
