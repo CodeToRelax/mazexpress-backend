@@ -4,7 +4,7 @@ import AuthenticateFbJWT from '@/middlewares/jwt.middleware';
 import { CheckUserRules } from '@/middlewares/checkUserRules.middleware';
 import { ValidateRequest } from '@/middlewares/validateRequest.middleware';
 import { CustomExpressRequest, StatusCode } from '@/utils/types';
-import { topUpWalletValidation, updateWalletCurrencyValidation } from '@/validation/wallet.validation';
+import { adminTransactionValidation, updateWalletCurrencyValidation } from '@/validation/wallet.validation';
 import { Router } from 'express';
 
 const router = Router({
@@ -83,23 +83,29 @@ router.get(
   }
 );
 
-// Admin-only top-up route - requires validation
+// Admin wallet transaction route - supports top-up, deduction, and refund
 router.post(
-  '/admin/topup',
+  '/admin/transaction',
   AuthenticateFbJWT,
   CheckUserRules,
-  ValidateRequest(topUpWalletValidation),
+  ValidateRequest(adminTransactionValidation),
   async (req: CustomExpressRequest, res) => {
     try {
       if (!req.body.walletId) {
         throw new CustomErrorHandler(403, 'common.errorValidation', 'Wallet ID is required');
       }
 
-      const result = await WalletController.adminTopUpWallet(
+      if (!req.body.type) {
+        throw new CustomErrorHandler(403, 'common.errorValidation', 'Transaction type is required');
+      }
+
+      const result = await WalletController.adminProcessWalletTransaction(
         req.body.walletId,
+        req.body.type,
         req.body.amount,
         req.body.description,
-        req.body.reference
+        req.body.reference,
+        req.body.status || 'completed'
       );
       return res.status(StatusCode.SUCCESS_CREATED).json(result);
     } catch (error) {

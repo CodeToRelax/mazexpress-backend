@@ -84,12 +84,15 @@ router.get('/transaction/:transactionNumber', jwt_middleware_1.default, checkUse
         }
     }
 });
-router.post('/admin/topup', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(wallet_validation_1.topUpWalletValidation), async (req, res) => {
+router.post('/admin/transaction', jwt_middleware_1.default, checkUserRules_middleware_1.CheckUserRules, (0, validateRequest_middleware_1.ValidateRequest)(wallet_validation_1.adminTransactionValidation), async (req, res) => {
     try {
         if (!req.body.walletId) {
             throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'Wallet ID is required');
         }
-        const result = await wallet_controller_1.WalletController.adminTopUpWallet(req.body.walletId, req.body.amount, req.body.description, req.body.reference);
+        if (!req.body.type) {
+            throw new error_middleware_1.CustomErrorHandler(403, 'common.errorValidation', 'Transaction type is required');
+        }
+        const result = await wallet_controller_1.WalletController.adminProcessWalletTransaction(req.body.walletId, req.body.type, req.body.amount, req.body.description, req.body.reference, req.body.status || 'completed');
         return res.status(types_1.StatusCode.SUCCESS_CREATED).json(result);
     }
     catch (error) {

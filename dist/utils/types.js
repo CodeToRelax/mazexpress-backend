@@ -95,7 +95,7 @@ const postEndpoints = [
     '/createWarehouse',
     '/createUser',
     '/createShipment',
-    '/admin/topup',
+    '/admin/transaction',
     '/admin/create',
 ];
 const updateEndpoints = [];

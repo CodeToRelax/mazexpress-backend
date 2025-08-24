@@ -242,7 +242,7 @@ const postEndpoints = [
   '/createWarehouse',
   '/createUser',
   '/createShipment',
-  '/admin/topup',
+  '/admin/transaction',
   '/admin/create',
 ] as const;
 const updateEndpoints = [] as const;

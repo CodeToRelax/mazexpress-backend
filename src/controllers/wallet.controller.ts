@@ -321,8 +321,15 @@ const createWalletForExistingUser = async (userId: string, currency: 'LYD' | 'US
   }
 };
 
-// admin: top up wallet by wallet ID
-const adminTopUpWallet = async (walletId: string, amount: number, description: string, reference?: string) => {
+// admin: process wallet transaction (top-up, deduction, refund)
+const adminProcessWalletTransaction = async (
+  walletId: string,
+  type: 'top_up' | 'deduction' | 'refund',
+  amount: number,
+  description: string,
+  reference?: string,
+  status: 'pending' | 'completed' | 'failed' | 'cancelled' = 'completed'
+) => {
   try {
     if (amount <= 0) {
       throw new CustomErrorHandler(400, 'common.invalidAmount', 'Amount must be greater than 0');
@@ -338,10 +345,28 @@ const adminTopUpWallet = async (walletId: string, amount: number, description: s
     }
 
     const balanceBefore = wallet.balance;
-    const balanceAfter = balanceBefore + amount;
+    let balanceAfter: number;
 
-    // update wallet balance
-    await WalletCollection.updateOne({ _id: wallet._id }, { balance: balanceAfter });
+    // Only update balance if status is 'completed'
+    if (status === 'completed') {
+      // Calculate new balance based on transaction type
+      if (type === 'deduction') {
+        balanceAfter = balanceBefore - amount;
+        // Check if deduction would result in negative balance (optional - you can remove this if you allow negative balances)
+        if (balanceAfter < 0) {
+          throw new CustomErrorHandler(400, 'common.insufficientBalance', 'Insufficient balance for deduction');
+        }
+      } else {
+        // top_up and refund both add to balance
+        balanceAfter = balanceBefore + amount;
+      }
+
+      // update wallet balance
+      await WalletCollection.updateOne({ _id: wallet._id }, { balance: balanceAfter });
+    } else {
+      // For non-completed statuses, keep the same balance
+      balanceAfter = balanceBefore;
+    }
 
     // create transaction record
     const transactionNumber = await generateTransactionNumber();
@@ -349,13 +374,13 @@ const adminTopUpWallet = async (walletId: string, amount: number, description: s
       transactionNumber,
       walletId: wallet._id,
       userId: wallet.userId,
-      type: TransactionType.TOP_UP,
+      type: type as TransactionType,
       amount,
       balanceBefore,
       balanceAfter,
       description,
       reference,
-      status: TransactionStatus.COMPLETED,
+      status: status as TransactionStatus,
     });
 
     const savedTransaction = await transaction.save();
@@ -379,7 +404,7 @@ export const WalletController = {
   createWallet,
   createWalletForExistingUser,
   topUpWallet,
-  adminTopUpWallet,
+  adminProcessWalletTransaction,
   getTransactionHistory,
   getTransaction,
   getAllWallets,

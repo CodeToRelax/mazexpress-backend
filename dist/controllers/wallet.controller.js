@@ -307,7 +307,7 @@ const createWalletForExistingUser = async (userId, currency = 'LYD') => {
         }
     }
 };
-const adminTopUpWallet = async (walletId, amount, description, reference) => {
+const adminProcessWalletTransaction = async (walletId, type, amount, description, reference, status = 'completed') => {
     try {
         if (amount <= 0) {
             throw new error_middleware_1.CustomErrorHandler(400, 'common.invalidAmount', 'Amount must be greater than 0');
@@ -320,20 +320,34 @@ const adminTopUpWallet = async (walletId, amount, description, reference) => {
             throw new error_middleware_1.CustomErrorHandler(400, 'common.walletInactive', 'Wallet is inactive');
         }
         const balanceBefore = wallet.balance;
-        const balanceAfter = balanceBefore + amount;
-        await wallet_model_1.default.updateOne({ _id: wallet._id }, { balance: balanceAfter });
+        let balanceAfter;
+        if (status === 'completed') {
+            if (type === 'deduction') {
+                balanceAfter = balanceBefore - amount;
+                if (balanceAfter < 0) {
+                    throw new error_middleware_1.CustomErrorHandler(400, 'common.insufficientBalance', 'Insufficient balance for deduction');
+                }
+            }
+            else {
+                balanceAfter = balanceBefore + amount;
+            }
+            await wallet_model_1.default.updateOne({ _id: wallet._id }, { balance: balanceAfter });
+        }
+        else {
+            balanceAfter = balanceBefore;
+        }
         const transactionNumber = await generateTransactionNumber();
         const transaction = new walletTransaction_model_1.default({
             transactionNumber,
             walletId: wallet._id,
             userId: wallet.userId,
-            type: walletTransaction_model_1.TransactionType.TOP_UP,
+            type: type,
             amount,
             balanceBefore,
             balanceAfter,
             description,
             reference,
-            status: walletTransaction_model_1.TransactionStatus.COMPLETED,
+            status: status,
         });
         const savedTransaction = await transaction.save();
         return {
@@ -356,7 +370,7 @@ exports.WalletController = {
     createWallet,
     createWalletForExistingUser,
     topUpWallet,
-    adminTopUpWallet,
+    adminProcessWalletTransaction,
     getTransactionHistory,
     getTransaction,
     getAllWallets,

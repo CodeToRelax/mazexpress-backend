@@ -200,7 +200,7 @@ export const generateAcl = (customerType: UserTypes): IUserACL => {
       config: ['/updateShippingConfig'],
       user: ['/createUser'],
       shipments: ['/createShipment'],
-      wallet: ['/admin/topup', '/admin/create'],
+      wallet: ['/admin/transaction', '/admin/create'],
     },
     DELETE: {
       warehouse: ['/deleteWarehouse', '/deleteShipments'],
