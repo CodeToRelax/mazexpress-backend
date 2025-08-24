@@ -34,6 +34,7 @@ export enum Cities {
   BREGA = 'brega',
   ISTANBUL = 'istanbul',
   DUBAI = 'dubai',
+  HONGKONG = 'hongkong',
 }
 
 export enum Countries {
@@ -78,6 +79,7 @@ export interface IUser {
   firebaseId: string;
   disabled: boolean;
   gender: UserGender;
+  walletId?: string;
 }
 export interface IGetAllUsersFilters extends IUser {
   searchParam: string;
@@ -210,7 +212,7 @@ export interface IUpdateUserAdmin {
   phoneNumber: string;
 }
 
-const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments', 'dashboard'] as const;
+const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments', 'dashboard', 'wallet'] as const;
 export type appServices = (typeof systemServices)[number];
 
 const getEndpoints = [
@@ -227,6 +229,12 @@ const getEndpoints = [
   '/getShipmentsStatusCount',
   '/getUserAndShipmentCountPerYear',
   '/getOrdersPerDay',
+  '/balance',
+  '/details',
+  '/transactions',
+  '/transaction',
+  '/admin/all',
+  '/admin/user',
 ] as const;
 const postEndpoints = [
   '/signUp',
@@ -234,6 +242,8 @@ const postEndpoints = [
   '/createWarehouse',
   '/createUser',
   '/createShipment',
+  '/admin/transaction',
+  '/admin/create',
 ] as const;
 const updateEndpoints = [] as const;
 const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipments'] as const;
@@ -246,6 +256,9 @@ const patchEndpoints = [
   '/updateShipment',
   '/updateShipments',
   '/updateShipmentsEsn',
+  '/admin/deactivate',
+  '/admin/reactivate',
+  '/admin/currency',
 ] as const;
 
 export interface IUserACL {
@@ -267,6 +280,28 @@ export interface IUserACL {
 }
 
 export type IUserStatus = 'enable' | 'disable';
+
+// Wallet Types
+export interface IWallet {
+  userId: string;
+  balance: number;
+  currency: 'LYD' | 'USD';
+  isActive: boolean;
+}
+
+export interface IWalletTransaction {
+  transactionNumber: string;
+  walletId: string;
+  userId: string;
+  type: 'top_up' | 'deduction' | 'refund';
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  description: string;
+  reference?: string;
+  status: 'pending' | 'completed' | 'failed' | 'cancelled';
+  metadata?: Record<string, unknown>;
+}
 
 interface Dimensions {
   length: string;

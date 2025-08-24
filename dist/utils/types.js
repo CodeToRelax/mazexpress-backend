@@ -35,6 +35,7 @@ var Cities;
     Cities["BREGA"] = "brega";
     Cities["ISTANBUL"] = "istanbul";
     Cities["DUBAI"] = "dubai";
+    Cities["HONGKONG"] = "hongkong";
 })(Cities || (exports.Cities = Cities = {}));
 var Countries;
 (function (Countries) {
@@ -66,7 +67,7 @@ var ShipmentStatus;
     ShipmentStatus["READY_FOR_PICK_UP"] = "ready for pick up";
     ShipmentStatus["DELIVERED"] = "delivered";
 })(ShipmentStatus || (exports.ShipmentStatus = ShipmentStatus = {}));
-const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments', 'dashboard'];
+const systemServices = ['auth', 'user', 'warehouse', 'config', 'shipments', 'dashboard', 'wallet'];
 const getEndpoints = [
     '/getShippingConfig',
     '/getWarehouses',
@@ -81,6 +82,12 @@ const getEndpoints = [
     '/getShipmentsStatusCount',
     '/getUserAndShipmentCountPerYear',
     '/getOrdersPerDay',
+    '/balance',
+    '/details',
+    '/transactions',
+    '/transaction',
+    '/admin/all',
+    '/admin/user',
 ];
 const postEndpoints = [
     '/signUp',
@@ -88,6 +95,8 @@ const postEndpoints = [
     '/createWarehouse',
     '/createUser',
     '/createShipment',
+    '/admin/transaction',
+    '/admin/create',
 ];
 const updateEndpoints = [];
 const deleteEndpoints = ['/deleteWarehouse', '/deleteUser', '/deleteShipments'];
@@ -100,6 +109,9 @@ const patchEndpoints = [
     '/updateShipment',
     '/updateShipments',
     '/updateShipmentsEsn',
+    '/admin/deactivate',
+    '/admin/reactivate',
+    '/admin/currency',
 ];
 var StatusCode;
 (function (StatusCode) {

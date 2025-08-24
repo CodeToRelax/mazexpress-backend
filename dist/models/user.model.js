@@ -93,6 +93,11 @@ exports.UserSchema = new mongoose_1.default.Schema({
     privacyPolicy: {
         usageAgreement: { type: Boolean, required: true },
     },
+    walletId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: 'Wallet',
+        required: false,
+    },
 }, {
     timestamps: true,
 });

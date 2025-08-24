@@ -90,6 +90,11 @@ export const UserSchema = new mongoose.Schema(
     privacyPolicy: {
       usageAgreement: { type: Boolean, required: true },
     },
+    walletId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Wallet',
+      required: false,
+    },
   },
   {
     timestamps: true,
